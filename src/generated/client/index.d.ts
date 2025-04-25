@@ -2343,12 +2343,14 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     Log: number;
+    AccessKey: number;
   };
 
   export type UserCountOutputTypeSelect<
     ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
   > = {
     Log?: boolean | UserCountOutputTypeCountLogArgs;
+    AccessKey?: boolean | UserCountOutputTypeCountAccessKeyArgs;
   };
 
   // Custom InputTypes
@@ -2371,6 +2373,15 @@ export namespace Prisma {
     ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
   > = {
     where?: LogWhereInput;
+  };
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAccessKeyArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    where?: AccessKeyWhereInput;
   };
 
   /**
@@ -2845,6 +2856,7 @@ export namespace Prisma {
       status?: boolean;
       cameraType?: boolean;
       Log?: boolean | User$LogArgs<ExtArgs>;
+      AccessKey?: boolean | User$AccessKeyArgs<ExtArgs>;
       _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>;
     },
     ExtArgs['result']['user']
@@ -2900,6 +2912,7 @@ export namespace Prisma {
     ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
   > = {
     Log?: boolean | User$LogArgs<ExtArgs>;
+    AccessKey?: boolean | User$AccessKeyArgs<ExtArgs>;
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>;
   };
   export type UserIncludeCreateManyAndReturn<
@@ -2915,6 +2928,7 @@ export namespace Prisma {
     name: 'User';
     objects: {
       Log: Prisma.$LogPayload<ExtArgs>[];
+      AccessKey: Prisma.$AccessKeyPayload<ExtArgs>[];
     };
     scalars: $Extensions.GetPayloadResult<
       {
@@ -3481,6 +3495,17 @@ export namespace Prisma {
         >
       | Null
     >;
+    AccessKey<T extends User$AccessKeyArgs<ExtArgs> = {}>(
+      args?: Subset<T, User$AccessKeyArgs<ExtArgs>>,
+    ): Prisma.PrismaPromise<
+      | $Result.GetResult<
+          Prisma.$AccessKeyPayload<ExtArgs>,
+          T,
+          'findMany',
+          GlobalOmitOptions
+        >
+      | Null
+    >;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3966,6 +3991,34 @@ export namespace Prisma {
     take?: number;
     skip?: number;
     distinct?: LogScalarFieldEnum | LogScalarFieldEnum[];
+  };
+
+  /**
+   * User.AccessKey
+   */
+  export type User$AccessKeyArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the AccessKey
+     */
+    select?: AccessKeySelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the AccessKey
+     */
+    omit?: AccessKeyOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccessKeyInclude<ExtArgs> | null;
+    where?: AccessKeyWhereInput;
+    orderBy?:
+      | AccessKeyOrderByWithRelationInput
+      | AccessKeyOrderByWithRelationInput[];
+    cursor?: AccessKeyWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: AccessKeyScalarFieldEnum | AccessKeyScalarFieldEnum[];
   };
 
   /**
@@ -8410,6 +8463,7 @@ export namespace Prisma {
     id: string | null;
     token: string | null;
     projectId: string | null;
+    userId: string | null;
     cameraType: $Enums.CameraType | null;
     expiresAt: Date | null;
   };
@@ -8418,6 +8472,7 @@ export namespace Prisma {
     id: string | null;
     token: string | null;
     projectId: string | null;
+    userId: string | null;
     cameraType: $Enums.CameraType | null;
     expiresAt: Date | null;
   };
@@ -8426,6 +8481,7 @@ export namespace Prisma {
     id: number;
     token: number;
     projectId: number;
+    userId: number;
     cameraType: number;
     expiresAt: number;
     _all: number;
@@ -8435,6 +8491,7 @@ export namespace Prisma {
     id?: true;
     token?: true;
     projectId?: true;
+    userId?: true;
     cameraType?: true;
     expiresAt?: true;
   };
@@ -8443,6 +8500,7 @@ export namespace Prisma {
     id?: true;
     token?: true;
     projectId?: true;
+    userId?: true;
     cameraType?: true;
     expiresAt?: true;
   };
@@ -8451,6 +8509,7 @@ export namespace Prisma {
     id?: true;
     token?: true;
     projectId?: true;
+    userId?: true;
     cameraType?: true;
     expiresAt?: true;
     _all?: true;
@@ -8537,6 +8596,7 @@ export namespace Prisma {
     id: string;
     token: string;
     projectId: string;
+    userId: string;
     cameraType: $Enums.CameraType;
     expiresAt: Date;
     _count: AccessKeyCountAggregateOutputType | null;
@@ -8564,9 +8624,11 @@ export namespace Prisma {
       id?: boolean;
       token?: boolean;
       projectId?: boolean;
+      userId?: boolean;
       cameraType?: boolean;
       expiresAt?: boolean;
       project?: boolean | ProjectDefaultArgs<ExtArgs>;
+      user?: boolean | UserDefaultArgs<ExtArgs>;
     },
     ExtArgs['result']['accessKey']
   >;
@@ -8578,9 +8640,11 @@ export namespace Prisma {
       id?: boolean;
       token?: boolean;
       projectId?: boolean;
+      userId?: boolean;
       cameraType?: boolean;
       expiresAt?: boolean;
       project?: boolean | ProjectDefaultArgs<ExtArgs>;
+      user?: boolean | UserDefaultArgs<ExtArgs>;
     },
     ExtArgs['result']['accessKey']
   >;
@@ -8592,9 +8656,11 @@ export namespace Prisma {
       id?: boolean;
       token?: boolean;
       projectId?: boolean;
+      userId?: boolean;
       cameraType?: boolean;
       expiresAt?: boolean;
       project?: boolean | ProjectDefaultArgs<ExtArgs>;
+      user?: boolean | UserDefaultArgs<ExtArgs>;
     },
     ExtArgs['result']['accessKey']
   >;
@@ -8603,6 +8669,7 @@ export namespace Prisma {
     id?: boolean;
     token?: boolean;
     projectId?: boolean;
+    userId?: boolean;
     cameraType?: boolean;
     expiresAt?: boolean;
   };
@@ -8610,23 +8677,26 @@ export namespace Prisma {
   export type AccessKeyOmit<
     ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
   > = $Extensions.GetOmit<
-    'id' | 'token' | 'projectId' | 'cameraType' | 'expiresAt',
+    'id' | 'token' | 'projectId' | 'userId' | 'cameraType' | 'expiresAt',
     ExtArgs['result']['accessKey']
   >;
   export type AccessKeyInclude<
     ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
   > = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>;
+    user?: boolean | UserDefaultArgs<ExtArgs>;
   };
   export type AccessKeyIncludeCreateManyAndReturn<
     ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
   > = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>;
+    user?: boolean | UserDefaultArgs<ExtArgs>;
   };
   export type AccessKeyIncludeUpdateManyAndReturn<
     ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
   > = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>;
+    user?: boolean | UserDefaultArgs<ExtArgs>;
   };
 
   export type $AccessKeyPayload<
@@ -8635,12 +8705,14 @@ export namespace Prisma {
     name: 'AccessKey';
     objects: {
       project: Prisma.$ProjectPayload<ExtArgs>;
+      user: Prisma.$UserPayload<ExtArgs>;
     };
     scalars: $Extensions.GetPayloadResult<
       {
         id: string;
         token: string;
         projectId: string;
+        userId: string;
         cameraType: $Enums.CameraType;
         expiresAt: Date;
       },
@@ -9207,6 +9279,20 @@ export namespace Prisma {
       ExtArgs,
       GlobalOmitOptions
     >;
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(
+      args?: Subset<T, UserDefaultArgs<ExtArgs>>,
+    ): Prisma__UserClient<
+      | $Result.GetResult<
+          Prisma.$UserPayload<ExtArgs>,
+          T,
+          'findUniqueOrThrow',
+          GlobalOmitOptions
+        >
+      | Null,
+      Null,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9250,6 +9336,7 @@ export namespace Prisma {
     readonly id: FieldRef<'AccessKey', 'String'>;
     readonly token: FieldRef<'AccessKey', 'String'>;
     readonly projectId: FieldRef<'AccessKey', 'String'>;
+    readonly userId: FieldRef<'AccessKey', 'String'>;
     readonly cameraType: FieldRef<'AccessKey', 'CameraType'>;
     readonly expiresAt: FieldRef<'AccessKey', 'DateTime'>;
   }
@@ -23090,6 +23177,7 @@ export namespace Prisma {
     id: 'id';
     token: 'token';
     projectId: 'projectId';
+    userId: 'userId';
     cameraType: 'cameraType';
     expiresAt: 'expiresAt';
   };
@@ -23464,6 +23552,7 @@ export namespace Prisma {
       | $Enums.CameraType
       | null;
     Log?: LogListRelationFilter;
+    AccessKey?: AccessKeyListRelationFilter;
   };
 
   export type UserOrderByWithRelationInput = {
@@ -23475,6 +23564,7 @@ export namespace Prisma {
     status?: SortOrder;
     cameraType?: SortOrderInput | SortOrder;
     Log?: LogOrderByRelationAggregateInput;
+    AccessKey?: AccessKeyOrderByRelationAggregateInput;
   };
 
   export type UserWhereUniqueInput = Prisma.AtLeast<
@@ -23493,6 +23583,7 @@ export namespace Prisma {
         | $Enums.CameraType
         | null;
       Log?: LogListRelationFilter;
+      AccessKey?: AccessKeyListRelationFilter;
     },
     'id' | 'email'
   >;
@@ -23819,39 +23910,46 @@ export namespace Prisma {
     id?: StringFilter<'AccessKey'> | string;
     token?: StringFilter<'AccessKey'> | string;
     projectId?: StringFilter<'AccessKey'> | string;
+    userId?: StringFilter<'AccessKey'> | string;
     cameraType?: EnumCameraTypeFilter<'AccessKey'> | $Enums.CameraType;
     expiresAt?: DateTimeFilter<'AccessKey'> | Date | string;
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>;
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>;
   };
 
   export type AccessKeyOrderByWithRelationInput = {
     id?: SortOrder;
     token?: SortOrder;
     projectId?: SortOrder;
+    userId?: SortOrder;
     cameraType?: SortOrder;
     expiresAt?: SortOrder;
     project?: ProjectOrderByWithRelationInput;
+    user?: UserOrderByWithRelationInput;
   };
 
   export type AccessKeyWhereUniqueInput = Prisma.AtLeast<
     {
       id?: string;
+      token?: string;
       AND?: AccessKeyWhereInput | AccessKeyWhereInput[];
       OR?: AccessKeyWhereInput[];
       NOT?: AccessKeyWhereInput | AccessKeyWhereInput[];
-      token?: StringFilter<'AccessKey'> | string;
       projectId?: StringFilter<'AccessKey'> | string;
+      userId?: StringFilter<'AccessKey'> | string;
       cameraType?: EnumCameraTypeFilter<'AccessKey'> | $Enums.CameraType;
       expiresAt?: DateTimeFilter<'AccessKey'> | Date | string;
       project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>;
+      user?: XOR<UserScalarRelationFilter, UserWhereInput>;
     },
-    'id'
+    'id' | 'token'
   >;
 
   export type AccessKeyOrderByWithAggregationInput = {
     id?: SortOrder;
     token?: SortOrder;
     projectId?: SortOrder;
+    userId?: SortOrder;
     cameraType?: SortOrder;
     expiresAt?: SortOrder;
     _count?: AccessKeyCountOrderByAggregateInput;
@@ -23870,6 +23968,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<'AccessKey'> | string;
     token?: StringWithAggregatesFilter<'AccessKey'> | string;
     projectId?: StringWithAggregatesFilter<'AccessKey'> | string;
+    userId?: StringWithAggregatesFilter<'AccessKey'> | string;
     cameraType?:
       | EnumCameraTypeWithAggregatesFilter<'AccessKey'>
       | $Enums.CameraType;
@@ -24555,6 +24654,7 @@ export namespace Prisma {
     status: boolean;
     cameraType?: $Enums.CameraType | null;
     Log?: LogCreateNestedManyWithoutUserInput;
+    AccessKey?: AccessKeyCreateNestedManyWithoutUserInput;
   };
 
   export type UserUncheckedCreateInput = {
@@ -24566,6 +24666,7 @@ export namespace Prisma {
     status: boolean;
     cameraType?: $Enums.CameraType | null;
     Log?: LogUncheckedCreateNestedManyWithoutUserInput;
+    AccessKey?: AccessKeyUncheckedCreateNestedManyWithoutUserInput;
   };
 
   export type UserUpdateInput = {
@@ -24580,6 +24681,7 @@ export namespace Prisma {
       | $Enums.CameraType
       | null;
     Log?: LogUpdateManyWithoutUserNestedInput;
+    AccessKey?: AccessKeyUpdateManyWithoutUserNestedInput;
   };
 
   export type UserUncheckedUpdateInput = {
@@ -24594,6 +24696,7 @@ export namespace Prisma {
       | $Enums.CameraType
       | null;
     Log?: LogUncheckedUpdateManyWithoutUserNestedInput;
+    AccessKey?: AccessKeyUncheckedUpdateManyWithoutUserNestedInput;
   };
 
   export type UserCreateManyInput = {
@@ -24940,12 +25043,14 @@ export namespace Prisma {
     cameraType: $Enums.CameraType;
     expiresAt: Date | string;
     project: ProjectCreateNestedOneWithoutAccessKeyInput;
+    user: UserCreateNestedOneWithoutAccessKeyInput;
   };
 
   export type AccessKeyUncheckedCreateInput = {
     id?: string;
     token: string;
     projectId: string;
+    userId: string;
     cameraType: $Enums.CameraType;
     expiresAt: Date | string;
   };
@@ -24956,12 +25061,14 @@ export namespace Prisma {
     cameraType?: EnumCameraTypeFieldUpdateOperationsInput | $Enums.CameraType;
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     project?: ProjectUpdateOneRequiredWithoutAccessKeyNestedInput;
+    user?: UserUpdateOneRequiredWithoutAccessKeyNestedInput;
   };
 
   export type AccessKeyUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string;
     token?: StringFieldUpdateOperationsInput | string;
     projectId?: StringFieldUpdateOperationsInput | string;
+    userId?: StringFieldUpdateOperationsInput | string;
     cameraType?: EnumCameraTypeFieldUpdateOperationsInput | $Enums.CameraType;
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string;
   };
@@ -24970,6 +25077,7 @@ export namespace Prisma {
     id?: string;
     token: string;
     projectId: string;
+    userId: string;
     cameraType: $Enums.CameraType;
     expiresAt: Date | string;
   };
@@ -24985,6 +25093,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string;
     token?: StringFieldUpdateOperationsInput | string;
     projectId?: StringFieldUpdateOperationsInput | string;
+    userId?: StringFieldUpdateOperationsInput | string;
     cameraType?: EnumCameraTypeFieldUpdateOperationsInput | $Enums.CameraType;
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string;
   };
@@ -25669,12 +25778,22 @@ export namespace Prisma {
     none?: LogWhereInput;
   };
 
+  export type AccessKeyListRelationFilter = {
+    every?: AccessKeyWhereInput;
+    some?: AccessKeyWhereInput;
+    none?: AccessKeyWhereInput;
+  };
+
   export type SortOrderInput = {
     sort: SortOrder;
     nulls?: NullsOrder;
   };
 
   export type LogOrderByRelationAggregateInput = {
+    _count?: SortOrder;
+  };
+
+  export type AccessKeyOrderByRelationAggregateInput = {
     _count?: SortOrder;
   };
 
@@ -25960,12 +26079,6 @@ export namespace Prisma {
     isNot?: EngineerWhereInput;
   };
 
-  export type AccessKeyListRelationFilter = {
-    every?: AccessKeyWhereInput;
-    some?: AccessKeyWhereInput;
-    none?: AccessKeyWhereInput;
-  };
-
   export type PavementListRelationFilter = {
     every?: PavementWhereInput;
     some?: PavementWhereInput;
@@ -25988,10 +26101,6 @@ export namespace Prisma {
     every?: PdfWhereInput;
     some?: PdfWhereInput;
     none?: PdfWhereInput;
-  };
-
-  export type AccessKeyOrderByRelationAggregateInput = {
-    _count?: SortOrder;
   };
 
   export type PavementOrderByRelationAggregateInput = {
@@ -26133,10 +26242,16 @@ export namespace Prisma {
     isNot?: ProjectWhereInput;
   };
 
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput;
+    isNot?: UserWhereInput;
+  };
+
   export type AccessKeyCountOrderByAggregateInput = {
     id?: SortOrder;
     token?: SortOrder;
     projectId?: SortOrder;
+    userId?: SortOrder;
     cameraType?: SortOrder;
     expiresAt?: SortOrder;
   };
@@ -26145,6 +26260,7 @@ export namespace Prisma {
     id?: SortOrder;
     token?: SortOrder;
     projectId?: SortOrder;
+    userId?: SortOrder;
     cameraType?: SortOrder;
     expiresAt?: SortOrder;
   };
@@ -26153,6 +26269,7 @@ export namespace Prisma {
     id?: SortOrder;
     token?: SortOrder;
     projectId?: SortOrder;
+    userId?: SortOrder;
     cameraType?: SortOrder;
     expiresAt?: SortOrder;
   };
@@ -26651,11 +26768,6 @@ export namespace Prisma {
     active?: SortOrder;
   };
 
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput;
-    isNot?: UserWhereInput;
-  };
-
   export type LogCountOrderByAggregateInput = {
     id?: SortOrder;
     userId?: SortOrder;
@@ -26695,6 +26807,21 @@ export namespace Prisma {
     connect?: LogWhereUniqueInput | LogWhereUniqueInput[];
   };
 
+  export type AccessKeyCreateNestedManyWithoutUserInput = {
+    create?:
+      | XOR<
+          AccessKeyCreateWithoutUserInput,
+          AccessKeyUncheckedCreateWithoutUserInput
+        >
+      | AccessKeyCreateWithoutUserInput[]
+      | AccessKeyUncheckedCreateWithoutUserInput[];
+    connectOrCreate?:
+      | AccessKeyCreateOrConnectWithoutUserInput
+      | AccessKeyCreateOrConnectWithoutUserInput[];
+    createMany?: AccessKeyCreateManyUserInputEnvelope;
+    connect?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
+  };
+
   export type LogUncheckedCreateNestedManyWithoutUserInput = {
     create?:
       | XOR<LogCreateWithoutUserInput, LogUncheckedCreateWithoutUserInput>
@@ -26705,6 +26832,21 @@ export namespace Prisma {
       | LogCreateOrConnectWithoutUserInput[];
     createMany?: LogCreateManyUserInputEnvelope;
     connect?: LogWhereUniqueInput | LogWhereUniqueInput[];
+  };
+
+  export type AccessKeyUncheckedCreateNestedManyWithoutUserInput = {
+    create?:
+      | XOR<
+          AccessKeyCreateWithoutUserInput,
+          AccessKeyUncheckedCreateWithoutUserInput
+        >
+      | AccessKeyCreateWithoutUserInput[]
+      | AccessKeyUncheckedCreateWithoutUserInput[];
+    connectOrCreate?:
+      | AccessKeyCreateOrConnectWithoutUserInput
+      | AccessKeyCreateOrConnectWithoutUserInput[];
+    createMany?: AccessKeyCreateManyUserInputEnvelope;
+    connect?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
   };
 
   export type StringFieldUpdateOperationsInput = {
@@ -26752,6 +26894,34 @@ export namespace Prisma {
     deleteMany?: LogScalarWhereInput | LogScalarWhereInput[];
   };
 
+  export type AccessKeyUpdateManyWithoutUserNestedInput = {
+    create?:
+      | XOR<
+          AccessKeyCreateWithoutUserInput,
+          AccessKeyUncheckedCreateWithoutUserInput
+        >
+      | AccessKeyCreateWithoutUserInput[]
+      | AccessKeyUncheckedCreateWithoutUserInput[];
+    connectOrCreate?:
+      | AccessKeyCreateOrConnectWithoutUserInput
+      | AccessKeyCreateOrConnectWithoutUserInput[];
+    upsert?:
+      | AccessKeyUpsertWithWhereUniqueWithoutUserInput
+      | AccessKeyUpsertWithWhereUniqueWithoutUserInput[];
+    createMany?: AccessKeyCreateManyUserInputEnvelope;
+    set?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
+    disconnect?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
+    delete?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
+    connect?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
+    update?:
+      | AccessKeyUpdateWithWhereUniqueWithoutUserInput
+      | AccessKeyUpdateWithWhereUniqueWithoutUserInput[];
+    updateMany?:
+      | AccessKeyUpdateManyWithWhereWithoutUserInput
+      | AccessKeyUpdateManyWithWhereWithoutUserInput[];
+    deleteMany?: AccessKeyScalarWhereInput | AccessKeyScalarWhereInput[];
+  };
+
   export type LogUncheckedUpdateManyWithoutUserNestedInput = {
     create?:
       | XOR<LogCreateWithoutUserInput, LogUncheckedCreateWithoutUserInput>
@@ -26775,6 +26945,34 @@ export namespace Prisma {
       | LogUpdateManyWithWhereWithoutUserInput
       | LogUpdateManyWithWhereWithoutUserInput[];
     deleteMany?: LogScalarWhereInput | LogScalarWhereInput[];
+  };
+
+  export type AccessKeyUncheckedUpdateManyWithoutUserNestedInput = {
+    create?:
+      | XOR<
+          AccessKeyCreateWithoutUserInput,
+          AccessKeyUncheckedCreateWithoutUserInput
+        >
+      | AccessKeyCreateWithoutUserInput[]
+      | AccessKeyUncheckedCreateWithoutUserInput[];
+    connectOrCreate?:
+      | AccessKeyCreateOrConnectWithoutUserInput
+      | AccessKeyCreateOrConnectWithoutUserInput[];
+    upsert?:
+      | AccessKeyUpsertWithWhereUniqueWithoutUserInput
+      | AccessKeyUpsertWithWhereUniqueWithoutUserInput[];
+    createMany?: AccessKeyCreateManyUserInputEnvelope;
+    set?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
+    disconnect?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
+    delete?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
+    connect?: AccessKeyWhereUniqueInput | AccessKeyWhereUniqueInput[];
+    update?:
+      | AccessKeyUpdateWithWhereUniqueWithoutUserInput
+      | AccessKeyUpdateWithWhereUniqueWithoutUserInput[];
+    updateMany?:
+      | AccessKeyUpdateManyWithWhereWithoutUserInput
+      | AccessKeyUpdateManyWithWhereWithoutUserInput[];
+    deleteMany?: AccessKeyScalarWhereInput | AccessKeyScalarWhereInput[];
   };
 
   export type ProjectCreateNestedManyWithoutAgencyInput = {
@@ -27452,6 +27650,15 @@ export namespace Prisma {
     connect?: ProjectWhereUniqueInput;
   };
 
+  export type UserCreateNestedOneWithoutAccessKeyInput = {
+    create?: XOR<
+      UserCreateWithoutAccessKeyInput,
+      UserUncheckedCreateWithoutAccessKeyInput
+    >;
+    connectOrCreate?: UserCreateOrConnectWithoutAccessKeyInput;
+    connect?: UserWhereUniqueInput;
+  };
+
   export type EnumCameraTypeFieldUpdateOperationsInput = {
     set?: $Enums.CameraType;
   };
@@ -27470,6 +27677,23 @@ export namespace Prisma {
         ProjectUpdateWithoutAccessKeyInput
       >,
       ProjectUncheckedUpdateWithoutAccessKeyInput
+    >;
+  };
+
+  export type UserUpdateOneRequiredWithoutAccessKeyNestedInput = {
+    create?: XOR<
+      UserCreateWithoutAccessKeyInput,
+      UserUncheckedCreateWithoutAccessKeyInput
+    >;
+    connectOrCreate?: UserCreateOrConnectWithoutAccessKeyInput;
+    upsert?: UserUpsertWithoutAccessKeyInput;
+    connect?: UserWhereUniqueInput;
+    update?: XOR<
+      XOR<
+        UserUpdateToOneWithWhereWithoutAccessKeyInput,
+        UserUpdateWithoutAccessKeyInput
+      >,
+      UserUncheckedUpdateWithoutAccessKeyInput
     >;
   };
 
@@ -28714,6 +28938,35 @@ export namespace Prisma {
     skipDuplicates?: boolean;
   };
 
+  export type AccessKeyCreateWithoutUserInput = {
+    id?: string;
+    token: string;
+    cameraType: $Enums.CameraType;
+    expiresAt: Date | string;
+    project: ProjectCreateNestedOneWithoutAccessKeyInput;
+  };
+
+  export type AccessKeyUncheckedCreateWithoutUserInput = {
+    id?: string;
+    token: string;
+    projectId: string;
+    cameraType: $Enums.CameraType;
+    expiresAt: Date | string;
+  };
+
+  export type AccessKeyCreateOrConnectWithoutUserInput = {
+    where: AccessKeyWhereUniqueInput;
+    create: XOR<
+      AccessKeyCreateWithoutUserInput,
+      AccessKeyUncheckedCreateWithoutUserInput
+    >;
+  };
+
+  export type AccessKeyCreateManyUserInputEnvelope = {
+    data: AccessKeyCreateManyUserInput | AccessKeyCreateManyUserInput[];
+    skipDuplicates?: boolean;
+  };
+
   export type LogUpsertWithWhereUniqueWithoutUserInput = {
     where: LogWhereUniqueInput;
     update: XOR<LogUpdateWithoutUserInput, LogUncheckedUpdateWithoutUserInput>;
@@ -28743,6 +28996,46 @@ export namespace Prisma {
     tableName?: StringFilter<'Log'> | string;
     targetId?: StringFilter<'Log'> | string;
     generatedAt?: DateTimeFilter<'Log'> | Date | string;
+  };
+
+  export type AccessKeyUpsertWithWhereUniqueWithoutUserInput = {
+    where: AccessKeyWhereUniqueInput;
+    update: XOR<
+      AccessKeyUpdateWithoutUserInput,
+      AccessKeyUncheckedUpdateWithoutUserInput
+    >;
+    create: XOR<
+      AccessKeyCreateWithoutUserInput,
+      AccessKeyUncheckedCreateWithoutUserInput
+    >;
+  };
+
+  export type AccessKeyUpdateWithWhereUniqueWithoutUserInput = {
+    where: AccessKeyWhereUniqueInput;
+    data: XOR<
+      AccessKeyUpdateWithoutUserInput,
+      AccessKeyUncheckedUpdateWithoutUserInput
+    >;
+  };
+
+  export type AccessKeyUpdateManyWithWhereWithoutUserInput = {
+    where: AccessKeyScalarWhereInput;
+    data: XOR<
+      AccessKeyUpdateManyMutationInput,
+      AccessKeyUncheckedUpdateManyWithoutUserInput
+    >;
+  };
+
+  export type AccessKeyScalarWhereInput = {
+    AND?: AccessKeyScalarWhereInput | AccessKeyScalarWhereInput[];
+    OR?: AccessKeyScalarWhereInput[];
+    NOT?: AccessKeyScalarWhereInput | AccessKeyScalarWhereInput[];
+    id?: StringFilter<'AccessKey'> | string;
+    token?: StringFilter<'AccessKey'> | string;
+    projectId?: StringFilter<'AccessKey'> | string;
+    userId?: StringFilter<'AccessKey'> | string;
+    cameraType?: EnumCameraTypeFilter<'AccessKey'> | $Enums.CameraType;
+    expiresAt?: DateTimeFilter<'AccessKey'> | Date | string;
   };
 
   export type ProjectCreateWithoutAgencyInput = {
@@ -28978,11 +29271,13 @@ export namespace Prisma {
     token: string;
     cameraType: $Enums.CameraType;
     expiresAt: Date | string;
+    user: UserCreateNestedOneWithoutAccessKeyInput;
   };
 
   export type AccessKeyUncheckedCreateWithoutProjectInput = {
     id?: string;
     token: string;
+    userId: string;
     cameraType: $Enums.CameraType;
     expiresAt: Date | string;
   };
@@ -29240,17 +29535,6 @@ export namespace Prisma {
     >;
   };
 
-  export type AccessKeyScalarWhereInput = {
-    AND?: AccessKeyScalarWhereInput | AccessKeyScalarWhereInput[];
-    OR?: AccessKeyScalarWhereInput[];
-    NOT?: AccessKeyScalarWhereInput | AccessKeyScalarWhereInput[];
-    id?: StringFilter<'AccessKey'> | string;
-    token?: StringFilter<'AccessKey'> | string;
-    projectId?: StringFilter<'AccessKey'> | string;
-    cameraType?: EnumCameraTypeFilter<'AccessKey'> | $Enums.CameraType;
-    expiresAt?: DateTimeFilter<'AccessKey'> | Date | string;
-  };
-
   export type PavementUpsertWithWhereUniqueWithoutProjectInput = {
     where: PavementWhereUniqueInput;
     update: XOR<
@@ -29453,6 +29737,36 @@ export namespace Prisma {
     >;
   };
 
+  export type UserCreateWithoutAccessKeyInput = {
+    id?: string;
+    name: string;
+    email: string;
+    password?: string | null;
+    role: $Enums.UserRole;
+    status: boolean;
+    cameraType?: $Enums.CameraType | null;
+    Log?: LogCreateNestedManyWithoutUserInput;
+  };
+
+  export type UserUncheckedCreateWithoutAccessKeyInput = {
+    id?: string;
+    name: string;
+    email: string;
+    password?: string | null;
+    role: $Enums.UserRole;
+    status: boolean;
+    cameraType?: $Enums.CameraType | null;
+    Log?: LogUncheckedCreateNestedManyWithoutUserInput;
+  };
+
+  export type UserCreateOrConnectWithoutAccessKeyInput = {
+    where: UserWhereUniqueInput;
+    create: XOR<
+      UserCreateWithoutAccessKeyInput,
+      UserUncheckedCreateWithoutAccessKeyInput
+    >;
+  };
+
   export type ProjectUpsertWithoutAccessKeyInput = {
     update: XOR<
       ProjectUpdateWithoutAccessKeyInput,
@@ -29517,6 +29831,54 @@ export namespace Prisma {
     Location?: LocationUncheckedUpdateManyWithoutProjectNestedInput;
     Pathology?: PathologyUncheckedUpdateManyWithoutProjectNestedInput;
     Pdf?: PdfUncheckedUpdateManyWithoutProjectNestedInput;
+  };
+
+  export type UserUpsertWithoutAccessKeyInput = {
+    update: XOR<
+      UserUpdateWithoutAccessKeyInput,
+      UserUncheckedUpdateWithoutAccessKeyInput
+    >;
+    create: XOR<
+      UserCreateWithoutAccessKeyInput,
+      UserUncheckedCreateWithoutAccessKeyInput
+    >;
+    where?: UserWhereInput;
+  };
+
+  export type UserUpdateToOneWithWhereWithoutAccessKeyInput = {
+    where?: UserWhereInput;
+    data: XOR<
+      UserUpdateWithoutAccessKeyInput,
+      UserUncheckedUpdateWithoutAccessKeyInput
+    >;
+  };
+
+  export type UserUpdateWithoutAccessKeyInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    name?: StringFieldUpdateOperationsInput | string;
+    email?: StringFieldUpdateOperationsInput | string;
+    password?: NullableStringFieldUpdateOperationsInput | string | null;
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+    status?: BoolFieldUpdateOperationsInput | boolean;
+    cameraType?:
+      | NullableEnumCameraTypeFieldUpdateOperationsInput
+      | $Enums.CameraType
+      | null;
+    Log?: LogUpdateManyWithoutUserNestedInput;
+  };
+
+  export type UserUncheckedUpdateWithoutAccessKeyInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    name?: StringFieldUpdateOperationsInput | string;
+    email?: StringFieldUpdateOperationsInput | string;
+    password?: NullableStringFieldUpdateOperationsInput | string | null;
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+    status?: BoolFieldUpdateOperationsInput | boolean;
+    cameraType?:
+      | NullableEnumCameraTypeFieldUpdateOperationsInput
+      | $Enums.CameraType
+      | null;
+    Log?: LogUncheckedUpdateManyWithoutUserNestedInput;
   };
 
   export type ProjectCreateWithoutPavementInput = {
@@ -30633,6 +30995,7 @@ export namespace Prisma {
     role: $Enums.UserRole;
     status: boolean;
     cameraType?: $Enums.CameraType | null;
+    AccessKey?: AccessKeyCreateNestedManyWithoutUserInput;
   };
 
   export type UserUncheckedCreateWithoutLogInput = {
@@ -30643,6 +31006,7 @@ export namespace Prisma {
     role: $Enums.UserRole;
     status: boolean;
     cameraType?: $Enums.CameraType | null;
+    AccessKey?: AccessKeyUncheckedCreateNestedManyWithoutUserInput;
   };
 
   export type UserCreateOrConnectWithoutLogInput = {
@@ -30672,6 +31036,7 @@ export namespace Prisma {
       | NullableEnumCameraTypeFieldUpdateOperationsInput
       | $Enums.CameraType
       | null;
+    AccessKey?: AccessKeyUpdateManyWithoutUserNestedInput;
   };
 
   export type UserUncheckedUpdateWithoutLogInput = {
@@ -30685,6 +31050,7 @@ export namespace Prisma {
       | NullableEnumCameraTypeFieldUpdateOperationsInput
       | $Enums.CameraType
       | null;
+    AccessKey?: AccessKeyUncheckedUpdateManyWithoutUserNestedInput;
   };
 
   export type LogCreateManyUserInput = {
@@ -30693,6 +31059,14 @@ export namespace Prisma {
     tableName: string;
     targetId: string;
     generatedAt: Date | string;
+  };
+
+  export type AccessKeyCreateManyUserInput = {
+    id?: string;
+    token: string;
+    projectId: string;
+    cameraType: $Enums.CameraType;
+    expiresAt: Date | string;
   };
 
   export type LogUpdateWithoutUserInput = {
@@ -30717,6 +31091,30 @@ export namespace Prisma {
     tableName?: StringFieldUpdateOperationsInput | string;
     targetId?: StringFieldUpdateOperationsInput | string;
     generatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+  };
+
+  export type AccessKeyUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    token?: StringFieldUpdateOperationsInput | string;
+    cameraType?: EnumCameraTypeFieldUpdateOperationsInput | $Enums.CameraType;
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    project?: ProjectUpdateOneRequiredWithoutAccessKeyNestedInput;
+  };
+
+  export type AccessKeyUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    token?: StringFieldUpdateOperationsInput | string;
+    projectId?: StringFieldUpdateOperationsInput | string;
+    cameraType?: EnumCameraTypeFieldUpdateOperationsInput | $Enums.CameraType;
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+  };
+
+  export type AccessKeyUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    token?: StringFieldUpdateOperationsInput | string;
+    projectId?: StringFieldUpdateOperationsInput | string;
+    cameraType?: EnumCameraTypeFieldUpdateOperationsInput | $Enums.CameraType;
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string;
   };
 
   export type ProjectCreateManyAgencyInput = {
@@ -30874,6 +31272,7 @@ export namespace Prisma {
   export type AccessKeyCreateManyProjectInput = {
     id?: string;
     token: string;
+    userId: string;
     cameraType: $Enums.CameraType;
     expiresAt: Date | string;
   };
@@ -30915,11 +31314,13 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string;
     cameraType?: EnumCameraTypeFieldUpdateOperationsInput | $Enums.CameraType;
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    user?: UserUpdateOneRequiredWithoutAccessKeyNestedInput;
   };
 
   export type AccessKeyUncheckedUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string;
     token?: StringFieldUpdateOperationsInput | string;
+    userId?: StringFieldUpdateOperationsInput | string;
     cameraType?: EnumCameraTypeFieldUpdateOperationsInput | $Enums.CameraType;
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string;
   };
@@ -30927,6 +31328,7 @@ export namespace Prisma {
   export type AccessKeyUncheckedUpdateManyWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string;
     token?: StringFieldUpdateOperationsInput | string;
+    userId?: StringFieldUpdateOperationsInput | string;
     cameraType?: EnumCameraTypeFieldUpdateOperationsInput | $Enums.CameraType;
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string;
   };

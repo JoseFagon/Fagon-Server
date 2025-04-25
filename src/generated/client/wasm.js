@@ -163,6 +163,7 @@ exports.Prisma.AccessKeyScalarFieldEnum = {
   id: 'id',
   token: 'token',
   projectId: 'projectId',
+  userId: 'userId',
   cameraType: 'cameraType',
   expiresAt: 'expiresAt',
 };

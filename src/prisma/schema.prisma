@@ -42,8 +42,6 @@ enum PdfType {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/client"
-
 }
 
 datasource db {
@@ -61,6 +59,8 @@ model User {
   cameraType CameraType?
 
   Log Log[]
+
+  AccessKey AccessKey[]
 }
 
 model Agency {
@@ -118,12 +118,14 @@ model Project {
 
 model AccessKey {
   id        String   @id @default(uuid())
-  token     String
+  token     String   @unique
   projectId String
+  userId    String
   cameraType CameraType
   expiresAt DateTime
   
   project   Project  @relation(fields: [projectId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Pavement {
