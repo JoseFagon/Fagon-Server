@@ -1,10 +1,11 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AccessKeyDto } from './dto/access-key.dto';
-import { Request } from 'express';
 import { JwtAuthGuard } from './guards/auth.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -27,10 +28,8 @@ export class AuthController {
   @Post('access-keys')
   async generateAccessKey(
     @Body() accessKeyDto: AccessKeyDto,
-    @Req() req: Request,
+    @CurrentUser() user: JwtPayload,
   ): Promise<{ token: string }> {
-    const user = req.user as { sub: string };
-    const userId: string = user.sub;
-    return this.authService.generateAccessKey(accessKeyDto, userId);
+    return this.authService.generateAccessKey(accessKeyDto, user.sub);
   }
 }

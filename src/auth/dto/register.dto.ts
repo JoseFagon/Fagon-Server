@@ -6,6 +6,7 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
+import { ROLES } from 'src/common/constants/roles.constant';
 import { CameraType, UserRole } from 'src/generated/client';
 
 export class RegisterDto {
@@ -23,7 +24,7 @@ export class RegisterDto {
   password!: string;
 
   @IsEnum(CameraType)
-  @ValidateIf((o) => o.role === UserRole.vistoriador)
+  @ValidateIf((o) => o.role === ROLES.VISTORIADOR)
   cameraType?: CameraType;
 
   @IsEnum(UserRole)

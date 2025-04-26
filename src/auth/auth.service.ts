@@ -7,7 +7,8 @@ import { AccessKeyDto } from './dto/access-key.dto';
 import * as crypto from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
-import { AccessKey, User, UserRole } from 'src/generated/client';
+import { AccessKey, User } from 'src/generated/client';
+import { ROLES } from 'src/common/constants/roles.constant';
 
 @Injectable()
 export class AuthService {
@@ -127,12 +128,12 @@ export class AuthService {
     const payload: JwtPayload = {
       sub: user.id,
       email:
-        user.role === UserRole.funcionario || user.role === UserRole.admin
+        user.role === ROLES.FUNCIONARIO || user.role === ROLES.ADMIN
           ? user.email
           : undefined,
       role: user.role,
       cameraType:
-        user.role === UserRole.vistoriador && user.cameraType != null
+        user.role === ROLES.VISTORIADOR && user.cameraType != null
           ? user.cameraType
           : undefined,
     };
