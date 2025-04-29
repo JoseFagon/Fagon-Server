@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s # Adicionado para alertas
+
+rule_files:
+  - '/etc/prometheus/alert.rules.yml' # Caminho no container Docker
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093'] # Alerte se tiver Alertmanager
+
+scrape_configs:
+  - job_name: 'nestjs_app_http'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:3000']
+      - targets: ['localhost:3000']
+
+  - job_name: 'nestjs_app_internal'
+    metrics_path: '/internal/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:3000']
+      - targets: ['localhost:3000']
+
+  - job_name: 'redis_bull_queue'
+    static_configs:
+      - targets: ['redis:6379']
+    metrics_path: '/metrics'

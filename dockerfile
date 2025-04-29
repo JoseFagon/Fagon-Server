@@ -1,0 +1,19 @@
+FROM node:slim
+# FROM node:23-alpine
+
+WORKDIR /app
+
+# Instala dependências
+COPY package*.json ./
+RUN npm ci
+
+# Copia o código
+COPY . .
+
+# Compila o projeto (se usar TypeScript)
+RUN npm run build
+
+# Expõe a porta da aplicação + métricas
+EXPOSE 3000
+
+CMD ["npm", "run", "start:prod"]

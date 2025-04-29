@@ -1,0 +1,18 @@
+groups:
+  - name: nestjs_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: rate(business_errors_total[1m]) > 5
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Alta taxa de erros em {{ $labels.error_type }}'
+          description: 'Taxa de erros: {{ $value }} por minuto'
+
+      - alert: ProcessingQueueBacklog
+        expr: processing_queue_size > 100
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Fila de processamento cheia ({{ $value }} itens)'
