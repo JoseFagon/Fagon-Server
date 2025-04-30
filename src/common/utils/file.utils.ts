@@ -174,7 +174,7 @@ export class FileUtils {
     }
 
     try {
-      await fs.writeFile(destinationPath, file.buffer as Buffer);
+      await fs.writeFile(destinationPath, file.buffer);
       return destinationPath;
     } catch (error: unknown) {
       if (error instanceof Error) {

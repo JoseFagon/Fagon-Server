@@ -16,7 +16,7 @@ export class LoggerService {
     return nestWinstonModuleUtilities.format.nestLike('MyApp', {
       colors: true,
       prettyPrint: true,
-    }) as winston.Logform.Format;
+    });
   }
 
   private initializeLogger() {

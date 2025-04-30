@@ -1,10 +1,12 @@
 import {
-  Injectable,
   ExecutionContext,
+  Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
+import { PUBLIC_KEY } from '../../common/decorators/public.decorator';
+import { Request } from 'express';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @Injectable()
@@ -14,39 +16,25 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
+    const isPublic = this.reflector.getAllAndOverride<boolean>(PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
 
-    if (isPublic) {
-      return true;
-    }
+    if (isPublic) return true;
+
+    const request = context.switchToHttp().getRequest<Request>();
+    if (!request.user) return false;
 
     return super.canActivate(context);
   }
 
-  handleRequest<TUser extends JwtPayload = JwtPayload>(
-    err: any,
-    user: TUser,
-    info: any,
-    context: ExecutionContext,
-  ): TUser {
+  handleRequest<TUser = JwtPayload>(err: unknown, user: TUser): TUser {
     if (err || !user) {
       throw err instanceof Error
         ? err
-        : new UnauthorizedException('Token inválido ou expirado');
+        : new UnauthorizedException('Acesso não autorizado');
     }
-
-    const requiresEmail = this.reflector.getAllAndOverride<boolean>(
-      'requiresEmail',
-      [context.getHandler(), context.getClass()],
-    );
-
-    if (requiresEmail && !user.email) {
-      throw new UnauthorizedException('Acesso restrito a funcionários');
-    }
-
     return user;
   }
 }

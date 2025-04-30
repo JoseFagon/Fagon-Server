@@ -9,7 +9,6 @@ import { Server, Socket } from 'socket.io';
 export class ProjectGateway {
   @WebSocketServer() server!: Server;
 
-  // Ouvinte de eventos do cliente
   @SubscribeMessage('update-project')
   handleProjectUpdate(
     client: Socket,
@@ -27,6 +26,6 @@ export class ProjectGateway {
   // Entrar em uma sala (para updates específicos)
   @SubscribeMessage('join-project-room')
   handleJoinProjectRoom(client: Socket, projectId: string) {
-    client.join(`project_${projectId}`);
+    void client.join(`project_${projectId}`);
   }
 }

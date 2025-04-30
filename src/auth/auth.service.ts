@@ -9,6 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 import { AccessKey, User } from 'src/generated/client';
 import { ROLES } from 'src/common/constants/roles.constant';
+import { RegisterResponse } from 'src/common/interfaces/response.register.interface';
+import { LoginResponse } from 'src/common/interfaces/response.login.interface';
 
 @Injectable()
 export class AuthService {
@@ -50,7 +52,7 @@ export class AuthService {
     return user;
   }
 
-  async loginEmployee(loginDto: LoginDto) {
+  async loginEmployee(loginDto: LoginDto): Promise<LoginResponse> {
     const { email, password } = loginDto;
 
     if (!email || !password) {
@@ -69,7 +71,7 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async loginWithAccessKey(loginDto: LoginDto) {
+  async loginWithAccessKey(loginDto: LoginDto): Promise<LoginResponse> {
     const { accessKeyToken } = loginDto;
     const accessKey = (await this.prisma.accessKey.findFirst({
       where: { token: accessKeyToken },
@@ -92,7 +94,7 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async register(registerDto: RegisterDto): Promise<User> {
+  async register(registerDto: RegisterDto): Promise<RegisterResponse> {
     if (
       (!registerDto.email && registerDto.role !== 'vistoriador') ||
       !registerDto.password
@@ -100,15 +102,34 @@ export class AuthService {
       throw new Error('Email e senha são obrigatórios');
     }
 
-    const user = (await this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: {
         ...registerDto,
         password: await argon2.hash(registerDto.password),
         status: true,
       },
-    })) as User;
+    });
 
-    return user;
+    const payload: JwtPayload = {
+      id: user.id,
+      sub: user.id,
+      email: user.email || undefined,
+      role: user.role,
+      cameraType: user.cameraType || undefined,
+      isActive: user.status,
+    };
+
+    return {
+      token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+        cameraType: user.cameraType || undefined,
+        isActive: user.status,
+      },
+    };
   }
 
   async generateAccessKey(accessKeyDto: AccessKeyDto, userId: string) {
@@ -126,6 +147,7 @@ export class AuthService {
 
   private generateToken(user: User) {
     const payload: JwtPayload = {
+      id: user.id,
       sub: user.id,
       email:
         user.role === ROLES.FUNCIONARIO || user.role === ROLES.ADMIN
@@ -136,6 +158,7 @@ export class AuthService {
         user.role === ROLES.VISTORIADOR && user.cameraType != null
           ? user.cameraType
           : undefined,
+      isActive: user.status,
     };
 
     return {
@@ -144,7 +167,10 @@ export class AuthService {
         id: user.id,
         name: user.name,
         role: user.role,
-        cameraType: user.cameraType,
+        cameraType:
+          user.role === ROLES.VISTORIADOR && user.cameraType != null
+            ? user.cameraType
+            : undefined,
       },
     };
   }

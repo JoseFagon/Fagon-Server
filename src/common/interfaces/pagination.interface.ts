@@ -1,4 +1,6 @@
-export interface PaginationParams {
+import { PaginationDto } from '../pagination/pagination.dto';
+
+export interface PaginationParams extends PaginationDto {
   page?: number;
   limit?: number;
   sortBy?: string;

@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { FlagsService } from './flags.service';
 
 @Module({
-  imports: [ConfigModule], // Importe ConfigModule se for usar variáveis de ambiente
+  imports: [],
   providers: [FlagsService],
-  exports: [FlagsService], // Exporte o serviço para que outros módulos possam usá-lo
+  exports: [FlagsService],
 })
 export class FlagsModule {}

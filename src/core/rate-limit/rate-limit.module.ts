@@ -1,19 +1,19 @@
+// src/rate-limit/rate-limit.module.ts
 import { Module } from '@nestjs/common';
-import { RateLimitService } from './rate-limit.service';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RateLimitService } from './rate-limit.service';
+import { throttlerConfig } from 'src/config/throttler.config';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          ttl: 60,
-          limit: 10,
-        },
-      ],
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: throttlerConfig,
     }),
   ],
   providers: [RateLimitService],
-  exports: [RateLimitService],
+  exports: [RateLimitService, ThrottlerModule],
 })
 export class RateLimitModule {}

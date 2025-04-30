@@ -1,22 +1,26 @@
 import { MailerOptions } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import * as path from 'path';
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
-  }
-  return value;
-}
-
-export const mailerConfig: MailerOptions = {
+export const mailerConfig = (configService: ConfigService): MailerOptions => ({
   transport: {
-    host: requireEnv('MAIL_HOST'),
-    port: parseInt(requireEnv('MAIL_PORT')),
+    host: configService.get<string>('MAIL_HOST'),
+    port: configService.get<number>('MAIL_PORT'),
     secure: false,
     auth: {
-      user: requireEnv('MAIL_USER'),
-      pass: requireEnv('MAIL_PASS'),
+      user: configService.get<string>('MAIL_USER'),
+      pass: configService.get<string>('MAIL_PASSWORD'),
     },
   },
-  defaults: { from: `"No Reply" <${requireEnv('MAIL_FROM')}>` },
-};
+  defaults: {
+    from: `"${configService.get<string>('MAIL_FROM_NAME')}" <${configService.get<string>('MAIL_FROM_ADDRESS')}>`,
+  },
+  template: {
+    dir: path.join(__dirname, '../../templates/emails'),
+    adapter: new HandlebarsAdapter(),
+    options: {
+      strict: true,
+    },
+  },
+});

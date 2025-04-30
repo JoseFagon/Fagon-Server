@@ -28,4 +28,5 @@ export const CurrentUser = createParamDecorator<
   return field ? user[field] : user;
 });
 
+export const REQUIRE_AUTH_KEY = 'requireAuth';
 export const RequireAuth = () => SetMetadata('requireAuth', true);

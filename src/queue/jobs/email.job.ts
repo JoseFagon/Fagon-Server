@@ -26,5 +26,3 @@ export interface AccessGrantedJob {
   resource: string;
   grantedBy: string;
 }
-
-export type EmailJob = RecoveryPasswordJob | NotificationJob | AccessGrantedJob;

@@ -1,17 +1,22 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AccessKeyDto } from './dto/access-key.dto';
-import { JwtAuthGuard } from './guards/auth.guard';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  RequireAuth,
+} from 'src/common/decorators/current-user.decorator';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('auth')
+@RequireAuth()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @Public()
   async login(@Body() loginDto: LoginDto) {
     if (loginDto.accessKeyToken) {
       return this.authService.loginWithAccessKey(loginDto);
@@ -20,11 +25,11 @@ export class AuthController {
   }
 
   @Post('register')
+  @Public()
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('access-keys')
   async generateAccessKey(
     @Body() accessKeyDto: AccessKeyDto,

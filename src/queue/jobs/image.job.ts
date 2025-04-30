@@ -39,8 +39,6 @@ export interface ConvertImageJob extends Job<ConvertImageData> {
   name: ImageJobType.CONVERT;
 }
 
-export type ImageJob = ResizeImageJob | CompressImageJob | ConvertImageJob;
-
 function isValidImageJobType(name: string): name is ImageJobType {
   return Object.values(ImageJobType).includes(name as ImageJobType);
 }

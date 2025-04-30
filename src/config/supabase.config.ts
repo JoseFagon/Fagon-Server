@@ -1,12 +1,18 @@
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
-  }
-  return value;
-}
+import { ConfigService } from '@nestjs/config';
+import { SupabaseCustomConfig } from 'src/common/interfaces/supabase-config.interface';
 
-export const supabaseConfig = {
-  url: requireEnv('SUPABASE_URL'),
-  apiKey: requireEnv('SUPABASE_KEY'),
+export const supabaseConfig = (
+  configService: ConfigService,
+): SupabaseCustomConfig => {
+  return {
+    supabaseUrl: configService.get<string>('SUPABASE_URL', ''),
+    supabaseKey: configService.get<string>('SUPABASE_KEY', ''),
+    options: {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+      },
+    },
+  };
 };
