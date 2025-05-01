@@ -9,6 +9,8 @@ import {
 } from 'src/common/decorators/current-user.decorator';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 import { Public } from 'src/common/decorators/public.decorator';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { ROLES } from 'src/common/constants/roles.constant';
 
 @Controller('auth')
 @RequireAuth()
@@ -31,10 +33,11 @@ export class AuthController {
   }
 
   @Post('access-keys')
+  @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
   async generateAccessKey(
     @Body() accessKeyDto: AccessKeyDto,
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() currentUser: JwtPayload,
   ): Promise<{ token: string }> {
-    return this.authService.generateAccessKey(accessKeyDto, user.sub);
+    return this.authService.generateAccessKey(accessKeyDto, currentUser.sub);
   }
 }

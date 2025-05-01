@@ -68,7 +68,7 @@ export class MailerService {
         name: user.name,
         resetUrl,
         expiresIn,
-        supportEmail: this.configService.get<string>('SUPPORT_EMAIL'),
+        supportEmail: this.configService.get<string>('MAIL_FROM_ADDRESS'),
       },
     );
   }

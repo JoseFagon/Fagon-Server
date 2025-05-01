@@ -21,6 +21,7 @@ import { QueueModule } from './queue/queue.module';
 import { LoggerModule } from './core/logger/logger.module';
 import { RateLimitModule } from './core/rate-limit/rate-limit.module';
 import { GraphqlModule } from './graphql/graphql.module';
+import { AgencyModule } from './modules/agencies/agencies.module';
 // import { UsersModule } from './users/users.module';
 
 @Module({
@@ -47,6 +48,7 @@ import { GraphqlModule } from './graphql/graphql.module';
     GraphqlModule,
     PrismaModule,
     AuthModule,
+    AgencyModule,
     // UsersModule,
   ],
   providers: [

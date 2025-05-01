@@ -7,7 +7,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { ROLES } from 'src/common/constants/roles.constant';
-import { CameraType, UserRole } from 'src/generated/client';
+import { CameraType, UserRole } from 'src/generated/@prisma/client';
 
 export class RegisterDto {
   @IsString()

@@ -2,11 +2,11 @@ import { ConfigService } from '@nestjs/config';
 import { Params } from 'nestjs-pino';
 import { RequestWithUser } from 'src/common/interfaces/request.user.interface';
 
-export const loggerConfig = (config: ConfigService): Params => ({
+export const loggerConfig = (configService: ConfigService): Params => ({
   pinoHttp: {
-    level: config.get('LOG_LEVEL', 'info'),
+    level: configService.get('LOG_LEVEL', 'info'),
     transport:
-      config.get('NODE_ENV') !== 'production'
+      configService.get('NODE_ENV') !== 'production'
         ? { target: 'pino-pretty' }
         : undefined,
     serializers: {

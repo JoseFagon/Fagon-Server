@@ -1,4 +1,10 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsBoolean,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export enum Environment {
@@ -41,6 +47,24 @@ export class EnvConfig {
   REDIS_USER?: string;
 
   @IsString()
+  @IsOptional()
+  REDIS_URL?: string;
+
+  @IsString()
+  @IsOptional()
+  REDIS_PREFIX = 'fagon:';
+
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  @IsOptional()
+  REDIS_TLS = false;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
+  @IsOptional()
+  REDIS_DEFAULT_TTL = 60 * 60 * 24; // 24h
+
+  @IsString()
   MAIL_HOST!: string;
 
   @IsNumber()
@@ -51,13 +75,23 @@ export class EnvConfig {
   MAIL_USER!: string;
 
   @IsString()
-  MAIL_PASS!: string;
+  MAIL_PASSWORD!: string;
+
+  @IsString()
+  MAIL_FROM_NAME!: string;
+
+  @IsString()
+  MAIL_FROM_ADDRESS!: string;
 
   @IsString()
   SUPABASE_URL!: string;
 
   @IsString()
   SUPABASE_KEY!: string;
+
+  @IsString()
+  @IsOptional()
+  SUPABASE_STORAGE_BUCKET = 'default';
 
   @IsString()
   @IsOptional()
@@ -70,10 +104,41 @@ export class EnvConfig {
   @IsNumber()
   @Transform(({ value }: { value: string }) => parseInt(value, 10))
   @IsOptional()
-  THROTTLE_TTL = 60;
+  THROTTLE_TTL_DEFAULT = 60;
 
   @IsNumber()
   @Transform(({ value }: { value: string }) => parseInt(value, 10))
   @IsOptional()
-  THROTTLE_LIMIT = 100;
+  THROTTLE_LIMIT_DEFAULT = 100;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
+  @IsOptional()
+  THROTTLE_TTL_STRICT = 1;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
+  @IsOptional()
+  THROTTLE_LIMIT_STRICT = 5;
+
+  @IsString()
+  @IsOptional()
+  FEATURE_FLAGS?: string;
+
+  @IsString()
+  APP_URL!: string;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
+  @IsOptional()
+  CACHE_TTL = 5;
+
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
+  @IsOptional()
+  CACHE_MAX_ITEMS = 100;
+
+  @IsString()
+  @IsOptional()
+  CACHE_STORE = 'memory';
 }

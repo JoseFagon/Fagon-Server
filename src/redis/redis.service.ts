@@ -14,8 +14,8 @@ export class RedisService {
   ) {
     this.defaultTtl = this.configService.get<number>(
       'REDIS_DEFAULT_TTL',
-      86400,
-    ); // 24h padrão
+      60 * 60 * 24,
+    ); // 24h
   }
 
   // Métodos básicos de chave-valor

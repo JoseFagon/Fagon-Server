@@ -42,6 +42,7 @@ enum PdfType {
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/@prisma/client"
 }
 
 datasource db {
@@ -67,7 +68,7 @@ model Agency {
   id           String @id @default(uuid())
   name         String
   agencyNumber Int
-  cnpj         String @unique
+  cnpj         String? @unique
   cep          String
   state        String
   city         String
@@ -121,7 +122,6 @@ model AccessKey {
   token     String   @unique
   projectId String
   userId    String
-  cameraType CameraType
   expiresAt DateTime
   
   project   Project  @relation(fields: [projectId], references: [id])

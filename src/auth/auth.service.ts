@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon2 from 'argon2';
 import { LoginDto } from './dto/login.dto';
@@ -7,10 +11,10 @@ import { AccessKeyDto } from './dto/access-key.dto';
 import * as crypto from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
-import { AccessKey, User } from 'src/generated/client';
 import { ROLES } from 'src/common/constants/roles.constant';
 import { RegisterResponse } from 'src/common/interfaces/response.register.interface';
 import { LoginResponse } from 'src/common/interfaces/response.login.interface';
+import { AccessKey, User } from 'src/generated/@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -45,8 +49,8 @@ export class AuthService {
       return null;
     }
 
-    const user = (await this.prisma.user.findFirst({
-      where: { role: 'vistoriador', cameraType: accessKey.cameraType },
+    const user = (await this.prisma.user.findUnique({
+      where: { id: accessKey.userId },
     })) as User | null;
 
     return user;
@@ -81,11 +85,8 @@ export class AuthService {
       throw new UnauthorizedException('Chave de acesso inválida ou expirada');
     }
 
-    const user = (await this.prisma.user.findFirst({
-      where: {
-        role: 'vistoriador',
-        cameraType: accessKey.cameraType,
-      },
+    const user = (await this.prisma.user.findUnique({
+      where: { id: accessKey.userId },
     })) as User | null;
     if (!user) {
       throw new UnauthorizedException('Nenhum usuário vistoriador configurado');
@@ -133,11 +134,16 @@ export class AuthService {
   }
 
   async generateAccessKey(accessKeyDto: AccessKeyDto, userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user || user.role !== 'vistoriador') {
+      throw new BadRequestException('Usuário inválido');
+    }
+
     const accessKey = (await this.prisma.accessKey.create({
       data: {
         token: crypto.randomBytes(32).toString('hex'),
         projectId: accessKeyDto.projectId,
-        cameraType: accessKeyDto.cameraType,
         userId: userId,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h
       },

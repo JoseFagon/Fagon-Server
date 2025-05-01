@@ -1,4 +1,4 @@
-import { CameraType, UserRole } from 'src/generated/client';
+import { CameraType, UserRole } from 'src/generated/@prisma/client';
 
 export interface JwtPayload {
   id: string;

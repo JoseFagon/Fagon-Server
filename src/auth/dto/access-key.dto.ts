@@ -1,10 +1,10 @@
-import { IsUUID, IsEnum } from 'class-validator';
-import { CameraType } from 'src/generated/client';
-
+import { IsUUID, IsNotEmpty, IsEmail } from 'class-validator';
 export class AccessKeyDto {
-  @IsEnum(CameraType)
-  cameraType!: CameraType;
-
   @IsUUID()
+  @IsNotEmpty()
   projectId!: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  email!: string;
 }
