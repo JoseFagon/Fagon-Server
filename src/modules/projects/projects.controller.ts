@@ -22,7 +22,11 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectService } from './projects.service';
 import { ROLES } from 'src/common/constants/roles.constant';
 import { SearchProjectDto } from './dto/search-project.dto';
-import { RequireAuth } from 'src/common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  RequireAuth,
+} from 'src/common/decorators/current-user.decorator';
+import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Projects')
 @ApiBearerAuth()
@@ -39,8 +43,11 @@ export class ProjectController {
     type: ProjectResponseDto,
     description: 'Project created successfully',
   })
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectService.create(createProjectDto);
+  create(
+    @Body() createProjectDto: CreateProjectDto,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.projectService.create(createProjectDto, currentUser.sub);
   }
 
   @Get()
@@ -66,7 +73,6 @@ export class ProjectController {
   }
 
   @Patch(':id')
-  @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
   @ApiOperation({ summary: 'Update project information' })
   @ApiResponse({
     status: 200,
@@ -76,8 +82,9 @@ export class ProjectController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProjectDto: UpdateProjectDto,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.projectService.update(id, updateProjectDto);
+    return this.projectService.update(id, updateProjectDto, currentUser.sub);
   }
 
   @Delete(':id')
@@ -87,8 +94,11 @@ export class ProjectController {
     status: 204,
     description: 'Project deleted',
   })
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectService.remove(id);
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.projectService.remove(id, currentUser.sub);
   }
 
   @Get(':id/pavements')

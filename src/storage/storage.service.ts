@@ -41,4 +41,14 @@ export class StorageService {
       },
     };
   }
+
+  async deleteFile(filePath: string, bucket = 'default'): Promise<void> {
+    const { error } = await this.supabase.storage
+      .from(bucket)
+      .remove([filePath]);
+
+    if (error) {
+      throw new Error(`Failed to delete file: ${error.message}`);
+    }
+  }
 }

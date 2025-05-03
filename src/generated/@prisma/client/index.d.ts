@@ -74,11 +74,6 @@ export type PathologyPhoto = $Result.DefaultSelection<Prisma.$PathologyPhotoPayl
  */
 export type Pdf = $Result.DefaultSelection<Prisma.$PdfPayload>
 /**
- * Model PdfTemplate
- * 
- */
-export type PdfTemplate = $Result.DefaultSelection<Prisma.$PdfTemplatePayload>
-/**
  * Model StateLaw
  * 
  */
@@ -429,16 +424,6 @@ export class PrismaClient<
     * ```
     */
   get pdf(): Prisma.PdfDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.pdfTemplate`: Exposes CRUD operations for the **PdfTemplate** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more PdfTemplates
-    * const pdfTemplates = await prisma.pdfTemplate.findMany()
-    * ```
-    */
-  get pdfTemplate(): Prisma.PdfTemplateDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.stateLaw`: Exposes CRUD operations for the **StateLaw** model.
@@ -911,7 +896,6 @@ export namespace Prisma {
     Pathology: 'Pathology',
     PathologyPhoto: 'PathologyPhoto',
     Pdf: 'Pdf',
-    PdfTemplate: 'PdfTemplate',
     StateLaw: 'StateLaw',
     Log: 'Log'
   };
@@ -932,7 +916,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "agency" | "engineer" | "project" | "accessKey" | "pavement" | "location" | "materialFinishing" | "photo" | "pathology" | "pathologyPhoto" | "pdf" | "pdfTemplate" | "stateLaw" | "log"
+      modelProps: "user" | "agency" | "engineer" | "project" | "accessKey" | "pavement" | "location" | "materialFinishing" | "photo" | "pathology" | "pathologyPhoto" | "pdf" | "stateLaw" | "log"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1824,80 +1808,6 @@ export namespace Prisma {
           }
         }
       }
-      PdfTemplate: {
-        payload: Prisma.$PdfTemplatePayload<ExtArgs>
-        fields: Prisma.PdfTemplateFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.PdfTemplateFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.PdfTemplateFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload>
-          }
-          findFirst: {
-            args: Prisma.PdfTemplateFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.PdfTemplateFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload>
-          }
-          findMany: {
-            args: Prisma.PdfTemplateFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload>[]
-          }
-          create: {
-            args: Prisma.PdfTemplateCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload>
-          }
-          createMany: {
-            args: Prisma.PdfTemplateCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.PdfTemplateCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload>[]
-          }
-          delete: {
-            args: Prisma.PdfTemplateDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload>
-          }
-          update: {
-            args: Prisma.PdfTemplateUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload>
-          }
-          deleteMany: {
-            args: Prisma.PdfTemplateDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.PdfTemplateUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.PdfTemplateUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload>[]
-          }
-          upsert: {
-            args: Prisma.PdfTemplateUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PdfTemplatePayload>
-          }
-          aggregate: {
-            args: Prisma.PdfTemplateAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregatePdfTemplate>
-          }
-          groupBy: {
-            args: Prisma.PdfTemplateGroupByArgs<ExtArgs>
-            result: $Utils.Optional<PdfTemplateGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.PdfTemplateCountArgs<ExtArgs>
-            result: $Utils.Optional<PdfTemplateCountAggregateOutputType> | number
-          }
-        }
-      }
       StateLaw: {
         payload: Prisma.$StateLawPayload<ExtArgs>
         fields: Prisma.StateLawFieldRefs
@@ -2142,7 +2052,6 @@ export namespace Prisma {
     pathology?: PathologyOmit
     pathologyPhoto?: PathologyPhotoOmit
     pdf?: PdfOmit
-    pdfTemplate?: PdfTemplateOmit
     stateLaw?: StateLawOmit
     log?: LogOmit
   }
@@ -9584,7 +9493,7 @@ export namespace Prisma {
   export type LocationGroupByOutputType = {
     id: string
     projectId: string
-    pavementId: string
+    pavementId: string | null
     name: string
     locationType: $Enums.LocationType
     height: number | null
@@ -9617,7 +9526,7 @@ export namespace Prisma {
     locationType?: boolean
     height?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
-    pavement?: boolean | PavementDefaultArgs<ExtArgs>
+    pavement?: boolean | Location$pavementArgs<ExtArgs>
     MaterialFinishing?: boolean | Location$MaterialFinishingArgs<ExtArgs>
     Photo?: boolean | Location$PhotoArgs<ExtArgs>
     Pathology?: boolean | Location$PathologyArgs<ExtArgs>
@@ -9632,7 +9541,7 @@ export namespace Prisma {
     locationType?: boolean
     height?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
-    pavement?: boolean | PavementDefaultArgs<ExtArgs>
+    pavement?: boolean | Location$pavementArgs<ExtArgs>
   }, ExtArgs["result"]["location"]>
 
   export type LocationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9643,7 +9552,7 @@ export namespace Prisma {
     locationType?: boolean
     height?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
-    pavement?: boolean | PavementDefaultArgs<ExtArgs>
+    pavement?: boolean | Location$pavementArgs<ExtArgs>
   }, ExtArgs["result"]["location"]>
 
   export type LocationSelectScalar = {
@@ -9658,7 +9567,7 @@ export namespace Prisma {
   export type LocationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "pavementId" | "name" | "locationType" | "height", ExtArgs["result"]["location"]>
   export type LocationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
-    pavement?: boolean | PavementDefaultArgs<ExtArgs>
+    pavement?: boolean | Location$pavementArgs<ExtArgs>
     MaterialFinishing?: boolean | Location$MaterialFinishingArgs<ExtArgs>
     Photo?: boolean | Location$PhotoArgs<ExtArgs>
     Pathology?: boolean | Location$PathologyArgs<ExtArgs>
@@ -9666,18 +9575,18 @@ export namespace Prisma {
   }
   export type LocationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
-    pavement?: boolean | PavementDefaultArgs<ExtArgs>
+    pavement?: boolean | Location$pavementArgs<ExtArgs>
   }
   export type LocationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
-    pavement?: boolean | PavementDefaultArgs<ExtArgs>
+    pavement?: boolean | Location$pavementArgs<ExtArgs>
   }
 
   export type $LocationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Location"
     objects: {
       project: Prisma.$ProjectPayload<ExtArgs>
-      pavement: Prisma.$PavementPayload<ExtArgs>
+      pavement: Prisma.$PavementPayload<ExtArgs> | null
       MaterialFinishing: Prisma.$MaterialFinishingPayload<ExtArgs>[]
       Photo: Prisma.$PhotoPayload<ExtArgs>[]
       Pathology: Prisma.$PathologyPayload<ExtArgs>[]
@@ -9685,7 +9594,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       projectId: string
-      pavementId: string
+      pavementId: string | null
       name: string
       locationType: $Enums.LocationType
       height: number | null
@@ -10084,7 +9993,7 @@ export namespace Prisma {
   export interface Prisma__LocationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    pavement<T extends PavementDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PavementDefaultArgs<ExtArgs>>): Prisma__PavementClient<$Result.GetResult<Prisma.$PavementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    pavement<T extends Location$pavementArgs<ExtArgs> = {}>(args?: Subset<T, Location$pavementArgs<ExtArgs>>): Prisma__PavementClient<$Result.GetResult<Prisma.$PavementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     MaterialFinishing<T extends Location$MaterialFinishingArgs<ExtArgs> = {}>(args?: Subset<T, Location$MaterialFinishingArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MaterialFinishingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Photo<T extends Location$PhotoArgs<ExtArgs> = {}>(args?: Subset<T, Location$PhotoArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Pathology<T extends Location$PathologyArgs<ExtArgs> = {}>(args?: Subset<T, Location$PathologyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PathologyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -10516,6 +10425,25 @@ export namespace Prisma {
      * Limit how many Locations to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Location.pavement
+   */
+  export type Location$pavementArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Pavement
+     */
+    select?: PavementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Pavement
+     */
+    omit?: PavementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PavementInclude<ExtArgs> | null
+    where?: PavementWhereInput
   }
 
   /**
@@ -15925,984 +15853,6 @@ export namespace Prisma {
 
 
   /**
-   * Model PdfTemplate
-   */
-
-  export type AggregatePdfTemplate = {
-    _count: PdfTemplateCountAggregateOutputType | null
-    _min: PdfTemplateMinAggregateOutputType | null
-    _max: PdfTemplateMaxAggregateOutputType | null
-  }
-
-  export type PdfTemplateMinAggregateOutputType = {
-    id: string | null
-    pdfType: $Enums.PdfType | null
-    createdAt: Date | null
-  }
-
-  export type PdfTemplateMaxAggregateOutputType = {
-    id: string | null
-    pdfType: $Enums.PdfType | null
-    createdAt: Date | null
-  }
-
-  export type PdfTemplateCountAggregateOutputType = {
-    id: number
-    pdfType: number
-    layoutStructure: number
-    createdAt: number
-    _all: number
-  }
-
-
-  export type PdfTemplateMinAggregateInputType = {
-    id?: true
-    pdfType?: true
-    createdAt?: true
-  }
-
-  export type PdfTemplateMaxAggregateInputType = {
-    id?: true
-    pdfType?: true
-    createdAt?: true
-  }
-
-  export type PdfTemplateCountAggregateInputType = {
-    id?: true
-    pdfType?: true
-    layoutStructure?: true
-    createdAt?: true
-    _all?: true
-  }
-
-  export type PdfTemplateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which PdfTemplate to aggregate.
-     */
-    where?: PdfTemplateWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PdfTemplates to fetch.
-     */
-    orderBy?: PdfTemplateOrderByWithRelationInput | PdfTemplateOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: PdfTemplateWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PdfTemplates from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PdfTemplates.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned PdfTemplates
-    **/
-    _count?: true | PdfTemplateCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: PdfTemplateMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: PdfTemplateMaxAggregateInputType
-  }
-
-  export type GetPdfTemplateAggregateType<T extends PdfTemplateAggregateArgs> = {
-        [P in keyof T & keyof AggregatePdfTemplate]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregatePdfTemplate[P]>
-      : GetScalarType<T[P], AggregatePdfTemplate[P]>
-  }
-
-
-
-
-  export type PdfTemplateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PdfTemplateWhereInput
-    orderBy?: PdfTemplateOrderByWithAggregationInput | PdfTemplateOrderByWithAggregationInput[]
-    by: PdfTemplateScalarFieldEnum[] | PdfTemplateScalarFieldEnum
-    having?: PdfTemplateScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: PdfTemplateCountAggregateInputType | true
-    _min?: PdfTemplateMinAggregateInputType
-    _max?: PdfTemplateMaxAggregateInputType
-  }
-
-  export type PdfTemplateGroupByOutputType = {
-    id: string
-    pdfType: $Enums.PdfType
-    layoutStructure: JsonValue
-    createdAt: Date
-    _count: PdfTemplateCountAggregateOutputType | null
-    _min: PdfTemplateMinAggregateOutputType | null
-    _max: PdfTemplateMaxAggregateOutputType | null
-  }
-
-  type GetPdfTemplateGroupByPayload<T extends PdfTemplateGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<PdfTemplateGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof PdfTemplateGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], PdfTemplateGroupByOutputType[P]>
-            : GetScalarType<T[P], PdfTemplateGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type PdfTemplateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    pdfType?: boolean
-    layoutStructure?: boolean
-    createdAt?: boolean
-  }, ExtArgs["result"]["pdfTemplate"]>
-
-  export type PdfTemplateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    pdfType?: boolean
-    layoutStructure?: boolean
-    createdAt?: boolean
-  }, ExtArgs["result"]["pdfTemplate"]>
-
-  export type PdfTemplateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    pdfType?: boolean
-    layoutStructure?: boolean
-    createdAt?: boolean
-  }, ExtArgs["result"]["pdfTemplate"]>
-
-  export type PdfTemplateSelectScalar = {
-    id?: boolean
-    pdfType?: boolean
-    layoutStructure?: boolean
-    createdAt?: boolean
-  }
-
-  export type PdfTemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pdfType" | "layoutStructure" | "createdAt", ExtArgs["result"]["pdfTemplate"]>
-
-  export type $PdfTemplatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "PdfTemplate"
-    objects: {}
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      pdfType: $Enums.PdfType
-      layoutStructure: Prisma.JsonValue
-      createdAt: Date
-    }, ExtArgs["result"]["pdfTemplate"]>
-    composites: {}
-  }
-
-  type PdfTemplateGetPayload<S extends boolean | null | undefined | PdfTemplateDefaultArgs> = $Result.GetResult<Prisma.$PdfTemplatePayload, S>
-
-  type PdfTemplateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<PdfTemplateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: PdfTemplateCountAggregateInputType | true
-    }
-
-  export interface PdfTemplateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PdfTemplate'], meta: { name: 'PdfTemplate' } }
-    /**
-     * Find zero or one PdfTemplate that matches the filter.
-     * @param {PdfTemplateFindUniqueArgs} args - Arguments to find a PdfTemplate
-     * @example
-     * // Get one PdfTemplate
-     * const pdfTemplate = await prisma.pdfTemplate.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends PdfTemplateFindUniqueArgs>(args: SelectSubset<T, PdfTemplateFindUniqueArgs<ExtArgs>>): Prisma__PdfTemplateClient<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one PdfTemplate that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {PdfTemplateFindUniqueOrThrowArgs} args - Arguments to find a PdfTemplate
-     * @example
-     * // Get one PdfTemplate
-     * const pdfTemplate = await prisma.pdfTemplate.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends PdfTemplateFindUniqueOrThrowArgs>(args: SelectSubset<T, PdfTemplateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PdfTemplateClient<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first PdfTemplate that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfTemplateFindFirstArgs} args - Arguments to find a PdfTemplate
-     * @example
-     * // Get one PdfTemplate
-     * const pdfTemplate = await prisma.pdfTemplate.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends PdfTemplateFindFirstArgs>(args?: SelectSubset<T, PdfTemplateFindFirstArgs<ExtArgs>>): Prisma__PdfTemplateClient<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first PdfTemplate that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfTemplateFindFirstOrThrowArgs} args - Arguments to find a PdfTemplate
-     * @example
-     * // Get one PdfTemplate
-     * const pdfTemplate = await prisma.pdfTemplate.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends PdfTemplateFindFirstOrThrowArgs>(args?: SelectSubset<T, PdfTemplateFindFirstOrThrowArgs<ExtArgs>>): Prisma__PdfTemplateClient<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more PdfTemplates that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfTemplateFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all PdfTemplates
-     * const pdfTemplates = await prisma.pdfTemplate.findMany()
-     * 
-     * // Get first 10 PdfTemplates
-     * const pdfTemplates = await prisma.pdfTemplate.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const pdfTemplateWithIdOnly = await prisma.pdfTemplate.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends PdfTemplateFindManyArgs>(args?: SelectSubset<T, PdfTemplateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a PdfTemplate.
-     * @param {PdfTemplateCreateArgs} args - Arguments to create a PdfTemplate.
-     * @example
-     * // Create one PdfTemplate
-     * const PdfTemplate = await prisma.pdfTemplate.create({
-     *   data: {
-     *     // ... data to create a PdfTemplate
-     *   }
-     * })
-     * 
-     */
-    create<T extends PdfTemplateCreateArgs>(args: SelectSubset<T, PdfTemplateCreateArgs<ExtArgs>>): Prisma__PdfTemplateClient<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many PdfTemplates.
-     * @param {PdfTemplateCreateManyArgs} args - Arguments to create many PdfTemplates.
-     * @example
-     * // Create many PdfTemplates
-     * const pdfTemplate = await prisma.pdfTemplate.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends PdfTemplateCreateManyArgs>(args?: SelectSubset<T, PdfTemplateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many PdfTemplates and returns the data saved in the database.
-     * @param {PdfTemplateCreateManyAndReturnArgs} args - Arguments to create many PdfTemplates.
-     * @example
-     * // Create many PdfTemplates
-     * const pdfTemplate = await prisma.pdfTemplate.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many PdfTemplates and only return the `id`
-     * const pdfTemplateWithIdOnly = await prisma.pdfTemplate.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends PdfTemplateCreateManyAndReturnArgs>(args?: SelectSubset<T, PdfTemplateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a PdfTemplate.
-     * @param {PdfTemplateDeleteArgs} args - Arguments to delete one PdfTemplate.
-     * @example
-     * // Delete one PdfTemplate
-     * const PdfTemplate = await prisma.pdfTemplate.delete({
-     *   where: {
-     *     // ... filter to delete one PdfTemplate
-     *   }
-     * })
-     * 
-     */
-    delete<T extends PdfTemplateDeleteArgs>(args: SelectSubset<T, PdfTemplateDeleteArgs<ExtArgs>>): Prisma__PdfTemplateClient<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one PdfTemplate.
-     * @param {PdfTemplateUpdateArgs} args - Arguments to update one PdfTemplate.
-     * @example
-     * // Update one PdfTemplate
-     * const pdfTemplate = await prisma.pdfTemplate.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends PdfTemplateUpdateArgs>(args: SelectSubset<T, PdfTemplateUpdateArgs<ExtArgs>>): Prisma__PdfTemplateClient<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more PdfTemplates.
-     * @param {PdfTemplateDeleteManyArgs} args - Arguments to filter PdfTemplates to delete.
-     * @example
-     * // Delete a few PdfTemplates
-     * const { count } = await prisma.pdfTemplate.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends PdfTemplateDeleteManyArgs>(args?: SelectSubset<T, PdfTemplateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more PdfTemplates.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfTemplateUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many PdfTemplates
-     * const pdfTemplate = await prisma.pdfTemplate.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends PdfTemplateUpdateManyArgs>(args: SelectSubset<T, PdfTemplateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more PdfTemplates and returns the data updated in the database.
-     * @param {PdfTemplateUpdateManyAndReturnArgs} args - Arguments to update many PdfTemplates.
-     * @example
-     * // Update many PdfTemplates
-     * const pdfTemplate = await prisma.pdfTemplate.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more PdfTemplates and only return the `id`
-     * const pdfTemplateWithIdOnly = await prisma.pdfTemplate.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends PdfTemplateUpdateManyAndReturnArgs>(args: SelectSubset<T, PdfTemplateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one PdfTemplate.
-     * @param {PdfTemplateUpsertArgs} args - Arguments to update or create a PdfTemplate.
-     * @example
-     * // Update or create a PdfTemplate
-     * const pdfTemplate = await prisma.pdfTemplate.upsert({
-     *   create: {
-     *     // ... data to create a PdfTemplate
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the PdfTemplate we want to update
-     *   }
-     * })
-     */
-    upsert<T extends PdfTemplateUpsertArgs>(args: SelectSubset<T, PdfTemplateUpsertArgs<ExtArgs>>): Prisma__PdfTemplateClient<$Result.GetResult<Prisma.$PdfTemplatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of PdfTemplates.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfTemplateCountArgs} args - Arguments to filter PdfTemplates to count.
-     * @example
-     * // Count the number of PdfTemplates
-     * const count = await prisma.pdfTemplate.count({
-     *   where: {
-     *     // ... the filter for the PdfTemplates we want to count
-     *   }
-     * })
-    **/
-    count<T extends PdfTemplateCountArgs>(
-      args?: Subset<T, PdfTemplateCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], PdfTemplateCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a PdfTemplate.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfTemplateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends PdfTemplateAggregateArgs>(args: Subset<T, PdfTemplateAggregateArgs>): Prisma.PrismaPromise<GetPdfTemplateAggregateType<T>>
-
-    /**
-     * Group by PdfTemplate.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PdfTemplateGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends PdfTemplateGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: PdfTemplateGroupByArgs['orderBy'] }
-        : { orderBy?: PdfTemplateGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, PdfTemplateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPdfTemplateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the PdfTemplate model
-   */
-  readonly fields: PdfTemplateFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for PdfTemplate.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__PdfTemplateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the PdfTemplate model
-   */
-  interface PdfTemplateFieldRefs {
-    readonly id: FieldRef<"PdfTemplate", 'String'>
-    readonly pdfType: FieldRef<"PdfTemplate", 'PdfType'>
-    readonly layoutStructure: FieldRef<"PdfTemplate", 'Json'>
-    readonly createdAt: FieldRef<"PdfTemplate", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * PdfTemplate findUnique
-   */
-  export type PdfTemplateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * Filter, which PdfTemplate to fetch.
-     */
-    where: PdfTemplateWhereUniqueInput
-  }
-
-  /**
-   * PdfTemplate findUniqueOrThrow
-   */
-  export type PdfTemplateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * Filter, which PdfTemplate to fetch.
-     */
-    where: PdfTemplateWhereUniqueInput
-  }
-
-  /**
-   * PdfTemplate findFirst
-   */
-  export type PdfTemplateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * Filter, which PdfTemplate to fetch.
-     */
-    where?: PdfTemplateWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PdfTemplates to fetch.
-     */
-    orderBy?: PdfTemplateOrderByWithRelationInput | PdfTemplateOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for PdfTemplates.
-     */
-    cursor?: PdfTemplateWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PdfTemplates from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PdfTemplates.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of PdfTemplates.
-     */
-    distinct?: PdfTemplateScalarFieldEnum | PdfTemplateScalarFieldEnum[]
-  }
-
-  /**
-   * PdfTemplate findFirstOrThrow
-   */
-  export type PdfTemplateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * Filter, which PdfTemplate to fetch.
-     */
-    where?: PdfTemplateWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PdfTemplates to fetch.
-     */
-    orderBy?: PdfTemplateOrderByWithRelationInput | PdfTemplateOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for PdfTemplates.
-     */
-    cursor?: PdfTemplateWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PdfTemplates from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PdfTemplates.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of PdfTemplates.
-     */
-    distinct?: PdfTemplateScalarFieldEnum | PdfTemplateScalarFieldEnum[]
-  }
-
-  /**
-   * PdfTemplate findMany
-   */
-  export type PdfTemplateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * Filter, which PdfTemplates to fetch.
-     */
-    where?: PdfTemplateWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PdfTemplates to fetch.
-     */
-    orderBy?: PdfTemplateOrderByWithRelationInput | PdfTemplateOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing PdfTemplates.
-     */
-    cursor?: PdfTemplateWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PdfTemplates from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PdfTemplates.
-     */
-    skip?: number
-    distinct?: PdfTemplateScalarFieldEnum | PdfTemplateScalarFieldEnum[]
-  }
-
-  /**
-   * PdfTemplate create
-   */
-  export type PdfTemplateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * The data needed to create a PdfTemplate.
-     */
-    data: XOR<PdfTemplateCreateInput, PdfTemplateUncheckedCreateInput>
-  }
-
-  /**
-   * PdfTemplate createMany
-   */
-  export type PdfTemplateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many PdfTemplates.
-     */
-    data: PdfTemplateCreateManyInput | PdfTemplateCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * PdfTemplate createManyAndReturn
-   */
-  export type PdfTemplateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * The data used to create many PdfTemplates.
-     */
-    data: PdfTemplateCreateManyInput | PdfTemplateCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * PdfTemplate update
-   */
-  export type PdfTemplateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * The data needed to update a PdfTemplate.
-     */
-    data: XOR<PdfTemplateUpdateInput, PdfTemplateUncheckedUpdateInput>
-    /**
-     * Choose, which PdfTemplate to update.
-     */
-    where: PdfTemplateWhereUniqueInput
-  }
-
-  /**
-   * PdfTemplate updateMany
-   */
-  export type PdfTemplateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update PdfTemplates.
-     */
-    data: XOR<PdfTemplateUpdateManyMutationInput, PdfTemplateUncheckedUpdateManyInput>
-    /**
-     * Filter which PdfTemplates to update
-     */
-    where?: PdfTemplateWhereInput
-    /**
-     * Limit how many PdfTemplates to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * PdfTemplate updateManyAndReturn
-   */
-  export type PdfTemplateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * The data used to update PdfTemplates.
-     */
-    data: XOR<PdfTemplateUpdateManyMutationInput, PdfTemplateUncheckedUpdateManyInput>
-    /**
-     * Filter which PdfTemplates to update
-     */
-    where?: PdfTemplateWhereInput
-    /**
-     * Limit how many PdfTemplates to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * PdfTemplate upsert
-   */
-  export type PdfTemplateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * The filter to search for the PdfTemplate to update in case it exists.
-     */
-    where: PdfTemplateWhereUniqueInput
-    /**
-     * In case the PdfTemplate found by the `where` argument doesn't exist, create a new PdfTemplate with this data.
-     */
-    create: XOR<PdfTemplateCreateInput, PdfTemplateUncheckedCreateInput>
-    /**
-     * In case the PdfTemplate was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<PdfTemplateUpdateInput, PdfTemplateUncheckedUpdateInput>
-  }
-
-  /**
-   * PdfTemplate delete
-   */
-  export type PdfTemplateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-    /**
-     * Filter which PdfTemplate to delete.
-     */
-    where: PdfTemplateWhereUniqueInput
-  }
-
-  /**
-   * PdfTemplate deleteMany
-   */
-  export type PdfTemplateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which PdfTemplates to delete
-     */
-    where?: PdfTemplateWhereInput
-    /**
-     * Limit how many PdfTemplates to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * PdfTemplate without action
-   */
-  export type PdfTemplateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PdfTemplate
-     */
-    select?: PdfTemplateSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PdfTemplate
-     */
-    omit?: PdfTemplateOmit<ExtArgs> | null
-  }
-
-
-  /**
    * Model StateLaw
    */
 
@@ -19193,16 +18143,6 @@ export namespace Prisma {
   export type PdfScalarFieldEnum = (typeof PdfScalarFieldEnum)[keyof typeof PdfScalarFieldEnum]
 
 
-  export const PdfTemplateScalarFieldEnum: {
-    id: 'id',
-    pdfType: 'pdfType',
-    layoutStructure: 'layoutStructure',
-    createdAt: 'createdAt'
-  };
-
-  export type PdfTemplateScalarFieldEnum = (typeof PdfTemplateScalarFieldEnum)[keyof typeof PdfTemplateScalarFieldEnum]
-
-
   export const StateLawScalarFieldEnum: {
     id: 'id',
     state: 'state',
@@ -19239,13 +18179,6 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-  export const JsonNullValueInput: {
-    JsonNull: typeof JsonNull
-  };
-
-  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
-
-
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -19260,15 +18193,6 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
-  export const JsonNullValueFilter: {
-    DbNull: typeof DbNull,
-    JsonNull: typeof JsonNull,
-    AnyNull: typeof AnyNull
-  };
-
-  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -19434,20 +18358,6 @@ export namespace Prisma {
    * Reference to a field of type 'PdfType[]'
    */
   export type ListEnumPdfTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PdfType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
-   * Reference to a field of type 'QueryMode'
-   */
-  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
   /**
    * Deep Input Types
@@ -19852,6 +18762,7 @@ export namespace Prisma {
 
   export type PavementWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    projectId_pavement?: PavementProjectIdPavementCompoundUniqueInput
     AND?: PavementWhereInput | PavementWhereInput[]
     OR?: PavementWhereInput[]
     NOT?: PavementWhereInput | PavementWhereInput[]
@@ -19861,7 +18772,7 @@ export namespace Prisma {
     area?: FloatNullableFilter<"Pavement"> | number | null
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     Location?: LocationListRelationFilter
-  }, "id">
+  }, "id" | "projectId_pavement">
 
   export type PavementOrderByWithAggregationInput = {
     id?: SortOrder
@@ -19893,12 +18804,12 @@ export namespace Prisma {
     NOT?: LocationWhereInput | LocationWhereInput[]
     id?: StringFilter<"Location"> | string
     projectId?: StringFilter<"Location"> | string
-    pavementId?: StringFilter<"Location"> | string
+    pavementId?: StringNullableFilter<"Location"> | string | null
     name?: StringFilter<"Location"> | string
     locationType?: EnumLocationTypeFilter<"Location"> | $Enums.LocationType
     height?: FloatNullableFilter<"Location"> | number | null
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
-    pavement?: XOR<PavementScalarRelationFilter, PavementWhereInput>
+    pavement?: XOR<PavementNullableScalarRelationFilter, PavementWhereInput> | null
     MaterialFinishing?: MaterialFinishingListRelationFilter
     Photo?: PhotoListRelationFilter
     Pathology?: PathologyListRelationFilter
@@ -19907,7 +18818,7 @@ export namespace Prisma {
   export type LocationOrderByWithRelationInput = {
     id?: SortOrder
     projectId?: SortOrder
-    pavementId?: SortOrder
+    pavementId?: SortOrderInput | SortOrder
     name?: SortOrder
     locationType?: SortOrder
     height?: SortOrderInput | SortOrder
@@ -19924,12 +18835,12 @@ export namespace Prisma {
     OR?: LocationWhereInput[]
     NOT?: LocationWhereInput | LocationWhereInput[]
     projectId?: StringFilter<"Location"> | string
-    pavementId?: StringFilter<"Location"> | string
+    pavementId?: StringNullableFilter<"Location"> | string | null
     name?: StringFilter<"Location"> | string
     locationType?: EnumLocationTypeFilter<"Location"> | $Enums.LocationType
     height?: FloatNullableFilter<"Location"> | number | null
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
-    pavement?: XOR<PavementScalarRelationFilter, PavementWhereInput>
+    pavement?: XOR<PavementNullableScalarRelationFilter, PavementWhereInput> | null
     MaterialFinishing?: MaterialFinishingListRelationFilter
     Photo?: PhotoListRelationFilter
     Pathology?: PathologyListRelationFilter
@@ -19938,7 +18849,7 @@ export namespace Prisma {
   export type LocationOrderByWithAggregationInput = {
     id?: SortOrder
     projectId?: SortOrder
-    pavementId?: SortOrder
+    pavementId?: SortOrderInput | SortOrder
     name?: SortOrder
     locationType?: SortOrder
     height?: SortOrderInput | SortOrder
@@ -19955,7 +18866,7 @@ export namespace Prisma {
     NOT?: LocationScalarWhereWithAggregatesInput | LocationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Location"> | string
     projectId?: StringWithAggregatesFilter<"Location"> | string
-    pavementId?: StringWithAggregatesFilter<"Location"> | string
+    pavementId?: StringNullableWithAggregatesFilter<"Location"> | string | null
     name?: StringWithAggregatesFilter<"Location"> | string
     locationType?: EnumLocationTypeWithAggregatesFilter<"Location"> | $Enums.LocationType
     height?: FloatNullableWithAggregatesFilter<"Location"> | number | null
@@ -20235,53 +19146,6 @@ export namespace Prisma {
     filePath?: StringWithAggregatesFilter<"Pdf"> | string
     signedFilePath?: StringNullableWithAggregatesFilter<"Pdf"> | string | null
     generatedAt?: DateTimeWithAggregatesFilter<"Pdf"> | Date | string
-  }
-
-  export type PdfTemplateWhereInput = {
-    AND?: PdfTemplateWhereInput | PdfTemplateWhereInput[]
-    OR?: PdfTemplateWhereInput[]
-    NOT?: PdfTemplateWhereInput | PdfTemplateWhereInput[]
-    id?: StringFilter<"PdfTemplate"> | string
-    pdfType?: EnumPdfTypeFilter<"PdfTemplate"> | $Enums.PdfType
-    layoutStructure?: JsonFilter<"PdfTemplate">
-    createdAt?: DateTimeFilter<"PdfTemplate"> | Date | string
-  }
-
-  export type PdfTemplateOrderByWithRelationInput = {
-    id?: SortOrder
-    pdfType?: SortOrder
-    layoutStructure?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type PdfTemplateWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: PdfTemplateWhereInput | PdfTemplateWhereInput[]
-    OR?: PdfTemplateWhereInput[]
-    NOT?: PdfTemplateWhereInput | PdfTemplateWhereInput[]
-    pdfType?: EnumPdfTypeFilter<"PdfTemplate"> | $Enums.PdfType
-    layoutStructure?: JsonFilter<"PdfTemplate">
-    createdAt?: DateTimeFilter<"PdfTemplate"> | Date | string
-  }, "id">
-
-  export type PdfTemplateOrderByWithAggregationInput = {
-    id?: SortOrder
-    pdfType?: SortOrder
-    layoutStructure?: SortOrder
-    createdAt?: SortOrder
-    _count?: PdfTemplateCountOrderByAggregateInput
-    _max?: PdfTemplateMaxOrderByAggregateInput
-    _min?: PdfTemplateMinOrderByAggregateInput
-  }
-
-  export type PdfTemplateScalarWhereWithAggregatesInput = {
-    AND?: PdfTemplateScalarWhereWithAggregatesInput | PdfTemplateScalarWhereWithAggregatesInput[]
-    OR?: PdfTemplateScalarWhereWithAggregatesInput[]
-    NOT?: PdfTemplateScalarWhereWithAggregatesInput | PdfTemplateScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"PdfTemplate"> | string
-    pdfType?: EnumPdfTypeWithAggregatesFilter<"PdfTemplate"> | $Enums.PdfType
-    layoutStructure?: JsonWithAggregatesFilter<"PdfTemplate">
-    createdAt?: DateTimeWithAggregatesFilter<"PdfTemplate"> | Date | string
   }
 
   export type StateLawWhereInput = {
@@ -20896,7 +19760,7 @@ export namespace Prisma {
     locationType: $Enums.LocationType
     height?: number | null
     project: ProjectCreateNestedOneWithoutLocationInput
-    pavement: PavementCreateNestedOneWithoutLocationInput
+    pavement?: PavementCreateNestedOneWithoutLocationInput
     MaterialFinishing?: MaterialFinishingCreateNestedManyWithoutLocationInput
     Photo?: PhotoCreateNestedManyWithoutLocationInput
     Pathology?: PathologyCreateNestedManyWithoutLocationInput
@@ -20905,7 +19769,7 @@ export namespace Prisma {
   export type LocationUncheckedCreateInput = {
     id?: string
     projectId: string
-    pavementId: string
+    pavementId?: string | null
     name: string
     locationType: $Enums.LocationType
     height?: number | null
@@ -20920,7 +19784,7 @@ export namespace Prisma {
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
     project?: ProjectUpdateOneRequiredWithoutLocationNestedInput
-    pavement?: PavementUpdateOneRequiredWithoutLocationNestedInput
+    pavement?: PavementUpdateOneWithoutLocationNestedInput
     MaterialFinishing?: MaterialFinishingUpdateManyWithoutLocationNestedInput
     Photo?: PhotoUpdateManyWithoutLocationNestedInput
     Pathology?: PathologyUpdateManyWithoutLocationNestedInput
@@ -20929,7 +19793,7 @@ export namespace Prisma {
   export type LocationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
-    pavementId?: StringFieldUpdateOperationsInput | string
+    pavementId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -20941,7 +19805,7 @@ export namespace Prisma {
   export type LocationCreateManyInput = {
     id?: string
     projectId: string
-    pavementId: string
+    pavementId?: string | null
     name: string
     locationType: $Enums.LocationType
     height?: number | null
@@ -20957,7 +19821,7 @@ export namespace Prisma {
   export type LocationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
-    pavementId?: StringFieldUpdateOperationsInput | string
+    pavementId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -21232,55 +20096,6 @@ export namespace Prisma {
     filePath?: StringFieldUpdateOperationsInput | string
     signedFilePath?: NullableStringFieldUpdateOperationsInput | string | null
     generatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PdfTemplateCreateInput = {
-    id?: string
-    pdfType: $Enums.PdfType
-    layoutStructure: JsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-  }
-
-  export type PdfTemplateUncheckedCreateInput = {
-    id?: string
-    pdfType: $Enums.PdfType
-    layoutStructure: JsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-  }
-
-  export type PdfTemplateUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    pdfType?: EnumPdfTypeFieldUpdateOperationsInput | $Enums.PdfType
-    layoutStructure?: JsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PdfTemplateUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    pdfType?: EnumPdfTypeFieldUpdateOperationsInput | $Enums.PdfType
-    layoutStructure?: JsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PdfTemplateCreateManyInput = {
-    id?: string
-    pdfType: $Enums.PdfType
-    layoutStructure: JsonNullValueInput | InputJsonValue
-    createdAt: Date | string
-  }
-
-  export type PdfTemplateUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    pdfType?: EnumPdfTypeFieldUpdateOperationsInput | $Enums.PdfType
-    layoutStructure?: JsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PdfTemplateUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    pdfType?: EnumPdfTypeFieldUpdateOperationsInput | $Enums.PdfType
-    layoutStructure?: JsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StateLawCreateInput = {
@@ -21957,6 +20772,11 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type PavementProjectIdPavementCompoundUniqueInput = {
+    projectId: string
+    pavement: string
+  }
+
   export type PavementCountOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
@@ -22030,9 +20850,9 @@ export namespace Prisma {
     not?: NestedEnumLocationTypeFilter<$PrismaModel> | $Enums.LocationType
   }
 
-  export type PavementScalarRelationFilter = {
-    is?: PavementWhereInput
-    isNot?: PavementWhereInput
+  export type PavementNullableScalarRelationFilter = {
+    is?: PavementWhereInput | null
+    isNot?: PavementWhereInput | null
   }
 
   export type MaterialFinishingListRelationFilter = {
@@ -22269,74 +21089,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPdfTypeFilter<$PrismaModel>
     _max?: NestedEnumPdfTypeFilter<$PrismaModel>
-  }
-  export type JsonFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
-  export type PdfTemplateCountOrderByAggregateInput = {
-    id?: SortOrder
-    pdfType?: SortOrder
-    layoutStructure?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type PdfTemplateMaxOrderByAggregateInput = {
-    id?: SortOrder
-    pdfType?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type PdfTemplateMinOrderByAggregateInput = {
-    id?: SortOrder
-    pdfType?: SortOrder
-    createdAt?: SortOrder
-  }
-  export type JsonWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedJsonFilter<$PrismaModel>
-    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type StateLawCountOrderByAggregateInput = {
@@ -23021,10 +21773,12 @@ export namespace Prisma {
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutLocationInput, ProjectUpdateWithoutLocationInput>, ProjectUncheckedUpdateWithoutLocationInput>
   }
 
-  export type PavementUpdateOneRequiredWithoutLocationNestedInput = {
+  export type PavementUpdateOneWithoutLocationNestedInput = {
     create?: XOR<PavementCreateWithoutLocationInput, PavementUncheckedCreateWithoutLocationInput>
     connectOrCreate?: PavementCreateOrConnectWithoutLocationInput
     upsert?: PavementUpsertWithoutLocationInput
+    disconnect?: PavementWhereInput | boolean
+    delete?: PavementWhereInput | boolean
     connect?: PavementWhereUniqueInput
     update?: XOR<XOR<PavementUpdateToOneWithWhereWithoutLocationInput, PavementUpdateWithoutLocationInput>, PavementUncheckedUpdateWithoutLocationInput>
   }
@@ -23596,29 +22350,6 @@ export namespace Prisma {
     _min?: NestedEnumPdfTypeFilter<$PrismaModel>
     _max?: NestedEnumPdfTypeFilter<$PrismaModel>
   }
-  export type NestedJsonFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
 
   export type LogCreateWithoutUserInput = {
     id?: string
@@ -23972,7 +22703,7 @@ export namespace Prisma {
     name: string
     locationType: $Enums.LocationType
     height?: number | null
-    pavement: PavementCreateNestedOneWithoutLocationInput
+    pavement?: PavementCreateNestedOneWithoutLocationInput
     MaterialFinishing?: MaterialFinishingCreateNestedManyWithoutLocationInput
     Photo?: PhotoCreateNestedManyWithoutLocationInput
     Pathology?: PathologyCreateNestedManyWithoutLocationInput
@@ -23980,7 +22711,7 @@ export namespace Prisma {
 
   export type LocationUncheckedCreateWithoutProjectInput = {
     id?: string
-    pavementId: string
+    pavementId?: string | null
     name: string
     locationType: $Enums.LocationType
     height?: number | null
@@ -24188,7 +22919,7 @@ export namespace Prisma {
     NOT?: LocationScalarWhereInput | LocationScalarWhereInput[]
     id?: StringFilter<"Location"> | string
     projectId?: StringFilter<"Location"> | string
-    pavementId?: StringFilter<"Location"> | string
+    pavementId?: StringNullableFilter<"Location"> | string | null
     name?: StringFilter<"Location"> | string
     locationType?: EnumLocationTypeFilter<"Location"> | $Enums.LocationType
     height?: FloatNullableFilter<"Location"> | number | null
@@ -24807,7 +23538,7 @@ export namespace Prisma {
     locationType: $Enums.LocationType
     height?: number | null
     project: ProjectCreateNestedOneWithoutLocationInput
-    pavement: PavementCreateNestedOneWithoutLocationInput
+    pavement?: PavementCreateNestedOneWithoutLocationInput
     Photo?: PhotoCreateNestedManyWithoutLocationInput
     Pathology?: PathologyCreateNestedManyWithoutLocationInput
   }
@@ -24815,7 +23546,7 @@ export namespace Prisma {
   export type LocationUncheckedCreateWithoutMaterialFinishingInput = {
     id?: string
     projectId: string
-    pavementId: string
+    pavementId?: string | null
     name: string
     locationType: $Enums.LocationType
     height?: number | null
@@ -24845,7 +23576,7 @@ export namespace Prisma {
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
     project?: ProjectUpdateOneRequiredWithoutLocationNestedInput
-    pavement?: PavementUpdateOneRequiredWithoutLocationNestedInput
+    pavement?: PavementUpdateOneWithoutLocationNestedInput
     Photo?: PhotoUpdateManyWithoutLocationNestedInput
     Pathology?: PathologyUpdateManyWithoutLocationNestedInput
   }
@@ -24853,7 +23584,7 @@ export namespace Prisma {
   export type LocationUncheckedUpdateWithoutMaterialFinishingInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
-    pavementId?: StringFieldUpdateOperationsInput | string
+    pavementId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -24867,7 +23598,7 @@ export namespace Prisma {
     locationType: $Enums.LocationType
     height?: number | null
     project: ProjectCreateNestedOneWithoutLocationInput
-    pavement: PavementCreateNestedOneWithoutLocationInput
+    pavement?: PavementCreateNestedOneWithoutLocationInput
     MaterialFinishing?: MaterialFinishingCreateNestedManyWithoutLocationInput
     Pathology?: PathologyCreateNestedManyWithoutLocationInput
   }
@@ -24875,7 +23606,7 @@ export namespace Prisma {
   export type LocationUncheckedCreateWithoutPhotoInput = {
     id?: string
     projectId: string
-    pavementId: string
+    pavementId?: string | null
     name: string
     locationType: $Enums.LocationType
     height?: number | null
@@ -24905,7 +23636,7 @@ export namespace Prisma {
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
     project?: ProjectUpdateOneRequiredWithoutLocationNestedInput
-    pavement?: PavementUpdateOneRequiredWithoutLocationNestedInput
+    pavement?: PavementUpdateOneWithoutLocationNestedInput
     MaterialFinishing?: MaterialFinishingUpdateManyWithoutLocationNestedInput
     Pathology?: PathologyUpdateManyWithoutLocationNestedInput
   }
@@ -24913,7 +23644,7 @@ export namespace Prisma {
   export type LocationUncheckedUpdateWithoutPhotoInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
-    pavementId?: StringFieldUpdateOperationsInput | string
+    pavementId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -24966,7 +23697,7 @@ export namespace Prisma {
     locationType: $Enums.LocationType
     height?: number | null
     project: ProjectCreateNestedOneWithoutLocationInput
-    pavement: PavementCreateNestedOneWithoutLocationInput
+    pavement?: PavementCreateNestedOneWithoutLocationInput
     MaterialFinishing?: MaterialFinishingCreateNestedManyWithoutLocationInput
     Photo?: PhotoCreateNestedManyWithoutLocationInput
   }
@@ -24974,7 +23705,7 @@ export namespace Prisma {
   export type LocationUncheckedCreateWithoutPathologyInput = {
     id?: string
     projectId: string
-    pavementId: string
+    pavementId?: string | null
     name: string
     locationType: $Enums.LocationType
     height?: number | null
@@ -25069,7 +23800,7 @@ export namespace Prisma {
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
     project?: ProjectUpdateOneRequiredWithoutLocationNestedInput
-    pavement?: PavementUpdateOneRequiredWithoutLocationNestedInput
+    pavement?: PavementUpdateOneWithoutLocationNestedInput
     MaterialFinishing?: MaterialFinishingUpdateManyWithoutLocationNestedInput
     Photo?: PhotoUpdateManyWithoutLocationNestedInput
   }
@@ -25077,7 +23808,7 @@ export namespace Prisma {
   export type LocationUncheckedUpdateWithoutPathologyInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
-    pavementId?: StringFieldUpdateOperationsInput | string
+    pavementId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -25502,7 +24233,7 @@ export namespace Prisma {
 
   export type LocationCreateManyProjectInput = {
     id?: string
-    pavementId: string
+    pavementId?: string | null
     name: string
     locationType: $Enums.LocationType
     height?: number | null
@@ -25574,7 +24305,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
-    pavement?: PavementUpdateOneRequiredWithoutLocationNestedInput
+    pavement?: PavementUpdateOneWithoutLocationNestedInput
     MaterialFinishing?: MaterialFinishingUpdateManyWithoutLocationNestedInput
     Photo?: PhotoUpdateManyWithoutLocationNestedInput
     Pathology?: PathologyUpdateManyWithoutLocationNestedInput
@@ -25582,7 +24313,7 @@ export namespace Prisma {
 
   export type LocationUncheckedUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    pavementId?: StringFieldUpdateOperationsInput | string
+    pavementId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -25593,7 +24324,7 @@ export namespace Prisma {
 
   export type LocationUncheckedUpdateManyWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    pavementId?: StringFieldUpdateOperationsInput | string
+    pavementId?: NullableStringFieldUpdateOperationsInput | string | null
     name?: StringFieldUpdateOperationsInput | string
     locationType?: EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
     height?: NullableFloatFieldUpdateOperationsInput | number | null

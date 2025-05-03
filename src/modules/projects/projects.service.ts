@@ -4,18 +4,21 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { SearchProjectDto } from './dto/search-project.dto';
 import { Prisma } from 'src/generated/@prisma/client';
+import { LogHelperService } from '../logs/log-helper.service';
 
 @Injectable()
 export class ProjectService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private logHelper: LogHelperService,
+  ) {}
 
-  async create(createProjectDto: CreateProjectDto) {
+  async create(createProjectDto: CreateProjectDto, userId: string) {
     const { agencyId, engineerId, ...projectData } = createProjectDto;
 
-    // Verify relations exist
     await this.validateRelationsExist(agencyId, engineerId);
 
-    return this.prisma.project.create({
+    const project = await this.prisma.project.create({
       data: {
         ...projectData,
         agency: { connect: { id: agencyId } },
@@ -23,6 +26,10 @@ export class ProjectService {
       },
       include: this.projectIncludes(),
     });
+
+    await this.logHelper.createLog(userId, 'CREATE', 'Project', project.id);
+
+    return project;
   }
 
   async findAll(filters: SearchProjectDto) {
@@ -75,7 +82,7 @@ export class ProjectService {
     return project;
   }
 
-  async update(id: string, updateProjectDto: UpdateProjectDto) {
+  async update(id: string, updateProjectDto: UpdateProjectDto, userId: string) {
     await this.findOne(id);
 
     const { agencyId, engineerId, ...projectData } = updateProjectDto;
@@ -91,20 +98,28 @@ export class ProjectService {
       updateData.engineer = { connect: { id: engineerId } };
     }
 
-    return this.prisma.project.update({
+    const updatedProject = await this.prisma.project.update({
       where: { id },
       data: updateData,
       include: this.projectIncludes(),
     });
+
+    await this.logHelper.createLog(userId, 'UPDATE', 'Project', id);
+
+    return updatedProject;
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
     await this.findOne(id);
 
-    return this.prisma.project.update({
+    const project = await this.prisma.project.update({
       where: { id },
       data: { status: 'cancelado' },
     });
+
+    await this.logHelper.createLog(userId, 'CANCEL', 'Project', id);
+
+    return project;
   }
 
   async getProjectPavements(id: string) {

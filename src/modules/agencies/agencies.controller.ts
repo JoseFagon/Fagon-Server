@@ -23,10 +23,13 @@ import { AgencyService } from './agencies.service';
 import { AgencyResponseDto } from './dto/response-agency.dto';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { SearchAgencyDto } from './dto/search-agency.dto';
-import { UpdateAgencyDto } from './dto/update-agency.dto';
-import { RequireAuth } from 'src/common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  RequireAuth,
+} from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { ROLES } from 'src/common/constants/roles.constant';
+import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Agencies')
 @ApiBearerAuth()
@@ -44,8 +47,11 @@ export class AgencyController {
     description: 'Agência criada com sucesso',
   })
   @ApiBody({ type: CreateAgencyDto })
-  create(@Body() createAgencyDto: CreateAgencyDto) {
-    return this.agencyService.create(createAgencyDto);
+  create(
+    @Body() createAgencyDto: CreateAgencyDto,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.agencyService.create(createAgencyDto, currentUser.sub);
   }
 
   @Get()
@@ -101,7 +107,7 @@ export class AgencyController {
   @Patch(':id')
   @ApiOperation({ summary: 'Atualiza uma agência' })
   @ApiParam({ name: 'id', description: 'UUID da agência' })
-  @ApiBody({ type: UpdateAgencyDto })
+  @ApiBody({ type: CreateAgencyDto })
   @ApiResponse({
     status: 200,
     type: AgencyResponseDto,
@@ -109,9 +115,10 @@ export class AgencyController {
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateAgencyDto: UpdateAgencyDto,
+    @Body() updateAgencyDto: CreateAgencyDto,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.agencyService.update(id, updateAgencyDto);
+    return this.agencyService.update(id, updateAgencyDto, currentUser.sub);
   }
 
   @Delete(':id')
@@ -121,7 +128,10 @@ export class AgencyController {
     status: 204,
     description: 'Agência removida',
   })
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.agencyService.remove(id);
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.agencyService.remove(id, currentUser.sub);
   }
 }

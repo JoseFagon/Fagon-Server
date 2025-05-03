@@ -14,7 +14,8 @@ import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 import { ROLES } from 'src/common/constants/roles.constant';
 import { RegisterResponse } from 'src/common/interfaces/response.register.interface';
 import { LoginResponse } from 'src/common/interfaces/response.login.interface';
-import { AccessKey, User } from 'src/generated/@prisma/client';
+import { User } from 'src/generated/@prisma/client';
+import { ADMIN_EMAILS } from 'src/common/constants/admin-emails.constant';
 
 @Injectable()
 export class AuthService {
@@ -27,9 +28,9 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<User | null> {
-    const user = (await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { email },
-    })) as User | null;
+    });
 
     if (!user?.password || !(await argon2.verify(user.password, password))) {
       throw new UnauthorizedException('Credenciais inválidas');
@@ -41,17 +42,17 @@ export class AuthService {
   async validateVisitor(loginDto: LoginDto): Promise<User | null> {
     const { accessKeyToken } = loginDto;
 
-    const accessKey = (await this.prisma.accessKey.findFirst({
+    const accessKey = await this.prisma.accessKey.findFirst({
       where: { token: accessKeyToken },
-    })) as AccessKey | null;
+    });
 
     if (!accessKey || new Date(accessKey.expiresAt) < new Date()) {
       return null;
     }
 
-    const user = (await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: accessKey.userId },
-    })) as User | null;
+    });
 
     return user;
   }
@@ -63,9 +64,9 @@ export class AuthService {
       throw new UnauthorizedException('Email e senha são obrigatórios');
     }
 
-    const user = (await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { email, role: 'funcionario' },
-    })) as User | null;
+    });
 
     if (!user) throw new UnauthorizedException('Credenciais inválidas');
     if (!user.password || !(await argon2.verify(user.password, password))) {
@@ -77,17 +78,17 @@ export class AuthService {
 
   async loginWithAccessKey(loginDto: LoginDto): Promise<LoginResponse> {
     const { accessKeyToken } = loginDto;
-    const accessKey = (await this.prisma.accessKey.findFirst({
+    const accessKey = await this.prisma.accessKey.findFirst({
       where: { token: accessKeyToken },
-    })) as AccessKey | null;
+    });
 
     if (!accessKey || new Date(accessKey.expiresAt) < new Date()) {
       throw new UnauthorizedException('Chave de acesso inválida ou expirada');
     }
 
-    const user = (await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: accessKey.userId },
-    })) as User | null;
+    });
     if (!user) {
       throw new UnauthorizedException('Nenhum usuário vistoriador configurado');
     }
@@ -96,23 +97,25 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto): Promise<RegisterResponse> {
-    if (
-      (!registerDto.email && registerDto.role !== 'vistoriador') ||
-      !registerDto.password
-    ) {
-      throw new Error('Email e senha são obrigatórios');
+    const { email, password } = registerDto;
+
+    if (!email || !password) {
+      throw new BadRequestException('Email e senha são obrigatórios');
     }
+
+    const isAdmin = ADMIN_EMAILS.includes(email);
+    const role = isAdmin ? ROLES.ADMIN : ROLES.FUNCIONARIO;
 
     const user = await this.prisma.user.create({
       data: {
         ...registerDto,
-        password: await argon2.hash(registerDto.password),
+        role,
+        password: await argon2.hash(password),
         status: true,
       },
     });
 
     const payload: JwtPayload = {
-      id: user.id,
       sub: user.id,
       email: user.email || undefined,
       role: user.role,
@@ -123,7 +126,6 @@ export class AuthService {
     return {
       token: this.jwtService.sign(payload),
       user: {
-        id: user.id,
         sub: user.id,
         email: user.email,
         role: user.role,
@@ -140,20 +142,19 @@ export class AuthService {
       throw new BadRequestException('Usuário inválido');
     }
 
-    const accessKey = (await this.prisma.accessKey.create({
+    const accessKey = await this.prisma.accessKey.create({
       data: {
         token: crypto.randomBytes(32).toString('hex'),
         projectId: accessKeyDto.projectId,
         userId: userId,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h
       },
-    })) as AccessKey;
+    });
     return { token: accessKey.token };
   }
 
   private generateToken(user: User) {
     const payload: JwtPayload = {
-      id: user.id,
       sub: user.id,
       email:
         user.role === ROLES.FUNCIONARIO || user.role === ROLES.ADMIN

@@ -227,13 +227,6 @@ exports.Prisma.PdfScalarFieldEnum = {
   generatedAt: 'generatedAt'
 };
 
-exports.Prisma.PdfTemplateScalarFieldEnum = {
-  id: 'id',
-  pdfType: 'pdfType',
-  layoutStructure: 'layoutStructure',
-  createdAt: 'createdAt'
-};
-
 exports.Prisma.StateLawScalarFieldEnum = {
   id: 'id',
   state: 'state',
@@ -261,10 +254,6 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
-exports.Prisma.JsonNullValueInput = {
-  JsonNull: Prisma.JsonNull
-};
-
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -273,12 +262,6 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
-};
-
-exports.Prisma.JsonNullValueFilter = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull,
-  AnyNull: Prisma.AnyNull
 };
 exports.UserRole = exports.$Enums.UserRole = {
   admin: 'admin',
@@ -335,7 +318,6 @@ exports.Prisma.ModelName = {
   Pathology: 'Pathology',
   PathologyPhoto: 'PathologyPhoto',
   Pdf: 'Pdf',
-  PdfTemplate: 'PdfTemplate',
   StateLaw: 'StateLaw',
   Log: 'Log'
 };

@@ -1,18 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAgencyDto } from './dto/create-agency.dto';
-import { UpdateAgencyDto } from './dto/update-agency.dto';
 import { SearchAgencyDto } from './dto/search-agency.dto';
 import { Prisma } from 'src/generated/@prisma/client';
+import { LogHelperService } from '../logs/log-helper.service';
+import { UpdateAgencyDto } from './dto/update-agency.dto';
 
 @Injectable()
 export class AgencyService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private logHelper: LogHelperService,
+  ) {}
 
-  async create(createAgencyDto: CreateAgencyDto) {
-    return this.prisma.agency.create({
+  async create(createAgencyDto: CreateAgencyDto, userId: string) {
+    const agency = await this.prisma.agency.create({
       data: createAgencyDto,
     });
+
+    await this.logHelper.createLog(userId, 'CREATE', 'Agency', agency.id);
+
+    return agency;
   }
 
   async findAll({ page, limit }: { page: number; limit: number }) {
@@ -47,16 +55,26 @@ export class AgencyService {
     });
   }
 
-  async update(id: string, updateAgencyDto: UpdateAgencyDto) {
-    return this.prisma.agency.update({
+  async update(id: string, updateAgencyDto: UpdateAgencyDto, userId: string) {
+    await this.findOne(id);
+
+    const updatedAgency = await this.prisma.agency.update({
       where: { id },
       data: updateAgencyDto,
     });
+
+    await this.logHelper.createLog(userId, 'UPDATE', 'Agency', id);
+
+    return updatedAgency;
   }
 
-  async remove(id: string) {
-    return this.prisma.agency.delete({
+  async remove(id: string, userId: string) {
+    const deletedAgency = await this.prisma.agency.delete({
       where: { id },
     });
+
+    await this.logHelper.createLog(userId, 'DELETE', 'Agency', id);
+
+    return deletedAgency;
   }
 }

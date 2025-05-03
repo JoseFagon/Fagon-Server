@@ -24,12 +24,12 @@ export class CreateAgencyDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  @Length(14, 14, { message: 'CNPJ deve ter exatamente 14 caracteres.' })
+  @Length(14, 14, { message: 'O CNPJ deve ter exatamente 14 caracteres.' })
   cnpj?: string;
 
   @ApiProperty()
   @IsString()
-  @Length(8, 8, { message: 'CEP deve ter exatamente 8 caracteres.' })
+  @Length(8, 8, { message: 'O CEP deve ter exatamente 8 caracteres.' })
   cep!: string;
 
   @ApiProperty()

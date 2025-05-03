@@ -22,7 +22,10 @@ import { LoggerModule } from './core/logger/logger.module';
 import { RateLimitModule } from './core/rate-limit/rate-limit.module';
 import { GraphqlModule } from './graphql/graphql.module';
 import { AgencyModule } from './modules/agencies/agencies.module';
-// import { UsersModule } from './users/users.module';
+import { EngineerModule } from './modules/engineers/engineers.module';
+import { UserModule } from './modules/users/users.module';
+import { ProjectModule } from './modules/projects/projects.module';
+import { LogModule } from './modules/logs/logs.module';
 
 @Module({
   imports: [
@@ -48,8 +51,11 @@ import { AgencyModule } from './modules/agencies/agencies.module';
     GraphqlModule,
     PrismaModule,
     AuthModule,
+    LogModule,
+    UserModule,
     AgencyModule,
-    // UsersModule,
+    EngineerModule,
+    ProjectModule,
   ],
   providers: [
     {

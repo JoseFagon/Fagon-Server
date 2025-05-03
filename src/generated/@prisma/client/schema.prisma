@@ -138,18 +138,20 @@ model Pavement {
   project Project @relation(fields: [projectId], references: [id])
 
   Location Location[]
+
+  @@unique([projectId, pavement])
 }
 
 model Location {
   id           String       @id @default(uuid())
   projectId    String
-  pavementId   String
+  pavementId   String?
   name         String
   locationType LocationType
   height       Float?
 
-  project  Project  @relation(fields: [projectId], references: [id])
-  pavement Pavement @relation(fields: [pavementId], references: [id])
+  project  Project   @relation(fields: [projectId], references: [id])
+  pavement Pavement? @relation(fields: [pavementId], references: [id])
 
   MaterialFinishing MaterialFinishing[]
 
@@ -208,13 +210,6 @@ model Pdf {
   generatedAt    DateTime
 
   project Project @relation(fields: [projectId], references: [id])
-}
-
-model PdfTemplate {
-  id              String   @id @default(uuid())
-  pdfType         PdfType
-  layoutStructure Json
-  createdAt       DateTime
 }
 
 model StateLaw {
