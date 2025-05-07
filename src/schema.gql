@@ -1,0 +1,42 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Date custom scalar type (formato ISO)"""
+scalar Date
+
+input GeneratePdfInput {
+  pdfType: PdfType!
+  projectId: ID!
+}
+
+type Mutation {
+  generatePdf(input: GeneratePdfInput!): PdfRecord!
+  updateSignedPdf(input: UpdateSignedPdfInput!): PdfRecord!
+}
+
+type PdfRecord {
+  filePath: String!
+  generatedAt: Date!
+  id: ID!
+  pdfType: PdfType!
+  projectId: String!
+  signedFilePath: String
+}
+
+enum PdfType {
+  anexo_m3
+  anexo_m4
+  atestado
+  laudo_avaliacao
+  relatorio_fotografico
+}
+
+type Query {
+  pdfsByProject(projectId: String!): [PdfRecord!]!
+}
+
+input UpdateSignedPdfInput {
+  pdfId: ID!
+  signedFilePath: String!
+}

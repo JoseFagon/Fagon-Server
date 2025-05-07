@@ -4,7 +4,7 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { UserRole } from 'src/generated/@prisma/client';
+import { UserRole } from '@prisma/client';
 
 type UserFromRequest = {
   id: string;

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ProjectType, ProjectStatus } from 'src/generated/@prisma/client';
+import { ProjectType, ProjectStatus } from '@prisma/client';
 
 export class ProjectResponseDto {
   @ApiProperty()

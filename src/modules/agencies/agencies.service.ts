@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { SearchAgencyDto } from './dto/search-agency.dto';
-import { Prisma } from 'src/generated/@prisma/client';
+import { Prisma } from '@prisma/client';
 import { LogHelperService } from '../logs/log-helper.service';
 import { UpdateAgencyDto } from './dto/update-agency.dto';
 

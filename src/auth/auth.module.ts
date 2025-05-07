@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { jwtConfig } from '../config/jwt.config';
 import { ConfigService } from '@nestjs/config';
 import { AuthMiddleware } from './middleware/auth.middleware';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthMiddleware } from './middleware/auth.middleware';
       useFactory: jwtConfig,
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    PrismaModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

@@ -4,7 +4,7 @@ import {
   OnModuleDestroy,
   INestApplication,
 } from '@nestjs/common';
-import { PrismaClient } from 'src/generated/@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService
@@ -26,11 +26,15 @@ export class PrismaService
   }
 
   enableShutdownHooks(app: INestApplication) {
-    (this.$on as (event: 'beforeExit', callback: () => void) => void)(
-      'beforeExit',
-      () => {
-        void app.close();
-      },
-    );
+    process.on('beforeExit', () => {
+      void (async () => {
+        try {
+          await app.close();
+        } catch (error) {
+          console.error('Error during shutdown:', error);
+          process.exit(1);
+        }
+      })();
+    });
   }
 }

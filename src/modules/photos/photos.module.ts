@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { PhotoController } from './photos.controller';
 import { StorageModule } from 'src/storage/storage.module';
 import { PhotoService } from './photos.service';
+import { AppConfigModule } from 'src/config/config.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
-  imports: [StorageModule],
+  imports: [StorageModule, PrismaModule, AppConfigModule],
   controllers: [PhotoController],
-  providers: [PhotoService, PrismaService],
+  providers: [PhotoService],
 })
 export class PhotoModule {}

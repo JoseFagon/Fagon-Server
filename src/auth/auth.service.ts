@@ -14,7 +14,7 @@ import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 import { ROLES } from 'src/common/constants/roles.constant';
 import { RegisterResponse } from 'src/common/interfaces/response.register.interface';
 import { LoginResponse } from 'src/common/interfaces/response.login.interface';
-import { User } from 'src/generated/@prisma/client';
+import { User } from '@prisma/client';
 import { ADMIN_EMAILS } from 'src/common/constants/admin-emails.constant';
 
 @Injectable()

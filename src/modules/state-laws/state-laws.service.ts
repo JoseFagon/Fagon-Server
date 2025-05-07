@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prisma } from 'src/generated/@prisma/client';
+import { Prisma } from '@prisma/client';
 import { CreateStateLawDto } from './dto/create-state-law.dto';
 import { UpdateStateLawDto } from './dto/update-state-law.dto';
 

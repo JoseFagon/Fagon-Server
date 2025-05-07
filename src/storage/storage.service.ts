@@ -1,12 +1,13 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FileUpload, StorageResult } from './types/file-upload.type';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ConfigService } from '@nestjs/config';
+import { InjectSupabaseClient } from 'nestjs-supabase-js';
 
 @Injectable()
 export class StorageService {
   constructor(
-    @Inject('SUPABASE_CLIENT') private supabase: SupabaseClient,
+    @InjectSupabaseClient() private supabase: SupabaseClient,
     private config: ConfigService,
   ) {}
 
@@ -14,7 +15,14 @@ export class StorageService {
     file: FileUpload,
     bucket = 'default',
   ): Promise<StorageResult> {
-    const filePath = `${Date.now()}-${file.originalname}`;
+    if (
+      file.mimetype !== 'application/pdf' &&
+      !file.mimetype.startsWith('image/')
+    ) {
+      throw new Error('Apenas arquivos PDF ou imagens são permitidos.');
+    }
+
+    const filePath = `uploads/${Date.now()}-${file.originalname}`;
 
     const { data, error } = await this.supabase.storage
       .from(bucket)

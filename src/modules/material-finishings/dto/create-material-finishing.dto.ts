@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID, IsString, IsNotEmpty } from 'class-validator';
-import { SurfaceType } from 'src/generated/@prisma/client';
+import { SurfaceType } from '@prisma/client';
 
 export class CreateMaterialFinishingDto {
   @ApiProperty()

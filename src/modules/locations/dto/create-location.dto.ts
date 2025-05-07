@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsEnum,
 } from 'class-validator';
-import { LocationType } from 'src/generated/@prisma/client';
+import { LocationType } from '@prisma/client';
 
 export class CreateLocationDto {
   @ApiProperty()

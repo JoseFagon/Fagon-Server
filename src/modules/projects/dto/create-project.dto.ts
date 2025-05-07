@@ -7,7 +7,7 @@ import {
   IsString,
   IsDateString,
 } from 'class-validator';
-import { ProjectType, ProjectStatus } from 'src/generated/@prisma/client';
+import { ProjectType, ProjectStatus } from '@prisma/client';
 
 export class CreateProjectDto {
   @ApiProperty({ enum: ProjectType })

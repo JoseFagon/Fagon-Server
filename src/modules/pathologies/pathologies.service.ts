@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prisma } from 'src/generated/@prisma/client';
+import { Prisma } from '@prisma/client';
 import { LogHelperService } from '../logs/log-helper.service';
 import { CreatePathologyDto } from '../pathologies/dto/create-pathology.dto';
 import { SearchPathologyDto } from '../pathologies/dto/search-pathology.dto';

@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { SearchProjectDto } from './dto/search-project.dto';
-import { Prisma } from 'src/generated/@prisma/client';
+import { Prisma } from '@prisma/client';
 import { LogHelperService } from '../logs/log-helper.service';
 
 @Injectable()

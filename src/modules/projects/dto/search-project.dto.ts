@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsEnum, IsUUID, IsNumber, Min } from 'class-validator';
-import { ProjectStatus, ProjectType } from 'src/generated/@prisma/client';
+import { ProjectStatus, ProjectType } from '@prisma/client';
 
 export class SearchProjectDto {
   @ApiProperty({ enum: ProjectStatus, required: false })

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GraphQLModule } from '@nestjs/graphql';
 import { SupabaseModule } from 'nestjs-supabase-js';
 import { LoggerModule } from 'nestjs-pino';
 import { BullModule } from '@nestjs/bull';
@@ -24,7 +23,6 @@ import { loggerConfig } from './logger.config';
       inject: [ConfigService],
       useFactory: loggerConfig,
     }),
-    GraphQLModule.forRoot(graphqlConfig),
     BullModule.forRootAsync({
       inject: [ConfigService],
       useFactory: bullConfig,

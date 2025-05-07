@@ -26,6 +26,7 @@ import { UpdatePhotoDto } from './dto/update-photo.dto';
 import { PhotoService } from './photos.service';
 import { PhotoResponseDto } from './dto/response-photo.dto';
 import { CreatePhotoDto } from './dto/create-photo.dto';
+import { Express } from 'express';
 
 @ApiTags('Photos')
 @ApiBearerAuth()

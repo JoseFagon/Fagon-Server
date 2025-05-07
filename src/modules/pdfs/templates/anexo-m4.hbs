@@ -1,0 +1,292 @@
+<html>
+  <head>
+    <meta charset='UTF-8' />
+    <title>Anexo M.4</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+
+      h1,
+      h2 {
+        color: #000;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 18pt;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        font-size: 14pt;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f5f5f5;
+        text-align: center;
+      }
+
+      .section {
+        margin-bottom: 25px;
+      }
+
+      .signature-section {
+        margin-top: 60px;
+        text-align: right;
+      }
+
+      .signature-line {
+        width: 300px;
+        border-top: 1px solid #333;
+        margin-top: 60px;
+        display: inline-block;
+      }
+
+      .footer {
+        margin-top: 50px;
+        font-size: 9pt;
+        text-align: center;
+        border-top: 1px solid #ddd;
+        padding-top: 15px;
+        color: #666;
+      }
+
+      .footer a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+
+      @media print {
+        body {
+          padding: 0;
+        }
+        table {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ANEXO M.4<br />LAUDO TÉCNICO DE CONTROLE DE MATERIAIS DE ACABAMENTO E
+      REVESTIMENTO</h1>
+
+    <!-- Seção 1: Identificação da Edificação -->
+    <section class='section'>
+      <h2>1. IDENTIFICAÇÃO DA EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
+      <p><strong>Razão Social:</strong>
+        {{agency.name}}
+        — AG.
+        {{agency.agencyNumber}}/{{agency.city}}
+        -
+        {{agency.district}}</p>
+      <p><strong>Nome Fantasia:</strong>
+        {{agency.name}}
+        — AG.
+        {{agency.agencyNumber}}/{{agency.city}}
+        -
+        {{agency.district}}</p>
+      <p><strong>CNPJ:</strong> {{formatCNPJ agency.cnpj}}</p>
+      <p><strong>CEP:</strong> {{formatCEP agency.cep}}</p>
+      <p><strong>Município:</strong> {{agency.city}} - {{agency.state}}</p>
+      <p><strong>Logradouro:</strong>
+        {{agency.street}},
+        {{agency.number}}
+        -
+        {{agency.district}}</p>
+    </section>
+
+    <!-- Seção 2: Identificação do Proprietário -->
+    <section class='section'>
+      <h2>2. IDENTIFICAÇÃO DO PROPRIETÁRIO OU RESPONSÁVEL PELO USO DA EDIFICAÇÃO</h2>
+      <p><strong>Nome do Proprietário:</strong> Itaú Unibanco S/A</p>
+      <p><strong>CNPJ:</strong> 60.701.190/3544-04</p>
+      <p><strong>Nome do responsável pelo uso:</strong>
+        Ana Karina di Giacomo</p>
+      <p><strong>CPF:</strong> 216.013.208-09</p>
+      <p><strong>Telefone:</strong> (11) 5019-9167</p>
+      <p><strong>Email:</strong> ana.giacomo@itau-unibanco.com.br</p>
+    </section>
+
+    <!-- Seção 3: Identificação do Responsável Técnico -->
+    <section class='section'>
+      <h2>3. IDENTIFICAÇÃO DO RESPONSÁVEL TÉCNICO PELO LAUDO TÉCNICO</h2>
+      <p><strong>Nome do profissional:</strong> {{engineer.name}}</p>
+      <p><strong>CPF:</strong> {{formatCPF engineer.cpf}}</p>
+      <p><strong>Telefone:</strong> {{engineer.phone}}</p>
+      <p><strong>Email:</strong> {{engineer.email}}</p>
+      <p><strong>Formação Profissional:</strong>
+        {{engineer.education}}
+        -
+        {{engineer.registrationEntity}}
+        {{engineer.registrationNumber}}</p>
+    </section>
+
+    <!-- Seção 4: Objetivo -->
+    <section class='section'>
+      <h2>4. OBJETIVO</h2>
+      <p>O presente Laudo Técnico tem o objetivo de descrever as características
+        de reação ao fogo dos materiais de acabamento e de revestimento
+        aplicados na edificação identificada no Capítulo 1, atestando sua
+        conformidade com as Resoluções Técnicas e normas técnicas vigentes de
+        segurança contra incêndio e pânico.</p>
+
+      <p>Os dados para elaboração deste laudo foram extraídos de Memorial
+        Descritivo conforme levantamento realizado pelo escritório Fagon em
+        {{formatDate project.inspectionDate 'MMMM, yyyy'}}.</p>
+    </section>
+
+    <!-- Seção 5: Fundamentação Normativa -->
+    <section class='section'>
+      <h2>5. FUNDAMENTAÇÃO NORMATIVA</h2>
+      <p>O Laudo Técnico de Controle dos Materiais de Acabamento e de
+        Revestimento está tecnicamente fundamentado na Instrução Técnica (IT) n°
+        {{StateLaw.lawReference}}, do Corpo de Bombeiros da Polícia Militar do
+        Estado
+        {{StateLaw.textState}}
+        e suas normas técnicas correlatas.</p>
+
+      <p>As classificações e as condições exigidas para aplicação dos materiais
+        de acabamento e de revestimento e os respectivos locais constam na
+        respectiva IT, replicada abaixo na tabela abaixo: (Agência Bancária –
+        Classificação D-2)</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th rowspan='2' colspan='2'></th>
+            <th colspan='3'>FINALIDADE DO MATERIAL</th>
+          </tr>
+          <tr>
+            <th>Piso (Acabamento¹/Revestimento)</th>
+            <th>Paredes e Divisórias (Acabamento²/Revestimento)</th>
+            <th>Teto e Forro (Acabamento/Revestimento)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th rowspan='3'>GRUPO / DIVISÃO</th>
+            <td>A-2⁶ e A-3⁶</td>
+            <td>Classe I, II-A, III-A, IV-A ou V-A⁸</td>
+            <td>Classe I, II-A, III-A ou IV-A⁹</td>
+            <td>Classe I, II-A ou III-A⁷</td>
+          </tr>
+          <tr>
+            <td>B, D, E, G, H, I-1, J-1⁴ e J-2</td>
+            <td>Classe I, II-A, III-A ou IV-A</td>
+            <td>Classe I, II-A ou III-A¹⁰</td>
+            <td>Classe I ou II-A</td>
+          </tr>
+          <tr>
+            <td>C, F⁵, I-2, I-3, J-3, J-4, L-1, M-2³, M-3, M-5 e M-10</td>
+            <td>Classe I, II-A, III-A ou IV-A</td>
+            <td>Classe I ou II-A</td>
+            <td>Classe I ou II-A</td>
+          </tr>
+          <tr>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Seção 6: Classificação dos Materiais -->
+    <section class='section'>
+      <h2>6. CLASSIFICAÇÃO DOS MATERIAIS DE ACABAMENTO E REVESTIMENTO APLICADOS
+        NA EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Local de aplicação dos materiais de acabamento e de revestimento</th>
+            <th>Classes de reação ao fogo dos materiais de acabamento e de
+              revestimento aplicados</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PISOS</td>
+            <td>CLASSE I ou CLASSE II-A</td>
+          </tr>
+          <tr>
+            <td>DIVISÓRIAS</td>
+            <td>CLASSE I ou CLASSE II-A</td>
+          </tr>
+          <tr>
+            <td>PAREDES E TETO OU FORROS</td>
+            <td>CLASSE I ou CLASSE II-A</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Os materiais de acabamento e de revestimento aplicados nos demais
+        locais da edificação não descritos na Tabela do presente Laudo Técnico
+        cumprem rigorosamente as exigências constantes na respectiva IT,
+        incluindo suas notas específicas e genéricas, e normas técnicas
+        correlatas.</p>
+    </section>
+
+    <!-- Seção 7: Conclusão -->
+    <section class='section'>
+      <h2>7. CONCLUSÃO</h2>
+      <p>Em análise às presentes informações e aos respectivos documentos
+        técnicos comprobatórios, conclui-se que os materiais de acabamento e de
+        revestimento aplicados na edificação identificada no Capítulo 1 do
+        presente Laudo Técnico cumprem rigorosamente a legislação, Resoluções
+        Técnicas do Corpo de Bombeiros da Polícia Militar Estadual e Normas
+        Técnicas vigentes, oferecendo segurança aos usuários desta de acordo com
+        a eficiência prevista nas normativas elencadas.</p>
+    </section>
+
+    <!-- Seção 8: Validade do Laudo -->
+    <section class='section'>
+      <h2>8. VALIDADE DO LAUDO TÉCNICO</h2>
+      <p>As informações prestadas no presente Laudo Técnico são verdadeiras e
+        seus dados não foram alterados além dos itens editáveis. Os relatórios
+        técnicos, laudos de ensaios, especificações técnicas de produto, entre
+        outros documentos comprobatórios da classificação dos materiais de
+        acabamento e de revestimento e a correta aplicação destes na edificação
+        foram entregues ao proprietário/responsável pelo uso, identificado no
+        Capítulo 2, o qual assina a plena ciência neste mesmo Laudo Técnico. O
+        presente Laudo Técnico tem validade enquanto permanecerem inalterados os
+        materiais e as condições de aplicação descritas.</p>
+    </section>
+
+    <!-- Data e Assinatura -->
+    <section class='signature-section'>
+      <p>São Paulo,
+        {{formatDate now 'dd'}}
+        de
+        {{formatDate now 'MMMM'}}
+        de
+        {{formatDate now 'yyyy'}}.</p>
+      <p>Resp. Técnico {{engineer.registrationNumber}}</p>
+    </section>
+  </body>
+</html>

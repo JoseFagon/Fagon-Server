@@ -18,4 +18,7 @@ export class EngineerResponseDto {
 
   @ApiProperty()
   registrationNumber!: string;
+
+  @ApiProperty()
+  registrationEntity!: string;
 }

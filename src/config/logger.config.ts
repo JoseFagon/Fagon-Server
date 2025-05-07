@@ -24,7 +24,7 @@ export const loggerConfig = (configService: ConfigService): Params => ({
       const typedReq = req as RequestWithUser;
       return {
         context: 'HTTP',
-        user: typedReq.user?.id,
+        user: typedReq.user?.sub,
       };
     },
   },

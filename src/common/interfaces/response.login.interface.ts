@@ -1,4 +1,4 @@
-import { CameraType } from 'src/generated/@prisma/client';
+import { CameraType } from '@prisma/client';
 
 export interface LoginResponse {
   access_token: string;

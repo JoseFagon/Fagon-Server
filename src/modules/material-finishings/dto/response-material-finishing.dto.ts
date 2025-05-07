@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SurfaceType } from 'src/generated/@prisma/client';
+import { SurfaceType } from '@prisma/client';
 
 export class MaterialFinishingResponseDto {
   @ApiProperty()

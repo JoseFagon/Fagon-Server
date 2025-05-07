@@ -1,0 +1,240 @@
+<html>
+  <head>
+    <meta charset='UTF-8' />
+    <title>ATESTADO DO EMPREGO DOS MATERIAIS DE ACABAMENTO E REVESTIMENTO</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+
+      h1,
+      h2 {
+        color: #000;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 16pt;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        font-size: 14pt;
+        margin-top: 20px;
+        margin-bottom: 30px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        page-break-inside: avoid;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f5f5f5;
+      }
+
+      .signature-section {
+        margin-top: 40px;
+        text-align: right;
+      }
+
+      .signature-line {
+        width: 300px;
+        border-top: 1px solid #333;
+        margin-top: 60px;
+        display: inline-block;
+      }
+
+      .footer {
+        margin-top: 50px;
+        font-size: 9pt;
+        text-align: center;
+        border-top: 1px solid #ddd;
+        padding-top: 15px;
+        color: #666;
+      }
+
+      .footer a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+
+      .observation {
+        margin-top: 20px;
+        font-style: italic;
+      }
+
+      @media print {
+        body {
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div style='text-align: center; margin-bottom: 20px;'>
+      <h1>CORPO DE BOMBEIROS DO ESTADO {{StateLaw.textState}}</h1>
+      <h2>ATESTADO DO EMPREGO DOS MATERIAIS DE ACABAMENTO E REVESTIMENTO</h2>
+    </div>
+
+    <p>Eu,
+      {{engineer.name}}, registrado no
+      {{engineer.registrationEntity}}
+      sob o N°
+      {{engineer.registrationNumber}}, atesto para os devidos fins, que os
+      materiais de acabamento e revestimento que foram aplicados nos pavimentos
+      da edificação descrita abaixo atendem aos parâmetros técnicos da
+      {{StateLaw.lawReference}}
+      ({{StateLaw.fullText}}).</p>
+
+    <p><strong>Razão Social:</strong>
+      {{agency.name}}
+      — AG.
+      {{agency.agencyNumber}}/{{agency.city}}
+      -
+      {{agency.district}}</p>
+    <p><strong>Nome Fantasia:</strong>
+      {{agency.name}}
+      — AG.
+      {{agency.agencyNumber}}/{{agency.city}}
+      -
+      {{agency.district}}</p>
+    <p><strong>CNPJ:</strong> {{formatCNPJ agency.cnpj}}</p>
+    <p><strong>CEP:</strong> {{formatCEP agency.cep}}</p>
+    <p><strong>Município:</strong> {{agency.city}} - {{agency.state}}</p>
+    <p><strong>Logradouro:</strong>
+      {{agency.street}},
+      {{agency.number}}
+      -
+      {{agency.district}}</p>
+
+    <p>Os materiais constam na tabela subsequente e foram levantados pelo
+      escritório Fagon em
+      {{formatDate project.inspectionDate 'MMMM, yyyy'}}.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>AMBIENTE</th>
+          <th>PAVIMENTO</th>
+          <th>PISO</th>
+          <th>PAREDES</th>
+          <th>FORROS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Seção de Acabamentos Externos -->
+        <tr>
+          <td
+            colspan='5'
+            style='background-color: #f5f5f5; font-weight: bold;'
+          >ACABAMENTOS EXTERNOS</td>
+        </tr>
+
+        {{#each (filterLocations locations 'externo')}}
+          <tr>
+            <td>{{this.name}}</td>
+            <td>—</td>
+            <td>
+              {{#each this.MaterialFinishing}}
+                {{#if (eq this.surface 'piso')}}
+                  {{this.materialFinishing}}
+                {{/if}}
+              {{/each}}
+            </td>
+            <td>
+              {{#each this.MaterialFinishing}}
+                {{#if (eq this.surface 'parede')}}
+                  {{this.materialFinishing}}
+                {{/if}}
+              {{/each}}
+            </td>
+            <td>
+              {{#if (eq this.name 'FACHADA')}}
+                —
+              {{else}}
+                {{#each this.MaterialFinishing}}
+                  {{#if (eq this.surface 'forro')}}
+                    {{this.materialFinishing}}
+                  {{/if}}
+                {{/each}}
+              {{/if}}
+            </td>
+          </tr>
+        {{/each}}
+
+        <!-- Seção de Acabamentos Internos -->
+        <tr>
+          <td
+            colspan='5'
+            style='background-color: #f5f5f5; font-weight: bold;'
+          >ACABAMENTOS INTERNOS</td>
+        </tr>
+
+        {{#each (filterLocations locations 'interno')}}
+          <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.pavement.pavement}}</td>
+            <td>
+              {{#each this.MaterialFinishing}}
+                {{#if (eq this.surface 'piso')}}
+                  {{this.materialFinishing}}
+                {{/if}}
+              {{/each}}
+            </td>
+            <td>
+              {{#each this.MaterialFinishing}}
+                {{#if (eq this.surface 'parede')}}
+                  {{this.materialFinishing}}
+                {{/if}}
+              {{/each}}
+            </td>
+            <td>
+              {{#each this.MaterialFinishing}}
+                {{#if (eq this.surface 'forro')}}
+                  {{this.materialFinishing}}
+                {{/if}}
+              {{/each}}
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+    <div class='observation'>
+      <p><strong>Obs:</strong>
+        A manutenção dos Materiais de Acabamento e Revestimento fica sob
+        responsabilidade do usuário ou responsável pelo uso da edificação.</p>
+    </div>
+
+    <!-- Data e Assinatura -->
+    <section class='signature-section'>
+      <p>São Paulo,
+        {{formatDate now 'dd'}}
+        de
+        {{formatDate now 'MMMM'}}
+        de
+        {{formatDate now 'yyyy'}}.</p>
+      <p>Resp. Técnico {{engineer.registrationNumber}}</p>
+    </section>
+  </body>
+</html>

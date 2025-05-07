@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, IsBoolean } from 'class-validator';
-import { UserRole } from 'src/generated/@prisma/client';
+import { UserRole } from '@prisma/client';
 
 export class SearchUserDto {
   @ApiProperty({ required: false })

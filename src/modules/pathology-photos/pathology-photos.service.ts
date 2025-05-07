@@ -1,15 +1,16 @@
-import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { StorageService } from 'src/storage/storage.service';
 import { PathologyPhotoResponseDto } from './dto/response-pathology-photo.dto';
+import { InjectSupabaseClient } from 'nestjs-supabase-js';
 
 @Injectable()
 export class PathologyPhotoService {
   constructor(
     private prisma: PrismaService,
     private storageService: StorageService,
-    @Inject('SUPABASE_CLIENT') private supabase: SupabaseClient,
+    @InjectSupabaseClient() private supabase: SupabaseClient,
   ) {}
 
   async uploadPhotos(files: Express.Multer.File[], pathologyId: string) {

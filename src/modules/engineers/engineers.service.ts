@@ -3,7 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateEngineerDto } from './dto/create-engineer.dto';
 import { UpdateEngineerDto } from './dto/update-engineer.dto';
 import { SearchEngineerDto } from './dto/search-engineer.dto';
-import { Prisma } from '../../generated/@prisma/client';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class EngineerService {

@@ -1,4 +1,4 @@
-import { UserRole } from 'src/generated/@prisma/client';
+import { UserRole } from '@prisma/client';
 
 export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
   [UserRole.admin]: ['users:manage', 'content:manage', 'settings:manage'],

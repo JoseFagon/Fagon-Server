@@ -31,4 +31,9 @@ export class CreateEngineerDto {
   @IsString()
   @IsNotEmpty({ message: 'O número do registro é obrigatório.' })
   registrationNumber!: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty({ message: 'A entidade do registro é obrigatória.' })
+  registrationEntity!: string;
 }

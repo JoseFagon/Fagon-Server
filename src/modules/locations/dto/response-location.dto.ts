@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { LocationType } from 'src/generated/@prisma/client';
+import { LocationType } from '@prisma/client';
 
 export class LocationResponseDto {
   @ApiProperty()

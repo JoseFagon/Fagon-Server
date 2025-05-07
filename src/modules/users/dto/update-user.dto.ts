@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { UserRole } from 'src/generated/@prisma/client';
+import { UserRole } from '@prisma/client';
 
 export class UpdateUserDto {
   @ApiProperty()

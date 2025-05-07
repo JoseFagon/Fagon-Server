@@ -1,26 +1,29 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { StorageService } from './storage.service';
-import { createClient, SupabaseClientOptions } from '@supabase/supabase-js';
-import { supabaseConfig } from 'src/config/supabase.config';
+import { AppConfigModule } from 'src/config/config.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, PrismaModule, AppConfigModule],
   providers: [
+    StorageService,
     {
-      provide: 'SUPABASE_CLIENT',
-      useFactory: (configService: ConfigService) => {
-        const config = supabaseConfig(configService);
-        return createClient(
-          config.supabaseUrl,
-          config.supabaseKey,
-          config.options as SupabaseClientOptions<'public'>,
-        );
+      provide: SupabaseClient,
+      useFactory: (configService: ConfigService): SupabaseClient => {
+        const url = configService.get<string>('SUPABASE_URL');
+        const key = configService.get<string>('SUPABASE_KEY');
+
+        if (!url || !key) {
+          throw new Error('Supabase URL and Secret Key must be provided');
+        }
+
+        return createClient(url, key);
       },
       inject: [ConfigService],
     },
-    StorageService,
   ],
-  exports: [StorageService],
+  exports: [StorageService, SupabaseClient],
 })
 export class StorageModule {}

@@ -1,0 +1,245 @@
+<html>
+  <head>
+    <meta charset='UTF-8' />
+    <title>Anexo M.3</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+
+      h1,
+      h2 {
+        color: #000;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 18pt;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        font-size: 14pt;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+
+      .section {
+        margin-bottom: 25px;
+      }
+
+      .checkbox-container {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 10px;
+        margin: 15px 0;
+      }
+
+      .checkbox-item {
+        display: contents;
+      }
+
+      .checkbox-x {
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .underline {
+        text-decoration: underline;
+      }
+
+      .signature-section {
+        margin-top: 60px;
+        text-align: right;
+      }
+
+      .signature-line {
+        width: 300px;
+        border-top: 1px solid #333;
+        margin-top: 60px;
+        display: inline-block;
+      }
+
+      @media print {
+        body {
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ANEXO M.3<br />LAUDO TÉCNICO DE SEGURANÇA ESTRUTURAL EM SITUAÇÃO DE
+      INCÊNDIO</h1>
+
+    <!-- Seção 1: Identificação da Edificação -->
+    <section class='section'>
+      <h2>1. IDENTIFICAÇÃO DA EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
+      <p><strong>Razão Social:</strong>
+        {{agency.name}}
+        — AG.
+        {{agency.agencyNumber}}/{{agency.city}}
+        -
+        {{agency.district}}</p>
+      <p><strong>Nome Fantasia:</strong>
+        {{agency.name}}
+        — AG.
+        {{agency.agencyNumber}}/{{agency.city}}
+        -
+        {{agency.district}}</p>
+      <p><strong>CNPJ:</strong> {{formatCNPJ agency.cnpj}}</p>
+      <p><strong>CEP:</strong> {{formatCEP agency.cep}}</p>
+      <p><strong>Município:</strong> {{agency.city}} - {{agency.state}}</p>
+      <p><strong>Logradouro:</strong>
+        {{agency.street}},
+        {{agency.number}}
+        -
+        {{agency.district}}</p>
+    </section>
+
+    <!-- Seção 2: Identificação do Proprietário -->
+    <section class='section'>
+      <h2>2. IDENTIFICAÇÃO DO PROPRIETÁRIO OU RESPONSÁVEL PELO USO DA EDIFICAÇÃO</h2>
+      <p><strong>Nome do Proprietário:</strong> Itaú Unibanco S/A</p>
+      <p><strong>CNPJ:</strong> 60.701.190/3544-04</p>
+      <p><strong>Nome do responsável pelo uso:</strong>
+        Ana Karina di Giacomo</p>
+      <p><strong>CPF:</strong> 216.013.208-09</p>
+      <p><strong>Telefone:</strong> (11) 5019-9167</p>
+      <p><strong>Email:</strong> ana.giacomo@itau-unibanco.com.br</p>
+    </section>
+
+    <!-- Seção 3: Identificação do Responsável Técnico -->
+    <section class='section'>
+      <h2>3. IDENTIFICAÇÃO DO RESPONSÁVEL TÉCNICO PELO LAUDO TÉCNICO</h2>
+      <p><strong>Nome do profissional:</strong> {{engineer.name}}</p>
+      <p><strong>CPF:</strong> {{formatCPF engineer.cpf}}</p>
+      <p><strong>Telefone:</strong> {{engineer.phone}}</p>
+      <p><strong>Email:</strong> {{engineer.email}}</p>
+      <p><strong>Formação Profissional:</strong>
+        {{engineer.education}}
+        -
+        {{engineer.registrationEntity}}
+        {{engineer.registrationNumber}}</p>
+    </section>
+
+    <!-- Seção 4: Objetivo -->
+    <section class='section'>
+      <h2>4. OBJETIVO</h2>
+      <p>O presente Laudo Técnico tem o objetivo de descrever as condições de
+        segurança estrutural em situação de incêndio da edificação identificada
+        no capítulo 1 deste Laudo Técnico, atestando sua conformidade com a
+        legislação, Resoluções Técnicas e normas técnicas vigentes de segurança
+        contra Incêndio e pânico.</p>
+    </section>
+
+    <!-- Seção 5: Fundamentação Normativa -->
+    <section class='section'>
+      <h2>5. FUNDAMENTAÇÃO NORMATIVA</h2>
+      <p>O Laudo Técnico de segurança estrutural em situação de incêndio está
+        tecnicamente fundamentado na Instrução Técnica (IT)
+        {{StateLaw.lawReference2}}, do Corpo de Bombeiros da Polícia Militar
+        {{StateLaw.textState}}
+        {{StateLaw.policeAbbreviation}}, e suas normas técnicas correlatas. Os
+        Tempos Requeridos de Resistência ao Fogo (TRRF) exigidos para os
+        subsolos e pavimentos acima do solo (altura da edificação - h) constam
+        ao Anexo A da respectiva IT. (As divisões F-11 e F-12 deverão ser
+        consideradas como pertencentes à divisão F-6, para fins de determinação
+        do tempo requerido de resistência ao fogo – TRRF).</p>
+    </section>
+
+    <!-- Seção 6: Tempo de Resistência ao Fogo -->
+    <section class='section'>
+      <h2>6. TEMPO DE RESISTÊNCIA AO FOGO (TRF) DA EDIFICAÇÃO</h2>
+      <p>De acordo com a fundamentação descrita no Capítulo 5 do presente Laudo
+        Técnico, os Tempos Requeridos de Resistência ao Fogo, em conformidade
+        com as características da edificação analisada, são:</p>
+
+      <p>a) TRRF dos pavimentos acima do solo (altura da edificação - h): (h =
+        {{paviment.height}}m térreo)
+        {{fireResistance}}
+        minutos;</p>
+
+      <p>b) TRRF dos pavimentos subsolo:
+        {{#if (eq this.name 'SUBSOLO')}}(h =
+          {{paviment.height}}m subsolo)
+          {{fireResistance}}
+          minutos{{else}}(não há subsolo){{/if}}</p>
+
+      <p>Informo ainda, conforme marcado nas opções abaixo, sobre a utilização
+        ou não do método de Tempo Equivalente para redução do TRRF, como segue:</p>
+
+      <section class='checkbox-container'>
+        <div class='checkbox-item'>
+          <span></span>
+          <span>Sim, foi utilizado o método reduzindo o TRRF em minutos.</span>
+        </div>
+
+        <div class='checkbox-item'>
+          <span class='checkbox-x'>X</span>
+          <span>Não, o método de Tempo Equivalente para redução do TRRF não foi
+            utilizado.</span>
+        </div>
+      </section>
+
+      <p>Desse modo, ao analisar a estrutura e/ou o projeto da edificação
+        identificada no presente Laudo Técnico, utilizando os métodos e técnicas
+        pertinentes, determina-se que o Tempo de Resistência ao Fogo geral da
+        edificação para fins de segurança estrutural em situação de incêndio é
+        superior a
+        {{fireResistance}}
+        minutos.</p>
+    </section>
+
+    <!-- Seção 7: Conclusão -->
+    <section class='section'>
+      <h2>7. CONCLUSÃO</h2>
+      <p>Em análise às presentes informações e aos respectivos documentos
+        técnicos comprobatórios, conclui-se que a edificação identificada no
+        Capítulo 1 do presente Laudo Técnico cumpre rigorosamente a legislação,
+        Resoluções Técnicas do Corpo de Bombeiros da Polícia Militar estadual e
+        Normas Técnicas vigentes, oferecendo segurança aos usuários quanto à
+        compartimentação vertical e / ou horizontal,
+        <span class='underline'>estando de acordo</span>
+        com a eficiência e objetivos previstos nas normativas elencadas.</p>
+    </section>
+
+    <!-- Seção 8: Validade do Laudo -->
+    <section class='section'>
+      <h2>8. VALIDADE DO LAUDO TÉCNICO</h2>
+      <p>As informações prestadas no presente Laudo Técnico são verdadeiras e
+        seus dados não foram alterados além dos itens editáveis.</p>
+
+      <p>Os dados para elaboração desse laudo foram extraídos de Memorial
+        Descritivo conforme levantamento realizado pelo escritório Fagon em
+        {{formatDate project.inspectionDate 'MMMM, yyyy'}}.</p>
+
+      <p>Os relatórios técnicos, laudos de ensaios, memórias de cálculo,
+        projetos e especificações técnicas de produto, entre outros documentos
+        comprobatórios da segurança estrutural em situação de incêndio da
+        edificação foram entregues ao proprietário / responsável pelo uso,
+        identificado no Capítulo 2, o qual assina a plena ciência neste mesmo
+        Laudo Técnico. O presente Laudo Técnico tem validade enquanto
+        permanecerem inalterados os materiais analisados e forem adequados às
+        condições de uso e manutenção das estruturas.</p>
+    </section>
+
+    <!-- Data e Assinatura -->
+    <section class='signature-section'>
+      <p>São Paulo,
+        {{formatDate now 'dd'}}
+        de
+        {{formatDate now 'MMMM'}}
+        de
+        {{formatDate now 'yyyy'}}.</p>
+      <p>Resp. Técnico {{engineer.registrationNumber}}</p>
+    </section>
+  </body>
+</html>

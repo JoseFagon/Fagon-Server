@@ -3,7 +3,7 @@ import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LogHelperService } from '../logs/log-helper.service';
-import { Prisma } from 'src/generated/@prisma/client';
+import { Prisma } from '@prisma/client';
 import { PavementService } from '../pavements/pavements.service';
 import { PhotoService } from '../photos/photos.service';
 import { MaterialFinishingService } from '../material-finishings/material-finishings.service';
