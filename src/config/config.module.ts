@@ -5,7 +5,6 @@ import { LoggerModule } from 'nestjs-pino';
 import { BullModule } from '@nestjs/bull';
 import { TerminusModule } from '@nestjs/terminus';
 import { CacheModule } from '@nestjs/cache-manager';
-import { graphqlConfig } from './graphql.config';
 import { validate } from './env.validation';
 import { supabaseConfig } from './supabase.config';
 import { bullConfig } from './bull.config';
