@@ -181,7 +181,7 @@ enum ProjectType {
 
 enum ProjectStatus {
   aguardando_vistoria
-  // aguardando_geração_de_pdfs
+  aguardando_gerar_pdfs    @map("aguardando_gerar_pdfs")
   aguardando_assinatura_de_pdfs
   finalizado
   cancelado
