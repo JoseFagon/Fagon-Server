@@ -14,8 +14,8 @@ import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 import { ROLES } from 'src/common/constants/roles.constant';
 import { RegisterResponse } from 'src/common/interfaces/response.register.interface';
 import { LoginResponse } from 'src/common/interfaces/response.login.interface';
-import { User } from '@prisma/client';
 import { ADMIN_EMAILS } from 'src/common/constants/admin-emails.constant';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -78,22 +78,24 @@ export class AuthService {
 
   async loginWithAccessKey(loginDto: LoginDto): Promise<LoginResponse> {
     const { accessKeyToken } = loginDto;
+
     const accessKey = await this.prisma.accessKey.findFirst({
       where: { token: accessKeyToken },
+      include: { user: true },
     });
 
     if (!accessKey || new Date(accessKey.expiresAt) < new Date()) {
       throw new UnauthorizedException('Chave de acesso inválida ou expirada');
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: accessKey.userId },
-    });
-    if (!user) {
-      throw new UnauthorizedException('Nenhum usuário vistoriador configurado');
+    if (
+      accessKey.user.role !== ROLES.VISTORIADOR ||
+      accessKey.user.cameraType !== accessKey.cameraType
+    ) {
+      throw new UnauthorizedException('Configuração de vistoriador inválida');
     }
 
-    return this.generateToken(user);
+    return this.generateToken(accessKey.user);
   }
 
   async register(registerDto: RegisterDto): Promise<RegisterResponse> {
@@ -136,21 +138,51 @@ export class AuthService {
   }
 
   async generateAccessKey(accessKeyDto: AccessKeyDto, userId: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const requestingUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
 
-    if (!user || user.role !== 'vistoriador') {
-      throw new BadRequestException('Usuário inválido');
+    if (
+      !requestingUser ||
+      (requestingUser.role !== ROLES.FUNCIONARIO &&
+        requestingUser.role !== ROLES.ADMIN)
+    ) {
+      throw new BadRequestException(
+        'Apenas funcionários ou administradores podem gerar chaves de acesso',
+      );
+    }
+
+    const surveyor = await this.prisma.user.findFirst({
+      where: {
+        role: ROLES.VISTORIADOR,
+        cameraType: accessKeyDto.cameraType,
+      },
+    });
+
+    if (!surveyor) {
+      throw new BadRequestException(
+        `Nenhum vistoriador com o tipo de câmera ${accessKeyDto.cameraType} encontrado`,
+      );
     }
 
     const accessKey = await this.prisma.accessKey.create({
       data: {
         token: crypto.randomBytes(32).toString('hex'),
         projectId: accessKeyDto.projectId,
-        userId: userId,
+        userId: surveyor.id,
+        generatedBy: userId,
+        cameraType: accessKeyDto.cameraType,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h
       },
     });
-    return { token: accessKey.token };
+
+    return {
+      token: accessKey.token,
+      expiresAt: accessKey.expiresAt,
+      cameraType: accessKey.cameraType,
+      surveyorId: surveyor.id,
+      surveyorName: surveyor.name,
+    };
   }
 
   private generateToken(user: User) {

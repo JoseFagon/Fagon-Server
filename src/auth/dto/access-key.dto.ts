@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsNotEmpty, IsEmail } from 'class-validator';
+import { IsUUID, IsNotEmpty, IsEnum } from 'class-validator';
+import { CameraType } from '@prisma/client';
 
 export class AccessKeyDto {
   @ApiProperty()
@@ -8,7 +9,7 @@ export class AccessKeyDto {
   projectId!: string;
 
   @ApiProperty()
-  @IsEmail()
+  @IsEnum(CameraType)
   @IsNotEmpty()
-  email!: string;
+  cameraType!: CameraType;
 }

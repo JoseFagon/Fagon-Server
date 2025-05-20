@@ -1,13 +1,55 @@
+
+enum UserRole {
+  admin
+  funcionario
+  vistoriador
+}
+
+enum ProjectType {
+  laudo_cmar
+}
+
+enum ProjectStatus {
+  aguardando_vistoria
+  aguardando_gerar_pdfs    @map("aguardando_gerar_pdfs")
+  aguardando_assinatura_de_pdfs
+  finalizado
+  cancelado
+}
+
+enum CameraType {
+  normal
+  camera_360
+}
+
+enum LocationType {
+  externo
+  interno
+}
+
+enum SurfaceType {
+  piso
+  parede
+  forro
+}
+
+enum PdfType {
+  atestado
+  anexo_m3
+  anexo_m4
+  laudo_avaliacao
+  relatorio_fotografico
+}
+
 generator client {
   provider = "prisma-client-js"
-  output   = "../../../node_modules/@prisma/client"
+
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model User {
   id         String      @id @default(uuid())
   name       String
@@ -43,6 +85,7 @@ model Engineer {
   education          String
   registrationNumber String
   registrationEntity String
+
   Project            Project[]
 }
 
@@ -57,6 +100,7 @@ model Project {
   inspectorName  String?
   inspectionDate DateTime?
   createdAt      DateTime      @default(now())
+
   AccessKey      AccessKey[]
   Location       Location[]
   Pathology      Pathology[]
@@ -71,7 +115,10 @@ model AccessKey {
   token     String   @unique
   projectId String
   userId    String
+  generatedBy String
+  cameraType CameraType
   expiresAt DateTime
+
   project   Project  @relation(fields: [projectId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 }
@@ -167,46 +214,4 @@ model Log {
   targetId    String
   generatedAt DateTime
   user        User     @relation(fields: [userId], references: [id])
-}
-
-enum UserRole {
-  admin
-  funcionario
-  vistoriador
-}
-
-enum ProjectType {
-  laudo_cmar
-}
-
-enum ProjectStatus {
-  aguardando_vistoria
-  aguardando_gerar_pdfs    @map("aguardando_gerar_pdfs")
-  aguardando_assinatura_de_pdfs
-  finalizado
-  cancelado
-}
-
-enum CameraType {
-  normal
-  camera_360
-}
-
-enum LocationType {
-  externo
-  interno
-}
-
-enum SurfaceType {
-  piso
-  parede
-  forro
-}
-
-enum PdfType {
-  atestado
-  anexo_m3
-  anexo_m4
-  laudo_avaliacao
-  relatorio_fotografico
 }
