@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { setupSwagger } from './docs/swagger.config';
 import { PrismaService } from './prisma/prisma.service';
@@ -11,8 +10,9 @@ async function bootstrap() {
   const prismaService = app.get(PrismaService);
   const logger = new Logger('Bootstrap');
 
+  app.setGlobalPrefix('api/v1');
+
   setupSwagger(app);
-  app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new TransformInterceptor());
 
   prismaService.enableShutdownHooks(app);

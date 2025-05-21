@@ -12,8 +12,8 @@ export const setupSwagger = (app: INestApplication) => {
       scheme: 'bearer',
       bearerFormat: 'JWT',
     })
-    .addServer('http://localhost:3000/api/v1', 'Development')
-    .addServer('https://api.producao.com/v1', 'Production')
+    .addServer('http://localhost:3000/', 'Development')
+    // .addServer('https://api.producao.com/v1', 'Production')
     .setContact('Suporte', '', 'suporte@empresa.com')
     .setLicense('MIT', '')
     .build();

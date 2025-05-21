@@ -22,10 +22,14 @@ export class ValidationPipe implements PipeTransform<any> {
 
     this.logger.debug(`Validating ${type} ${metatype.name}`);
 
-    const object = plainToInstance(metatype as new () => object, value, {
-      excludeExtraneousValues: true,
-      enableImplicitConversion: true,
-    });
+    const object = plainToInstance(
+      metatype as new () => Record<string, any>,
+      value,
+      {
+        excludeExtraneousValues: true,
+        enableImplicitConversion: true,
+      },
+    );
 
     const errors = await validate(object, {
       skipMissingProperties: false,

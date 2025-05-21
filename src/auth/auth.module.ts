@@ -1,4 +1,4 @@
-import { Module, MiddlewareConsumer } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -6,7 +6,6 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { jwtConfig } from '../config/jwt.config';
 import { ConfigService } from '@nestjs/config';
-import { AuthMiddleware } from './middleware/auth.middleware';
 import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
@@ -22,11 +21,4 @@ import { PrismaModule } from 'src/prisma/prisma.module';
   providers: [AuthService, JwtStrategy],
   exports: [JwtModule, JwtStrategy],
 })
-export class AuthModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware)
-      .exclude('auth/login', 'health')
-      .forRoutes('*');
-  }
-}
+export class AuthModule {}

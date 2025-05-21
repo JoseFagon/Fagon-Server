@@ -25,6 +25,10 @@ export class AuthController {
   @Post('register')
   @Public()
   async register(@Body() registerDto: RegisterDto) {
+    console.log('Payload recebido:', JSON.stringify(registerDto, null, 2));
+    console.log('Tipo do nome:', typeof registerDto.name);
+    console.log('Tipo do email:', typeof registerDto.email);
+    console.log('Tipo da senha:', typeof registerDto.password);
     return this.authService.register(registerDto);
   }
 

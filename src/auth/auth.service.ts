@@ -99,10 +99,10 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto): Promise<RegisterResponse> {
-    const { email, password } = registerDto;
+    const { name, email, password } = registerDto;
 
-    if (!email || !password) {
-      throw new BadRequestException('Email e senha são obrigatórios');
+    if (!name || !email || !password) {
+      throw new BadRequestException('Todos os campos são obrigatórios');
     }
 
     const isAdmin = ADMIN_EMAILS.includes(email);
