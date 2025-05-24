@@ -9,6 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const prismaService = app.get(PrismaService);
   const logger = new Logger('Bootstrap');
+  const port = process.env.PORT || 3000;
 
   app.setGlobalPrefix('api/v1');
 
@@ -17,7 +18,12 @@ async function bootstrap() {
 
   prismaService.enableShutdownHooks(app);
 
-  const port = process.env.PORT || 3000;
+  app.enableCors({
+    origin: ['http://localhost:8080', 'http://localhost:3001'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: 'Content-Type,Authorization,X-Requested-With',
+  });
   await app.listen(port);
   logger.log(`Application running on port ${port}`);
 }

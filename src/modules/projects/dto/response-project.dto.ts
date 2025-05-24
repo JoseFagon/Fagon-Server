@@ -30,13 +30,19 @@ export class ProjectResponseDto {
   agency!: {
     id: string;
     name: string;
-    agency_number: number;
+    agencyNumber: number;
+    cnpj?: string;
+    cep: string;
+    state: string;
+    city: string;
+    district: string;
+    street: string;
+    number: string;
   };
 
   @ApiProperty()
   engineer!: {
     id: string;
     name: string;
-    specialty: string;
   };
 }

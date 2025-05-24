@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SearchUserDto } from './dto/search-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -15,36 +20,42 @@ export class UserService {
       role: true,
       status: true,
       cameraType: true,
-      createdAt: true,
-      updatedAt: true,
     };
   }
 
-  async findAll(params: { status?: boolean; page?: number; limit?: number }) {
+  async findAll(params: { status?: string; page?: number; limit?: number }) {
     const { status, page = 1, limit = 10 } = params;
 
-    const where = {};
-    if (status !== undefined) where['status'] = status;
+    const where: Prisma.UserWhereInput = {};
+    if (status !== undefined) {
+      if (status === 'true') where['status'] = true;
+      else if (status === 'false') where['status'] = false;
+    }
 
-    const [users, total] = await Promise.all([
-      this.prisma.user.findMany({
-        where,
-        skip: (page - 1) * limit,
-        take: limit,
-        select: this.userSafeFields(),
-      }),
-      this.prisma.user.count({ where }),
-    ]);
+    try {
+      const [users, total] = await Promise.all([
+        this.prisma.user.findMany({
+          where,
+          skip: (page - 1) * limit,
+          take: limit,
+          select: this.userSafeFields(),
+        }),
+        this.prisma.user.count({ where }),
+      ]);
 
-    return {
-      data: users,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
+      return {
+        data: users,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      throw new InternalServerErrorException('Erro ao buscar usuários');
+    }
   }
 
   async search(filters: SearchUserDto) {

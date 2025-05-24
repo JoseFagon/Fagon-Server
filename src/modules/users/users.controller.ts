@@ -49,8 +49,8 @@ export class UserController {
     type: [UserResponseDto],
     description: 'Lista de usuários',
   })
-  @ApiQuery({ name: 'status', required: false, type: Boolean })
-  findAll(@Query('status') status?: boolean) {
+  @ApiQuery({ name: 'status', required: false, type: String })
+  findAll(@Query('status') status?: string) {
     return this.userService.findAll({ status });
   }
 

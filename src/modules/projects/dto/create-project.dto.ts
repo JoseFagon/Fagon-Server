@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsUUID,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsDateString,
-} from 'class-validator';
-import { ProjectType, ProjectStatus } from '@prisma/client';
+import { IsUUID, IsEnum, IsNumber } from 'class-validator';
+import { ProjectType } from '@prisma/client';
 import { Expose } from 'class-transformer';
 
 export class CreateProjectDto {
@@ -30,27 +23,4 @@ export class CreateProjectDto {
   @ApiProperty()
   @IsUUID()
   engineerId!: string;
-
-  @Expose()
-  @ApiProperty({ enum: ProjectStatus })
-  @IsEnum(ProjectStatus)
-  status!: ProjectStatus;
-
-  @Expose()
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  structureType?: string;
-
-  @Expose()
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  inspectorName?: string;
-
-  @Expose()
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsDateString()
-  inspectionDate?: string;
 }

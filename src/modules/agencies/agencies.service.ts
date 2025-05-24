@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { SearchAgencyDto } from './dto/search-agency.dto';
-import { Prisma } from '@prisma/client';
 import { LogHelperService } from '../logs/log-helper.service';
 import { UpdateAgencyDto } from './dto/update-agency.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AgencyService {
@@ -32,20 +32,33 @@ export class AgencyService {
   }
 
   async search(searchAgencyDto: SearchAgencyDto) {
-    const { name, agencyNumber, state, city } = searchAgencyDto;
+    const { name, agencyNumber, state, city, district } = searchAgencyDto;
 
-    const where: Prisma.AgencyWhereInput = {};
+    const orFilters: Prisma.AgencyWhereInput[] = [];
 
-    if (name) where.name = { contains: name, mode: 'insensitive' };
+    if (name) {
+      orFilters.push({ name: { contains: name, mode: 'insensitive' } });
+    }
     if (agencyNumber) {
       const agencyNumberInt = parseInt(agencyNumber, 10);
-      where.agencyNumber = { equals: agencyNumberInt };
+      orFilters.push({ agencyNumber: { equals: agencyNumberInt } });
     }
-    if (state) where.state = { equals: state, mode: 'insensitive' };
-    if (city) where.city = { equals: city, mode: 'insensitive' };
+    if (state) {
+      orFilters.push({ state: { startsWith: state, mode: 'insensitive' } });
+    }
+    if (city) {
+      orFilters.push({ city: { startsWith: city, mode: 'insensitive' } });
+    }
+    if (district) {
+      orFilters.push({
+        district: { startsWith: district, mode: 'insensitive' },
+      });
+    }
+
+    const whereClause = orFilters.length > 0 ? { OR: orFilters } : {};
 
     return this.prisma.agency.findMany({
-      where,
+      where: whereClause,
     });
   }
 

@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import {
-  IsOptional,
-  IsString,
-  Min,
-  Length,
-  IsNumberString,
-} from 'class-validator';
+import { IsOptional, IsString, Length, IsNumberString } from 'class-validator';
 
 export class SearchAgencyDto {
   @Expose()
@@ -20,7 +14,6 @@ export class SearchAgencyDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumberString()
-  @Min(1)
   agencyNumber?: string;
 
   @Expose()
@@ -35,4 +28,11 @@ export class SearchAgencyDto {
   @IsString()
   @Length(2, 100, { message: 'Cidade deve ter entre 2 e 100 caracteres' })
   city?: string;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  @Length(2, 100, { message: 'Bairro deve ter entre 2 e 100 caracteres' })
+  district?: string;
 }

@@ -65,7 +65,7 @@ export class AuthService {
     }
 
     const user = await this.prisma.user.findUnique({
-      where: { email, role: 'funcionario' },
+      where: { email },
     });
 
     if (!user) throw new UnauthorizedException('Credenciais inválidas');

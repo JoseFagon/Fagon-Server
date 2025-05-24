@@ -21,6 +21,7 @@ export class ProjectService {
     const project = await this.prisma.project.create({
       data: {
         ...projectData,
+        status: 'aguardando_vistoria',
         agency: { connect: { id: agencyId } },
         engineer: { connect: { id: engineerId } },
       },
@@ -142,14 +143,20 @@ export class ProjectService {
         select: {
           id: true,
           name: true,
-          agency_number: true,
+          agencyNumber: true,
+          cnpj: true,
+          cep: true,
+          state: true,
+          city: true,
+          district: true,
+          street: true,
+          number: true,
         },
       },
       engineer: {
         select: {
           id: true,
           name: true,
-          specialty: true,
         },
       },
     };
