@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { setupSwagger } from './docs/swagger.config';
 import { PrismaService } from './prisma/prisma.service';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,6 +24,12 @@ async function bootstrap() {
     credentials: true,
     allowedHeaders: 'Content-Type,Authorization,X-Requested-With',
   });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      disableErrorMessages: false,
+      whitelist: true,
+    }),
+  );
   await app.listen(port);
   logger.log(`Application running on port ${port}`);
 }

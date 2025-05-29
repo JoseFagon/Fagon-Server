@@ -19,13 +19,13 @@ import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { LocationResponseDto } from './dto/response-location.dto';
 import {
-  CurrentUser,
+  // CurrentUser,
   RequireAuth,
 } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 import { LocationService } from './locations.service';
+// import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Locations')
 @ApiBearerAuth()
@@ -45,9 +45,9 @@ export class LocationController {
   @ApiBody({ type: CreateLocationDto })
   create(
     @Body() createLocationDto: CreateLocationDto,
-    @CurrentUser() currentUser: JwtPayload,
+    // @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.locationService.create(createLocationDto, currentUser.sub);
+    return this.locationService.create(createLocationDto);
   }
 
   @Get('project/:projectId')
@@ -93,9 +93,9 @@ export class LocationController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateLocationDto: UpdateLocationDto,
-    @CurrentUser() currentUser: JwtPayload,
+    // @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.locationService.update(id, updateLocationDto, currentUser.sub);
+    return this.locationService.update(id, updateLocationDto);
   }
 
   @Delete(':id')
@@ -107,8 +107,8 @@ export class LocationController {
   })
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() currentUser: JwtPayload,
+    // @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.locationService.remove(id, currentUser.sub);
+    return this.locationService.remove(id);
   }
 }

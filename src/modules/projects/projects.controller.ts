@@ -23,10 +23,10 @@ import { ProjectService } from './projects.service';
 import { ROLES } from 'src/common/constants/roles.constant';
 import { SearchProjectDto } from './dto/search-project.dto';
 import {
-  CurrentUser,
+  // CurrentUser,
   RequireAuth,
 } from 'src/common/decorators/current-user.decorator';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+// import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Projects')
 @ApiBearerAuth()
@@ -45,9 +45,9 @@ export class ProjectController {
   })
   create(
     @Body() createProjectDto: CreateProjectDto,
-    @CurrentUser() currentUser: JwtPayload,
+    // @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.projectService.create(createProjectDto, currentUser.sub);
+    return this.projectService.create(createProjectDto);
   }
 
   @Get()
@@ -82,9 +82,9 @@ export class ProjectController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProjectDto: UpdateProjectDto,
-    @CurrentUser() currentUser: JwtPayload,
+    // @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.projectService.update(id, updateProjectDto, currentUser.sub);
+    return this.projectService.update(id, updateProjectDto);
   }
 
   @Delete(':id')
@@ -96,9 +96,9 @@ export class ProjectController {
   })
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() currentUser: JwtPayload,
+    // @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.projectService.remove(id, currentUser.sub);
+    return this.projectService.remove(id);
   }
 
   @Get(':id/pavements')

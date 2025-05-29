@@ -13,7 +13,7 @@ export class ProjectService {
     private logHelper: LogHelperService,
   ) {}
 
-  async create(createProjectDto: CreateProjectDto, userId: string) {
+  async create(createProjectDto: CreateProjectDto) {
     const { agencyId, engineerId, ...projectData } = createProjectDto;
 
     await this.validateRelationsExist(agencyId, engineerId);
@@ -28,7 +28,7 @@ export class ProjectService {
       include: this.projectIncludes(),
     });
 
-    await this.logHelper.createLog(userId, 'CREATE', 'Project', project.id);
+    // await this.logHelper.createLog(userId, 'CREATE', 'Project', project.id);
 
     return project;
   }
@@ -83,7 +83,7 @@ export class ProjectService {
     return project;
   }
 
-  async update(id: string, updateProjectDto: UpdateProjectDto, userId: string) {
+  async update(id: string, updateProjectDto: UpdateProjectDto) {
     await this.findOne(id);
 
     const { agencyId, engineerId, ...projectData } = updateProjectDto;
@@ -105,12 +105,12 @@ export class ProjectService {
       include: this.projectIncludes(),
     });
 
-    await this.logHelper.createLog(userId, 'UPDATE', 'Project', id);
+    // await this.logHelper.createLog(userId, 'UPDATE', 'Project', id);
 
     return updatedProject;
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string) {
     await this.findOne(id);
 
     const project = await this.prisma.project.update({
@@ -118,7 +118,7 @@ export class ProjectService {
       data: { status: 'cancelado' },
     });
 
-    await this.logHelper.createLog(userId, 'CANCEL', 'Project', id);
+    // await this.logHelper.createLog(userId, 'CANCEL', 'Project', id);
 
     return project;
   }

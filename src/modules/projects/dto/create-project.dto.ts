@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID, IsEnum, IsNumber } from 'class-validator';
 import { ProjectType } from '@prisma/client';
 import { Expose } from 'class-transformer';
+import { IsUnique } from 'src/common/decorators/is-unique.decorator';
 
 export class CreateProjectDto {
   @Expose()
@@ -12,6 +13,9 @@ export class CreateProjectDto {
   @Expose()
   @ApiProperty()
   @IsNumber()
+  @IsUnique('Project', 'upeCode', {
+    message: 'A UPE tem que ser única',
+  })
   upeCode!: number;
 
   @Expose()

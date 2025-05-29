@@ -126,11 +126,13 @@ model AccessKey {
 model Pavement {
   id        String     @id @default(uuid())
   projectId String
-  pavement  String     @unique
+  pavement  String
   height    Float
   area      Float?
-  Location  Location[]
+
+  @@unique([pavement, projectId]) 
   project   Project    @relation(fields: [projectId], references: [id])
+  Location  Location[]
 }
 
 model Location {
@@ -140,6 +142,8 @@ model Location {
   name              String
   locationType      LocationType
   height            Float?
+
+  @@unique([name, projectId]) 
   pavement          Pavement?           @relation(fields: [pavementId], references: [id], onDelete: Restrict)
   project           Project             @relation(fields: [projectId], references: [id])
   MaterialFinishing MaterialFinishing[]

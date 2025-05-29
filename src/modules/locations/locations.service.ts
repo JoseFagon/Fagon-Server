@@ -20,7 +20,7 @@ export class LocationService {
     private logHelper: LogHelperService,
   ) {}
 
-  async create(createLocationDto: CreateLocationDto, userId: string) {
+  async create(createLocationDto: CreateLocationDto) {
     const { projectId, pavementId, ...locationData } = createLocationDto;
 
     await this.validateRelationsExist(projectId, pavementId);
@@ -33,7 +33,7 @@ export class LocationService {
       },
     });
 
-    await this.logHelper.createLog(userId, 'CREATE', 'Location', location.id);
+    // await this.logHelper.createLog(userId, 'CREATE', 'Location', location.id);
 
     return location;
   }
@@ -69,7 +69,7 @@ export class LocationService {
   async update(
     id: string,
     updateLocationDto: UpdateLocationDto,
-    userId: string,
+    // userId: string,
   ) {
     const location = await this.findOne(id);
 
@@ -99,7 +99,7 @@ export class LocationService {
       await this.handleMaterialFinishingUpdate(id, materialFinishings);
     }
 
-    await this.logHelper.createLog(userId, 'UPDATE_LOCATION', 'Location', id);
+    // await this.logHelper.createLog(userId, 'UPDATE_LOCATION', 'Location', id);
 
     return updatedLocation;
   }
@@ -139,14 +139,14 @@ export class LocationService {
     }
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string) {
     await this.findOne(id);
 
     const deletedLocation = await this.prisma.location.delete({
       where: { id },
     });
 
-    await this.logHelper.createLog(userId, 'DELETE', 'Location', id);
+    // await this.logHelper.createLog(userId, 'DELETE', 'Location', id);
 
     return deletedLocation;
   }

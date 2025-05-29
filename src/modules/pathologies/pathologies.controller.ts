@@ -21,13 +21,13 @@ import { CreatePathologyDto } from './dto/create-pathology.dto';
 import { SearchPathologyDto } from './dto/search-pathology.dto';
 import { UpdatePathologyDto } from './dto/update-pathology.dto';
 import {
-  CurrentUser,
+  // CurrentUser,
   RequireAuth,
 } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { PathologyService } from './pathologies.service';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+// import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Pathologies')
 @ApiBearerAuth()
@@ -46,9 +46,9 @@ export class PathologyController {
   })
   create(
     @Body() createPathologyDto: CreatePathologyDto,
-    @CurrentUser() currentUser: JwtPayload,
+    // @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.pathologyService.create(createPathologyDto, currentUser.sub);
+    return this.pathologyService.create(createPathologyDto);
   }
 
   @Get()
@@ -99,12 +99,12 @@ export class PathologyController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePathologyDto: UpdatePathologyDto,
-    @CurrentUser() currentUser: JwtPayload,
+    // @CurrentUser() currentUser: JwtPayload,
   ) {
     return this.pathologyService.update(
       id,
       updatePathologyDto,
-      currentUser.sub,
+      // currentUser.sub,
     );
   }
 
@@ -117,8 +117,8 @@ export class PathologyController {
   })
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() currentUser: JwtPayload,
+    // @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.pathologyService.remove(id, currentUser.sub);
+    return this.pathologyService.remove(id);
   }
 }

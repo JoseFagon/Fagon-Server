@@ -13,12 +13,12 @@ export class AgencyService {
     private logHelper: LogHelperService,
   ) {}
 
-  async create(createAgencyDto: CreateAgencyDto, userId: string) {
+  async create(createAgencyDto: CreateAgencyDto) {
     const agency = await this.prisma.agency.create({
       data: createAgencyDto,
     });
 
-    await this.logHelper.createLog(userId, 'CREATE', 'Agency', agency.id);
+    // await this.logHelper.createLog(userId, 'CREATE', 'Agency', agency.id);
 
     return agency;
   }
@@ -68,7 +68,7 @@ export class AgencyService {
     });
   }
 
-  async update(id: string, updateAgencyDto: UpdateAgencyDto, userId: string) {
+  async update(id: string, updateAgencyDto: UpdateAgencyDto) {
     await this.findOne(id);
 
     const updatedAgency = await this.prisma.agency.update({
@@ -76,17 +76,17 @@ export class AgencyService {
       data: updateAgencyDto,
     });
 
-    await this.logHelper.createLog(userId, 'UPDATE', 'Agency', id);
+    // await this.logHelper.createLog(userId, 'UPDATE', 'Agency', id);
 
     return updatedAgency;
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string) {
     const deletedAgency = await this.prisma.agency.delete({
       where: { id },
     });
 
-    await this.logHelper.createLog(userId, 'DELETE', 'Agency', id);
+    // await this.logHelper.createLog(userId, 'DELETE', 'Agency', id);
 
     return deletedAgency;
   }
