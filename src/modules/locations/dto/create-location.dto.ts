@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsUUID,
   IsString,
-  IsNumber,
   IsNotEmpty,
   IsOptional,
   IsEnum,
@@ -33,10 +32,4 @@ export class CreateLocationDto {
   @ApiProperty({ enum: LocationType })
   @IsEnum(LocationType)
   locationType!: LocationType;
-
-  @Expose()
-  @ApiProperty({ required: false })
-  @IsNumber()
-  @IsOptional()
-  height?: number;
 }

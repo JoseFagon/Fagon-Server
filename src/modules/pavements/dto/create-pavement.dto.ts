@@ -20,9 +20,4 @@ export class CreatePavementDto {
   @IsNumber()
   @IsNotEmpty()
   height!: number;
-
-  @Expose()
-  @ApiProperty({ required: false })
-  @IsNumber()
-  area?: number;
 }

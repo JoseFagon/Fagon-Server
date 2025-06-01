@@ -15,25 +15,49 @@ export class StorageService {
     file: FileUpload,
     bucket = 'default',
   ): Promise<StorageResult> {
-    if (
-      file.mimetype !== 'application/pdf' &&
-      !file.mimetype.startsWith('image/')
-    ) {
-      throw new Error('Apenas arquivos PDF ou imagens são permitidos.');
+    const allowedMimeTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'application/pdf',
+    ];
+
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      throw new Error(
+        'Tipo de arquivo não suportado. São permitidos: JPEG, PNG, GIF, WEBP, PDF',
+      );
     }
 
-    const filePath = `uploads/${Date.now()}-${file.originalname}`;
+    const sanitizedName = (file.originalname || `file-${Date.now()}`)
+      .replace(/[^a-zA-Z0-9._-]/g, '-')
+      .substring(0, 100);
 
-    const { data, error } = await this.supabase.storage
+    const fileExt =
+      file.originalname?.split('.').pop() ||
+      (file.mimetype === 'image/jpeg'
+        ? 'jpg'
+        : file.mimetype === 'image/png'
+          ? 'png'
+          : file.mimetype === 'image/gif'
+            ? 'gif'
+            : file.mimetype === 'image/webp'
+              ? 'webp'
+              : 'bin');
+
+    const filePath = `uploads/${Date.now()}-${sanitizedName}.${fileExt}`;
+
+    const { error } = await this.supabase.storage
       .from(bucket)
       .upload(filePath, file.buffer, {
         contentType: file.mimetype,
         upsert: false,
+        cacheControl: '3600',
       });
 
-    console.log('Upload result:', data);
-
-    if (error) throw new Error(`Upload failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Upload failed: ${error.message}`);
+    }
 
     const {
       data: { publicUrl },
@@ -58,5 +82,17 @@ export class StorageService {
     if (error) {
       throw new Error(`Failed to delete file: ${error.message}`);
     }
+  }
+
+  getFileUrl(filePath: string, bucket = 'default'): string {
+    const {
+      data: { publicUrl },
+    } = this.supabase.storage.from(bucket).getPublicUrl(filePath);
+
+    if (!publicUrl) {
+      throw new Error('Failed to get public URL');
+    }
+
+    return publicUrl;
   }
 }

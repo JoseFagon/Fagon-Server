@@ -4,9 +4,19 @@ import { AppConfigModule } from 'src/config/config.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [ConfigModule, PrismaModule, AppConfigModule],
+  imports: [
+    MulterModule.register({
+      limits: {
+        fileSize: 10 * 1024 * 1024, // 10MB
+      },
+    }),
+    ConfigModule,
+    PrismaModule,
+    AppConfigModule,
+  ],
   providers: [
     StorageService,
     {

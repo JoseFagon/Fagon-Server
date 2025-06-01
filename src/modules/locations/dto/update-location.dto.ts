@@ -10,11 +10,18 @@ export class UpdateLocationDto extends PartialType(CreateLocationDto) {
   @Expose()
   @ApiProperty({
     required: false,
-    type: 'array',
-    items: { type: 'string', format: 'binary' },
+    type: 'string',
+    format: 'binary',
+    description: 'Array de fotos para upload',
   })
   @IsOptional()
   photos?: Express.Multer.File[];
+
+  @Expose()
+  @ApiProperty({ required: false, type: [String] })
+  @IsOptional()
+  @IsArray()
+  existingPhotos?: string[];
 
   @Expose()
   @ApiProperty({ required: false, type: CreatePavementDto })

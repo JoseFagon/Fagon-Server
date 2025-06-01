@@ -69,24 +69,24 @@ export class LocationService {
   async update(
     id: string,
     updateLocationDto: UpdateLocationDto,
-    // userId: string,
+    // userId: string
   ) {
     const location = await this.findOne(id);
 
-    const { projectId, photos, pavement, materialFinishings, ...locationData } =
-      updateLocationDto;
+    const {
+      photos,
+      existingPhotos,
+      pavement,
+      materialFinishings,
+      ...locationData
+    } = updateLocationDto;
     const updateData: Prisma.LocationUpdateInput = { ...locationData };
-
-    if (projectId && projectId !== location.projectId) {
-      await this.validateProjectExists(projectId);
-      updateData.project = { connect: { id: projectId } };
-    }
 
     if (pavement) {
       await this.handlePavementUpdate(location.projectId, pavement);
     }
 
-    const updatedLocation = await this.prisma.location.update({
+    await this.prisma.location.update({
       where: { id },
       data: updateData,
     });
@@ -95,13 +95,27 @@ export class LocationService {
       await this.photoService.uploadPhotos(photos, id);
     }
 
+    if (existingPhotos?.length) {
+      await this.handleExistingPhotos(existingPhotos, id);
+    }
+
     if (materialFinishings?.length) {
       await this.handleMaterialFinishingUpdate(id, materialFinishings);
     }
 
     // await this.logHelper.createLog(userId, 'UPDATE_LOCATION', 'Location', id);
 
-    return updatedLocation;
+    return this.findOne(id);
+  }
+
+  private async handleExistingPhotos(photoIds: string[], locationId: string) {
+    await this.prisma.photo.updateMany({
+      where: {
+        id: { in: photoIds },
+        locationId,
+      },
+      data: { locationId },
+    });
   }
 
   private async handlePavementUpdate(

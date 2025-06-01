@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,6 +16,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
@@ -25,6 +28,7 @@ import {
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { LocationService } from './locations.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 // import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Locations')
@@ -85,17 +89,43 @@ export class LocationController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update location information' })
-  @ApiResponse({
-    status: 200,
-    type: LocationResponseDto,
-    description: 'Location updated',
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        photos: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+        existingPhotos: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+        pavement: { $ref: '#/components/schemas/CreatePavementDto' },
+        materialFinishings: {
+          type: 'array',
+          items: { $ref: '#/components/schemas/CreateMaterialFinishingDto' },
+        },
+      },
+    },
   })
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'photos', maxCount: 10 }]))
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateLocationDto: UpdateLocationDto,
     // @CurrentUser() currentUser: JwtPayload,
+    @Body() updateLocationDto: UpdateLocationDto,
+    @UploadedFiles() files: { photos?: Express.Multer.File[] },
   ) {
-    return this.locationService.update(id, updateLocationDto);
+    return this.locationService.update(id, {
+      ...updateLocationDto,
+      photos: files?.photos,
+    });
   }
 
   @Delete(':id')

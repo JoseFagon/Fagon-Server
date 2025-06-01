@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { UpdatePhotoDto } from './dto/update-photo.dto';
-import { SupabaseClient } from '@supabase/supabase-js';
 import { StorageService } from 'src/storage/storage.service';
 import { PhotoResponseDto } from './dto/response-photo.dto';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { InjectSupabaseClient } from 'nestjs-supabase-js';
 
 @Injectable()
@@ -27,32 +26,40 @@ export class PhotoService {
     const uploadedPhotos: PhotoResponseDto[] = [];
 
     for (const file of files) {
-      const uploadResult = await this.storageService.uploadFile(
-        {
-          originalname: file.originalname,
-          buffer: file.buffer,
-          mimetype: file.mimetype,
-          size: file.size,
-        },
-        'locations',
-      );
+      try {
+        const uploadResult = await this.storageService.uploadFile(
+          {
+            originalname: file.originalname || `photo-${Date.now()}.jpg`,
+            buffer: file.buffer,
+            mimetype: file.mimetype || 'image/jpeg',
+            size: file.size,
+          },
+          'locations',
+        );
 
-      const photo = await this.prisma.photo.create({
-        data: {
-          locationId,
-          filePath: uploadResult.key,
-          selectedForPdf: false,
-        },
-      });
+        const photo = await this.prisma.photo.create({
+          data: {
+            locationId,
+            filePath: uploadResult.key,
+            selectedForPdf: false,
+          },
+        });
 
-      uploadedPhotos.push({
-        ...photo,
-        url: uploadResult.url,
-        location: {
-          id: location.id,
-          name: location.name,
-        },
-      });
+        uploadedPhotos.push({
+          id: photo.id,
+          filePath: photo.filePath,
+          selectedForPdf: photo.selectedForPdf,
+          locationId: photo.locationId,
+          url: uploadResult.url,
+          location: {
+            id: location.id,
+            name: location.name,
+          },
+        });
+      } catch (error) {
+        console.error(`Error uploading file ${file.originalname}:`, error);
+        throw new Error(`Failed to upload photo: ${file.originalname}`);
+      }
     }
 
     return uploadedPhotos;
@@ -62,7 +69,12 @@ export class PhotoService {
     const photos = await this.prisma.photo.findMany({
       where: { locationId },
       include: {
-        location: true,
+        location: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
@@ -73,12 +85,17 @@ export class PhotoService {
     }));
   }
 
-  async updatePhoto(id: string, updatePhotoDto: UpdatePhotoDto) {
+  async updatePhoto(id: string, selectedForPdf: boolean) {
     const photo = await this.prisma.photo.update({
       where: { id },
-      data: updatePhotoDto,
+      data: { selectedForPdf },
       include: {
-        location: true,
+        location: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
@@ -95,8 +112,9 @@ export class PhotoService {
       throw new NotFoundException('Foto não encontrada');
     }
 
-    await this.supabase.storage.from('photos').remove([photo.filePath]);
-
+    await this.storageService.deleteFile(photo.filePath, 'locations');
     await this.prisma.photo.delete({ where: { id } });
+
+    return { success: true, message: 'Foto deletada com sucesso' };
   }
 }
