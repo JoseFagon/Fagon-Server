@@ -16,5 +16,5 @@ export class CreatePhotoDto {
   @Expose()
   @ApiProperty()
   @IsBoolean()
-  selectedForPdf!: boolean;
+  selectedForPdf!: boolean | undefined;
 }

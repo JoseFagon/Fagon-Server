@@ -85,7 +85,7 @@ export class PhotoService {
     }));
   }
 
-  async updatePhoto(id: string, selectedForPdf: boolean) {
+  async updatePhoto(id: string, selectedForPdf: boolean | undefined) {
     const photo = await this.prisma.photo.update({
       where: { id },
       data: { selectedForPdf },

@@ -9,8 +9,9 @@ import {
   Body,
   Patch,
   UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
@@ -22,11 +23,9 @@ import {
 import { RequireAuth } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
-import { UpdatePhotoDto } from './dto/update-photo.dto';
 import { PhotoService } from './photos.service';
 import { PhotoResponseDto } from './dto/response-photo.dto';
-import { CreatePhotoDto } from './dto/create-photo.dto';
-import { Express } from 'express';
+import { UpdatePhotoDto } from './dto/update-photo.dto';
 
 @ApiTags('Photos')
 @ApiBearerAuth()
@@ -37,29 +36,32 @@ export class PhotoController {
   constructor(private readonly photoService: PhotoService) {}
 
   @Post('upload/:locationId')
-  @UseInterceptors(FilesInterceptor('files'))
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'photos', maxCount: 10 }]))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'Upload de fotos para uma localização',
     schema: {
       type: 'object',
       properties: {
-        files: {
+        photos: {
           type: 'array',
           items: {
             type: 'string',
             format: 'binary',
           },
+          description: 'Array de fotos para upload',
         },
       },
-      required: ['files'],
     },
   })
-  uploadPhotos(
-    @UploadedFiles() files: Express.Multer.File[],
-    @Param() createPhotoDto: CreatePhotoDto,
+  async uploadPhotos(
+    @UploadedFiles() files: { photos?: Express.Multer.File[] },
+    @Param('locationId', ParseUUIDPipe) locationId: string,
   ) {
-    return this.photoService.uploadPhotos(files, createPhotoDto.locationId);
+    if (!files?.photos || files.photos.length === 0) {
+      throw new BadRequestException('Nenhuma foto foi enviada');
+    }
+    return this.photoService.uploadPhotos(files.photos, locationId);
   }
 
   @Get('location/:locationId')
@@ -69,7 +71,9 @@ export class PhotoController {
     type: [PhotoResponseDto],
     description: 'Lista de fotos',
   })
-  getPhotosByLocation(@Param('locationId', ParseUUIDPipe) locationId: string) {
+  async getPhotosByLocation(
+    @Param('locationId', ParseUUIDPipe) locationId: string,
+  ) {
     return this.photoService.getPhotosByLocation(locationId);
   }
 
@@ -81,21 +85,28 @@ export class PhotoController {
     type: PhotoResponseDto,
     description: 'Foto atualizada',
   })
-  updatePhoto(
+  async updatePhoto(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePhotoDto: UpdatePhotoDto,
   ) {
-    return this.photoService.updatePhoto(id, updatePhotoDto);
+    return this.photoService.updatePhoto(id, updatePhotoDto.selectedForPdf);
   }
 
   @Delete(':id')
   @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
   @ApiOperation({ summary: 'Remove uma foto' })
   @ApiResponse({
-    status: 204,
-    description: 'Foto removida',
+    status: 200,
+    description: 'Foto removida com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean' },
+        message: { type: 'string' },
+      },
+    },
   })
-  deletePhoto(@Param('id', ParseUUIDPipe) id: string) {
+  async deletePhoto(@Param('id', ParseUUIDPipe) id: string) {
     return this.photoService.deletePhoto(id);
   }
 }
