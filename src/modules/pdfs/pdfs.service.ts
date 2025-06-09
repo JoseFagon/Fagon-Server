@@ -36,11 +36,11 @@ export class PdfService {
       include: {
         agency: true,
         engineer: true,
-        Location: {
+        location: {
           include: {
-            Photo: true,
+            photo: true,
             pavement: true,
-            MaterialFinishing: true,
+            materialFinishing: true,
           },
         },
       },
@@ -56,13 +56,13 @@ export class PdfService {
       .map((loc) => loc.pavement)
       .filter((p): p is Pavement => p !== null);
 
-    const maxHeight = Math.max(...pavements.map((p) => p.height), 0);
+    const maxHeight = Math.max(...pavements.map((p) => p.height ?? 0), 0);
 
     const hasSubsolo = pavements.some((p) =>
       p.pavement.toLowerCase().includes('subsolo'),
     );
 
-    const hasOver6m = pavements.some((p) => p.height > 6);
+    const hasOver6m = pavements.some((p) => (p.height ?? 0) > 6);
 
     const fireResistance = hasSubsolo || hasOver6m ? 60 : 30;
 

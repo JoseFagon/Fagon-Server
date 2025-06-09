@@ -14,7 +14,8 @@ export class ProjectService {
   ) {}
 
   async create(createProjectDto: CreateProjectDto) {
-    const { agencyId, engineerId, ...projectData } = createProjectDto;
+    const { agencyId, engineerId, pavements, ...projectData } =
+      createProjectDto;
 
     await this.validateRelationsExist(agencyId, engineerId);
 
@@ -28,9 +29,21 @@ export class ProjectService {
       include: this.projectIncludes(),
     });
 
+    if (pavements?.length) {
+      await this.prisma.pavement.createMany({
+        data: pavements.map((p) => ({
+          pavement: p.pavement,
+          projectId: project.id,
+        })),
+      });
+    }
+
     // await this.logHelper.createLog(userId, 'CREATE', 'Project', project.id);
 
-    return project;
+    return this.prisma.project.findUnique({
+      where: { id: project.id },
+      include: this.projectIncludes(),
+    });
   }
 
   async findAll(filters: SearchProjectDto) {
@@ -157,6 +170,12 @@ export class ProjectService {
         select: {
           id: true,
           name: true,
+        },
+      },
+      pavement: {
+        select: {
+          id: true,
+          pavement: true,
         },
       },
     };

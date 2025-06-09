@@ -2,9 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateLocationDto } from './create-location.dto';
 import { Expose, Type } from 'class-transformer';
-import { IsOptional, ValidateNested, IsArray } from 'class-validator';
+import {
+  IsOptional,
+  ValidateNested,
+  IsArray,
+  IsUUID,
+  IsNumber,
+} from 'class-validator';
 import { CreateMaterialFinishingDto } from 'src/modules/material-finishings/dto/create-material-finishing.dto';
-import { CreatePavementDto } from 'src/modules/pavements/dto/create-pavement.dto';
 
 export class UpdateLocationDto extends PartialType(CreateLocationDto) {
   @Expose()
@@ -24,11 +29,16 @@ export class UpdateLocationDto extends PartialType(CreateLocationDto) {
   existingPhotos?: string[];
 
   @Expose()
-  @ApiProperty({ required: false, type: CreatePavementDto })
+  @ApiProperty({ required: false })
   @IsOptional()
-  @ValidateNested()
-  @Type(() => CreatePavementDto)
-  pavement?: CreatePavementDto;
+  @IsUUID()
+  pavementId?: string;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  height?: number;
 
   @Expose()
   @ApiProperty({ required: false, type: [CreateMaterialFinishingDto] })

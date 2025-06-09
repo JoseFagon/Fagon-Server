@@ -16,12 +16,16 @@ import { RegisterResponse } from 'src/common/interfaces/response.register.interf
 import { LoginResponse } from 'src/common/interfaces/response.login.interface';
 import { ADMIN_EMAILS } from 'src/common/constants/admin-emails.constant';
 import { User } from '@prisma/client';
+// import { EmailJobType } from 'src/queue/jobs/email.job';
+// import { InjectQueue } from '@nestjs/bull';
+// import { Queue } from 'bull';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    // @InjectQueue('email') private emailQueue: Queue,
   ) {}
 
   async validateEmployee(
@@ -142,11 +146,7 @@ export class AuthService {
       where: { id: userId },
     });
 
-    if (
-      !requestingUser ||
-      (requestingUser.role !== ROLES.FUNCIONARIO &&
-        requestingUser.role !== ROLES.ADMIN)
-    ) {
+    if (!requestingUser || requestingUser.role === ROLES.VISTORIADOR) {
       throw new BadRequestException(
         'Apenas funcionários ou administradores podem gerar chaves de acesso',
       );
@@ -213,4 +213,67 @@ export class AuthService {
       },
     };
   }
+
+  // async requestPasswordReset(email: string): Promise<{ message: string }> {
+  //   const user = await this.prisma.user.findUnique({
+  //     where: { email },
+  //   });
+
+  //   if (!user) {
+  //     return {
+  //       message: 'Se o email existir, um link de redefinição será enviado',
+  //     };
+  //   }
+
+  //   const resetToken = crypto.randomBytes(32).toString('hex');
+  //   const resetTokenExpiry = new Date(Date.now() + 1000 * 60 * 60); // 1 hora
+
+  //   await this.prisma.user.update({
+  //     where: { email },
+  //     data: {
+  //       resetToken,
+  //       resetTokenExpiry,
+  //     },
+  //   });
+
+  //   await this.emailQueue.add(EmailJobType.RECOVERY_PASSWORD, {
+  //     email: user.email,
+  //     name: user.name,
+  //     token: resetToken,
+  //     expiresIn: 60, // 60 minutos
+  //   });
+
+  //   return {
+  //     message: 'Se o email existir, um link de redefinição será enviado',
+  //   };
+  // }
+
+  // async resetPassword(
+  //   token: string,
+  //   newPassword: string,
+  // ): Promise<{ message: string }> {
+  //   const user = await this.prisma.user.findFirst({
+  //     where: {
+  //       resetToken: token,
+  //       resetTokenExpiry: {
+  //         gt: new Date(),
+  //       },
+  //     },
+  //   });
+
+  //   if (!user) {
+  //     throw new BadRequestException('Token inválido ou expirado');
+  //   }
+
+  //   await this.prisma.user.update({
+  //     where: { id: user.id },
+  //     data: {
+  //       password: await argon2.hash(newPassword),
+  //       resetToken: null,
+  //       resetTokenExpiry: null,
+  //     },
+  //   });
+
+  //   return { message: 'Senha redefinida com sucesso' };
+  // }
 }

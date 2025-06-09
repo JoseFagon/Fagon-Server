@@ -7,5 +7,10 @@ export class UpdatePavementDto extends PartialType(CreatePavementDto) {
   @Expose()
   @ApiProperty({ required: false })
   @IsNumber()
+  height?: number;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsNumber()
   area?: number;
 }

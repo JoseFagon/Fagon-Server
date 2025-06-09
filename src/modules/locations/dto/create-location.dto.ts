@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsUUID,
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsEnum,
-} from 'class-validator';
+import { IsUUID, IsString, IsNotEmpty, IsEnum } from 'class-validator';
 import { LocationType } from '@prisma/client';
 import { Expose } from 'class-transformer';
 
@@ -15,12 +9,6 @@ export class CreateLocationDto {
   @IsUUID()
   @IsNotEmpty()
   projectId!: string;
-
-  @Expose()
-  @ApiProperty({ required: false })
-  @IsUUID()
-  @IsOptional()
-  pavementId?: string;
 
   @Expose()
   @ApiProperty()

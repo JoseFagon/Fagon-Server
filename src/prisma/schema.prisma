@@ -50,6 +50,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
   id         String      @id @default(uuid())
   name       String
@@ -57,9 +58,10 @@ model User {
   password   String?
   role       UserRole
   status     Boolean
+  
   cameraType CameraType?
-  AccessKey  AccessKey[]
-  Log        Log[]
+  accessKey  AccessKey[]
+  log        Log[]
 }
 
 model Agency {
@@ -73,7 +75,8 @@ model Agency {
   district     String
   street       String
   number       Int
-  Project      Project[]
+  
+  project      Project[]
 }
 
 model Engineer {
@@ -86,7 +89,7 @@ model Engineer {
   registrationNumber String
   registrationEntity String
 
-  Project            Project[]
+  project            Project[]
 }
 
 model Project {
@@ -101,11 +104,11 @@ model Project {
   inspectionDate DateTime?
   createdAt      DateTime      @default(now())
 
-  AccessKey      AccessKey[]
-  Location       Location[]
-  Pathology      Pathology[]
-  Pavement       Pavement[]
-  Pdf            Pdf[]
+  accessKey      AccessKey[]
+  location       Location[]
+  pathology      Pathology[]
+  pavement       Pavement[]
+  pdf            Pdf[]
   agency         Agency        @relation(fields: [agencyId], references: [id])
   engineer       Engineer      @relation(fields: [engineerId], references: [id])
 }
@@ -127,12 +130,12 @@ model Pavement {
   id        String     @id @default(uuid())
   projectId String
   pavement  String
-  height    Float
+  height    Float?
   area      Float?
 
   @@unique([pavement, projectId]) 
   project   Project    @relation(fields: [projectId], references: [id])
-  Location  Location[]
+  location  Location[]
 }
 
 model Location {
@@ -146,9 +149,9 @@ model Location {
   @@unique([name, projectId]) 
   pavement          Pavement?           @relation(fields: [pavementId], references: [id], onDelete: Restrict)
   project           Project             @relation(fields: [projectId], references: [id])
-  MaterialFinishing MaterialFinishing[]
-  Pathology         Pathology[]
-  Photo             Photo[]
+  materialFinishing MaterialFinishing[]
+  pathology         Pathology[]
+  photo             Photo[]
 }
 
 model MaterialFinishing {
@@ -156,6 +159,7 @@ model MaterialFinishing {
   locationId        String
   surface           SurfaceType
   materialFinishing String
+  
   location          Location    @relation(fields: [locationId], references: [id])
 }
 
@@ -164,6 +168,7 @@ model Photo {
   locationId     String
   filePath       String
   selectedForPdf Boolean
+  
   location       Location @relation(fields: [locationId], references: [id])
 }
 
@@ -175,15 +180,17 @@ model Pathology {
   title             String
   description       String
   recordDate        DateTime
+  
   location          Location         @relation(fields: [locationId], references: [id])
   project           Project          @relation(fields: [projectId], references: [id])
-  PathologyPhoto    PathologyPhoto[]
+  pathologyPhoto    PathologyPhoto[]
 }
 
 model PathologyPhoto {
   id          String    @id @default(uuid())
   pathologyId String
   filePath    String
+  
   pathology   Pathology @relation(fields: [pathologyId], references: [id])
 }
 
@@ -194,6 +201,7 @@ model Pdf {
   filePath       String
   signedFilePath String?
   generatedAt    DateTime
+  
   project        Project  @relation(fields: [projectId], references: [id])
 }
 
@@ -217,5 +225,6 @@ model Log {
   tableName   String
   targetId    String
   generatedAt DateTime
+  
   user        User     @relation(fields: [userId], references: [id])
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsUUID, IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsUUID, IsString, IsNotEmpty } from 'class-validator';
 
 export class CreatePavementDto {
   @Expose()
@@ -14,10 +14,4 @@ export class CreatePavementDto {
   @IsString()
   @IsNotEmpty()
   pavement!: string;
-
-  @Expose()
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  height!: number;
 }

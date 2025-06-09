@@ -8,6 +8,8 @@ import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { ROLES } from 'src/common/constants/roles.constant';
+// import { ForgotPasswordDto } from './dto/forgot-password.dto';
+// import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -40,4 +42,17 @@ export class AuthController {
   ): Promise<{ token: string }> {
     return this.authService.generateAccessKey(accessKeyDto, currentUser.sub);
   }
+
+  // @Post('forgot-password')
+  // async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+  //   return this.authService.requestPasswordReset(forgotPasswordDto.email);
+  // }
+
+  // @Post('reset-password')
+  // async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+  //   return this.authService.resetPassword(
+  //     resetPasswordDto.token,
+  //     resetPasswordDto.newPassword,
+  //   );
+  // }
 }
