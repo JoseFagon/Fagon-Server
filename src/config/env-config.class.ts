@@ -90,8 +90,7 @@ export class EnvConfig {
   SUPABASE_KEY!: string;
 
   @IsString()
-  @IsOptional()
-  SUPABASE_STORAGE_BUCKET = 'default';
+  SUPABASE_STORAGE_BUCKET!: string;
 
   @IsString()
   @IsOptional()

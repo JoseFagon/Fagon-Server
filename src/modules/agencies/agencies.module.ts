@@ -7,5 +7,6 @@ import { LogHelperService } from '../logs/log-helper.service';
 @Module({
   controllers: [AgencyController],
   providers: [AgencyService, PrismaService, LogHelperService],
+  exports: [AgencyService],
 })
 export class AgencyModule {}

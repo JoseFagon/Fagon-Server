@@ -90,31 +90,7 @@ export class LocationController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update location information' })
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        photos: {
-          type: 'array',
-          items: {
-            type: 'string',
-            format: 'binary',
-          },
-        },
-        existingPhotos: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-        pavement: { $ref: '#/components/schemas/CreatePavementDto' },
-        materialFinishings: {
-          type: 'array',
-          items: { $ref: '#/components/schemas/CreateMaterialFinishingDto' },
-        },
-      },
-    },
-  })
+  @ApiBody({ type: UpdateLocationDto })
   @UseInterceptors(FileFieldsInterceptor([{ name: 'photos', maxCount: 10 }]))
   update(
     @Param('id', ParseUUIDPipe) id: string,

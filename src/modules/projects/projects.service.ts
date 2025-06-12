@@ -1,15 +1,30 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { SearchProjectDto } from './dto/search-project.dto';
 import { Prisma } from '@prisma/client';
 import { LogHelperService } from '../logs/log-helper.service';
+import { AgencyService } from '../agencies/agencies.service';
+import { EngineerService } from '../engineers/engineers.service';
+import { PavementService } from '../pavements/pavements.service';
+import { PathologyService } from '../pathologies/pathologies.service';
 
 @Injectable()
 export class ProjectService {
   constructor(
     private prisma: PrismaService,
+    private agencyService: AgencyService,
+    private engineerService: EngineerService,
+    @Inject(forwardRef(() => PavementService))
+    private pavementService: PavementService,
+    @Inject(forwardRef(() => PathologyService))
+    private pathologyService: PathologyService,
     private logHelper: LogHelperService,
   ) {}
 
@@ -30,12 +45,12 @@ export class ProjectService {
     });
 
     if (pavements?.length) {
-      await this.prisma.pavement.createMany({
-        data: pavements.map((p) => ({
+      for (const p of pavements) {
+        await this.pavementService.create({
           pavement: p.pavement,
           projectId: project.id,
-        })),
-      });
+        });
+      }
     }
 
     // await this.logHelper.createLog(userId, 'CREATE', 'Project', project.id);
@@ -103,12 +118,12 @@ export class ProjectService {
     const updateData: Prisma.ProjectUpdateInput = { ...projectData };
 
     if (agencyId) {
-      await this.validateAgencyExists(agencyId);
+      await this.agencyService.validateAgencyExists(agencyId);
       updateData.agency = { connect: { id: agencyId } };
     }
 
     if (engineerId) {
-      await this.validateEngineerExists(engineerId);
+      await this.engineerService.validateEngineerExists(engineerId);
       updateData.engineer = { connect: { id: engineerId } };
     }
 
@@ -136,18 +151,14 @@ export class ProjectService {
     return project;
   }
 
-  async getProjectPavements(id: string) {
-    await this.findOne(id);
-    return this.prisma.pavement.findMany({
-      where: { projectId: id },
-    });
+  async getProjectPavements(projectId: string) {
+    await this.findOne(projectId);
+    return this.pavementService.findByProject(projectId);
   }
 
-  async getProjectPathologies(id: string) {
-    await this.findOne(id);
-    return this.prisma.pathology.findMany({
-      where: { projectId: id },
-    });
+  async getProjectPathologies(projectId: string) {
+    await this.findOne(projectId);
+    return this.pathologyService.findAll(projectId);
   }
 
   private projectIncludes() {
@@ -183,26 +194,18 @@ export class ProjectService {
 
   private async validateRelationsExist(agencyId: string, engineerId: string) {
     await Promise.all([
-      this.validateAgencyExists(agencyId),
-      this.validateEngineerExists(engineerId),
+      this.agencyService.validateAgencyExists(agencyId),
+      this.engineerService.validateEngineerExists(engineerId),
     ]);
   }
 
-  private async validateAgencyExists(agencyId: string) {
-    const agency = await this.prisma.agency.findUnique({
-      where: { id: agencyId },
+  async validateProjectExists(projectId: string) {
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
     });
-    if (!agency) {
-      throw new NotFoundException('Agency not found');
-    }
-  }
 
-  private async validateEngineerExists(engineerId: string) {
-    const engineer = await this.prisma.engineer.findUnique({
-      where: { id: engineerId },
-    });
-    if (!engineer) {
-      throw new NotFoundException('Engineer not found');
+    if (!project) {
+      throw new NotFoundException('Project not found');
     }
   }
 }

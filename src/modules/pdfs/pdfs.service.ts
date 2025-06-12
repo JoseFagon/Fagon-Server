@@ -12,6 +12,7 @@ import {
   Agency,
   Engineer,
 } from '@prisma/client';
+import { ProjectService } from '../projects/projects.service';
 
 interface ProjectWithRelations extends Project {
   agency: Agency;
@@ -28,23 +29,11 @@ export class PdfService {
   constructor(
     private prisma: PrismaService,
     private storageService: StorageService,
+    private projectService: ProjectService,
   ) {}
 
   async generatePdf(projectId: string, templateName: string, pdfType: string) {
-    const project = await this.prisma.project.findUnique({
-      where: { id: projectId },
-      include: {
-        agency: true,
-        engineer: true,
-        location: {
-          include: {
-            photo: true,
-            pavement: true,
-            materialFinishing: true,
-          },
-        },
-      },
-    });
+    const project = await this.projectService.findOne(projectId);
 
     if (!project) {
       throw new Error('Projeto não encontrado');

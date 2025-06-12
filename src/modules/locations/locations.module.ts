@@ -1,25 +1,26 @@
-import { Module } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { LogHelperService } from '../logs/log-helper.service';
+import { forwardRef, Module } from '@nestjs/common';
 import { LocationController } from './locations.controller';
 import { LocationService } from './locations.service';
-import { MaterialFinishingService } from '../material-finishings/material-finishings.service';
-import { PavementService } from '../pavements/pavements.service';
-import { PhotoService } from '../photos/photos.service';
-import { StorageModule } from 'src/storage/storage.module';
 import { AppConfigModule } from 'src/config/config.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { ProjectModule } from '../projects/projects.module';
+import { PavementModule } from '../pavements/pavements.module';
+import { MaterialFinishingModule } from '../material-finishings/material-finishings.module';
+import { PhotoModule } from '../photos/photos.module';
+import { LogModule } from '../logs/logs.module';
 
 @Module({
-  imports: [StorageModule, AppConfigModule, PrismaModule],
-  controllers: [LocationController],
-  providers: [
-    LocationService,
-    PrismaService,
-    LogHelperService,
-    PhotoService,
-    PavementService,
-    MaterialFinishingService,
+  imports: [
+    AppConfigModule,
+    PrismaModule,
+    forwardRef(() => ProjectModule),
+    forwardRef(() => PavementModule),
+    MaterialFinishingModule,
+    forwardRef(() => PhotoModule),
+    LogModule,
   ],
+  controllers: [LocationController],
+  providers: [LocationService],
+  exports: [LocationService],
 })
 export class LocationModule {}

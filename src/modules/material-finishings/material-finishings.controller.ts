@@ -21,6 +21,7 @@ import { RequireAuth } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { MaterialFinishingService } from './material-finishings.service';
+import { LocationFinishingInputDto } from './dto/location-finishing-input.dto';
 
 @ApiTags('Material Finishings')
 @ApiBearerAuth()
@@ -41,6 +42,22 @@ export class MaterialFinishingController {
   })
   create(@Body() createDto: CreateMaterialFinishingDto) {
     return this.materialFinishingService.create(createDto);
+  }
+
+  @Post('bulk/:locationId')
+  @ApiOperation({
+    summary: 'Cria múltiplos acabamentos materiais para uma localização',
+  })
+  @ApiResponse({
+    status: 201,
+    type: [MaterialFinishingResponseDto],
+    description: 'Acabamentos materiais criados com sucesso',
+  })
+  async createBulk(
+    @Param('locationId', ParseUUIDPipe) locationId: string,
+    @Body() finishes: LocationFinishingInputDto,
+  ) {
+    return this.materialFinishingService.createBulk(locationId, finishes);
   }
 
   @Get('location/:locationId')

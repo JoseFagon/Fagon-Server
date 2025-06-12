@@ -1,13 +1,24 @@
-import { Module } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { forwardRef, Module } from '@nestjs/common';
 import { ProjectService } from './projects.service';
 import { ProjectController } from './projects.controller';
-import { LogHelperService } from '../logs/log-helper.service';
-import { PavementService } from '../pavements/pavements.service';
+import { PavementModule } from '../pavements/pavements.module';
+import { AgencyModule } from '../agencies/agencies.module';
+import { EngineerModule } from '../engineers/engineers.module';
+import { LogModule } from '../logs/logs.module';
+import { PathologyModule } from '../pathologies/pathologies.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
+  imports: [
+    PrismaModule,
+    AgencyModule,
+    EngineerModule,
+    forwardRef(() => PavementModule),
+    forwardRef(() => PathologyModule),
+    LogModule,
+  ],
   controllers: [ProjectController],
-  providers: [ProjectService, PrismaService, PavementService, LogHelperService],
+  providers: [ProjectService],
   exports: [ProjectService],
 })
 export class ProjectModule {}

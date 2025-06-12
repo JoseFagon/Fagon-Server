@@ -1,42 +1,74 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateMaterialFinishingDto } from './dto/create-material-finishing.dto';
 import { UpdateMaterialFinishingDto } from './dto/update-material-finishing.dto';
+import { Prisma, SurfaceType } from '@prisma/client';
+import { LocationFinishingInputDto } from './dto/location-finishing-input.dto';
 
 @Injectable()
 export class MaterialFinishingService {
   constructor(private prisma: PrismaService) {}
 
   async create(createDto: CreateMaterialFinishingDto) {
-    const materialFinishing = await this.prisma.materialFinishing.create({
+    return this.prisma.materialFinishing.create({
       data: createDto,
-      include: {
-        location: true,
-      },
+    });
+  }
+
+  async createBulk(locationId: string, finishes: LocationFinishingInputDto) {
+    const materialFinishings = this.mapFinishesToMaterialFinishings(
+      locationId,
+      finishes,
+    );
+
+    await this.prisma.materialFinishing.deleteMany({
+      where: { locationId },
     });
 
-    return materialFinishing;
+    return this.prisma.materialFinishing.createMany({
+      data: materialFinishings,
+    });
+  }
+
+  private mapFinishesToMaterialFinishings(
+    locationId: string,
+    finishes: LocationFinishingInputDto,
+  ): Prisma.MaterialFinishingCreateManyInput[] {
+    const createInput = (
+      surface: SurfaceType,
+      materials: string[] | undefined,
+    ): Prisma.MaterialFinishingCreateManyInput[] => {
+      if (!materials) return [];
+      return materials.map(
+        (material): Prisma.MaterialFinishingCreateManyInput => ({
+          locationId,
+          surface,
+          materialFinishing: material,
+        }),
+      );
+    };
+
+    return [
+      ...createInput(SurfaceType.piso, finishes.floor),
+      ...createInput(SurfaceType.parede, finishes.wall),
+      ...createInput(SurfaceType.forro, finishes.ceiling),
+    ];
   }
 
   async findByLocation(locationId: string) {
     return this.prisma.materialFinishing.findMany({
       where: { locationId },
-      include: {
-        location: true,
-      },
     });
   }
 
   async findOne(id: string) {
     const materialFinishing = await this.prisma.materialFinishing.findUnique({
       where: { id },
-      include: {
-        location: true,
-      },
     });
 
     if (!materialFinishing) {
-      throw new NotFoundException('Acabamento material não encontrado');
+      throw new NotFoundException('Material finishing not found');
     }
 
     return materialFinishing;
@@ -45,18 +77,17 @@ export class MaterialFinishingService {
   async update(id: string, updateDto: UpdateMaterialFinishingDto) {
     await this.findOne(id);
 
-    const updated = await this.prisma.materialFinishing.update({
+    return this.prisma.materialFinishing.update({
       where: { id },
       data: updateDto,
-      include: {
-        location: true,
-      },
     });
-
-    return updated;
   }
 
   async remove(id: string) {
-    await this.prisma.materialFinishing.delete({ where: { id } });
+    await this.findOne(id);
+
+    return this.prisma.materialFinishing.delete({
+      where: { id },
+    });
   }
 }

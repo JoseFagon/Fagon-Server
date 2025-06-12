@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { SearchAgencyDto } from './dto/search-agency.dto';
@@ -89,5 +89,14 @@ export class AgencyService {
     // await this.logHelper.createLog(userId, 'DELETE', 'Agency', id);
 
     return deletedAgency;
+  }
+
+  async validateAgencyExists(agencyId: string) {
+    const agency = await this.prisma.agency.findUnique({
+      where: { id: agencyId },
+    });
+    if (!agency) {
+      throw new NotFoundException('Agency not found');
+    }
   }
 }

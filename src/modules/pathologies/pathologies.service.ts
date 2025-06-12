@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { LogHelperService } from '../logs/log-helper.service';
@@ -12,6 +17,7 @@ export class PathologyService {
   constructor(
     private prisma: PrismaService,
     private logHelper: LogHelperService,
+    @Inject(forwardRef(() => PathologyPhotoService))
     private pathologyPhotoService: PathologyPhotoService,
   ) {}
 

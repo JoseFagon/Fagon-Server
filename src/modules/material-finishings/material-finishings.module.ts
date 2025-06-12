@@ -6,5 +6,6 @@ import { MaterialFinishingController } from './material-finishings.controller';
 @Module({
   controllers: [MaterialFinishingController],
   providers: [MaterialFinishingService, PrismaService],
+  exports: [MaterialFinishingService],
 })
 export class MaterialFinishingModule {}

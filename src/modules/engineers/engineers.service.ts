@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateEngineerDto } from './dto/create-engineer.dto';
 import { UpdateEngineerDto } from './dto/update-engineer.dto';
@@ -56,5 +56,14 @@ export class EngineerService {
     return this.prisma.engineer.delete({
       where: { id },
     });
+  }
+
+  async validateEngineerExists(engineerId: string) {
+    const engineer = await this.prisma.engineer.findUnique({
+      where: { id: engineerId },
+    });
+    if (!engineer) {
+      throw new NotFoundException('Engineer not found');
+    }
   }
 }

@@ -1,22 +1,29 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { StorageService } from 'src/storage/storage.service';
 import { PathologyPhotoResponseDto } from './dto/response-pathology-photo.dto';
 import { InjectSupabaseClient } from 'nestjs-supabase-js';
+import { PathologyService } from '../pathologies/pathologies.service';
 
 @Injectable()
 export class PathologyPhotoService {
   constructor(
     private prisma: PrismaService,
     private storageService: StorageService,
+    @Inject(forwardRef(() => PathologyService))
+    private pathologyService: PathologyService,
     @InjectSupabaseClient() private supabase: SupabaseClient,
   ) {}
 
   async uploadPhotos(files: Express.Multer.File[], pathologyId: string) {
-    const pathologyExists = await this.prisma.pathology.findUnique({
-      where: { id: pathologyId },
-    });
+    const pathologyExists = await this.pathologyService.findOne(pathologyId);
+
     if (!pathologyExists) {
       throw new NotFoundException('Patologia não encontrada');
     }
@@ -24,15 +31,12 @@ export class PathologyPhotoService {
     const uploadedPhotos: PathologyPhotoResponseDto[] = [];
 
     for (const file of files) {
-      const uploadResult = await this.storageService.uploadFile(
-        {
-          originalname: file.originalname,
-          buffer: file.buffer,
-          mimetype: file.mimetype,
-          size: file.size,
-        },
-        'pathology-photos',
-      );
+      const uploadResult = await this.storageService.uploadFile({
+        originalname: file.originalname,
+        buffer: file.buffer,
+        mimetype: file.mimetype,
+        size: file.size,
+      });
 
       const photo = await this.prisma.pathologyPhoto.create({
         data: {
@@ -69,9 +73,7 @@ export class PathologyPhotoService {
 
     return photos.map((photo) => ({
       ...photo,
-      url: this.supabase.storage
-        .from('pathology-photos')
-        .getPublicUrl(photo.filePath).data.publicUrl,
+      url: this.storageService.getSignedUrl(photo.filePath),
     }));
   }
 
@@ -98,9 +100,7 @@ export class PathologyPhotoService {
 
     return {
       ...photo,
-      url: this.supabase.storage
-        .from('pathology-photos')
-        .getPublicUrl(photo.filePath).data.publicUrl,
+      url: await this.storageService.getSignedUrl(photo.filePath),
     };
   }
 
@@ -120,9 +120,7 @@ export class PathologyPhotoService {
       throw new NotFoundException('Foto da patologia não encontrada');
     }
 
-    await this.supabase.storage
-      .from('pathology-photos')
-      .remove([photo.filePath]);
+    await this.storageService.deleteFile(photo.filePath);
 
     await this.prisma.pathologyPhoto.delete({ where: { id } });
   }

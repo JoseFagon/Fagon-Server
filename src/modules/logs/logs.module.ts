@@ -8,6 +8,6 @@ import { LogHelperService } from './log-helper.service';
 @Module({
   controllers: [LogController],
   providers: [LogService, PrismaService, LogHelperService],
-  exports: [LogHelperService],
+  exports: [LogHelperService, LogService],
 })
 export class LogModule {}
