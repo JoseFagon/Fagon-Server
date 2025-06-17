@@ -34,11 +34,11 @@ export class MaterialFinishingController {
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'Cria um novo acabamento material' })
+  @ApiOperation({ summary: 'Create a new material finishing' })
   @ApiResponse({
     status: 201,
     type: MaterialFinishingResponseDto,
-    description: 'Acabamento material criado com sucesso',
+    description: 'Material finishing successfully created',
   })
   create(@Body() createDto: CreateMaterialFinishingDto) {
     return this.materialFinishingService.create(createDto);
@@ -46,12 +46,12 @@ export class MaterialFinishingController {
 
   @Post('bulk/:locationId')
   @ApiOperation({
-    summary: 'Cria múltiplos acabamentos materiais para uma localização',
+    summary: 'Create multiple material finishings for a location',
   })
   @ApiResponse({
     status: 201,
     type: [MaterialFinishingResponseDto],
-    description: 'Acabamentos materiais criados com sucesso',
+    description: 'Material finishings successfully created',
   })
   async createBulk(
     @Param('locationId', ParseUUIDPipe) locationId: string,
@@ -61,33 +61,33 @@ export class MaterialFinishingController {
   }
 
   @Get('location/:locationId')
-  @ApiOperation({ summary: 'Lista acabamentos materiais por localização' })
+  @ApiOperation({ summary: 'List material finishings by location' })
   @ApiResponse({
     status: 200,
     type: [MaterialFinishingResponseDto],
-    description: 'Lista de acabamentos materiais',
+    description: 'List of material finishings',
   })
   findByLocation(@Param('locationId', ParseUUIDPipe) locationId: string) {
     return this.materialFinishingService.findByLocation(locationId);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtém um acabamento material específico' })
+  @ApiOperation({ summary: 'Get a specific material finishing' })
   @ApiResponse({
     status: 200,
     type: MaterialFinishingResponseDto,
-    description: 'Detalhes do acabamento material',
+    description: 'Material finishing details',
   })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.materialFinishingService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualiza um acabamento material' })
+  @ApiOperation({ summary: 'Update a material finishing' })
   @ApiResponse({
     status: 200,
     type: MaterialFinishingResponseDto,
-    description: 'Acabamento material atualizado',
+    description: 'Material finishing updated',
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -97,10 +97,10 @@ export class MaterialFinishingController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove um acabamento material' })
+  @ApiOperation({ summary: 'Delete a material finishing' })
   @ApiResponse({
     status: 204,
-    description: 'Acabamento material removido',
+    description: 'Material finishing successfully deleted',
   })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.materialFinishingService.remove(id);

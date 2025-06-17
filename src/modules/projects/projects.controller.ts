@@ -14,6 +14,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -23,8 +24,8 @@ import { ProjectService } from './projects.service';
 import { ROLES } from 'src/common/constants/roles.constant';
 import { SearchProjectDto } from './dto/search-project.dto';
 import {
-  // CurrentUser,
   RequireAuth,
+  // CurrentUser,
 } from 'src/common/decorators/current-user.decorator';
 // import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
@@ -41,7 +42,7 @@ export class ProjectController {
   @ApiResponse({
     status: 201,
     type: ProjectResponseDto,
-    description: 'Project created successfully',
+    description: 'Project successfully created',
   })
   create(
     @Body() createProjectDto: CreateProjectDto,
@@ -51,18 +52,39 @@ export class ProjectController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all projects with filters' })
+  @ApiOperation({ summary: 'Get paginated list of projects' })
   @ApiResponse({
     status: 200,
     type: [ProjectResponseDto],
     description: 'List of projects',
   })
-  findAll(@Query() filters: SearchProjectDto) {
-    return this.projectService.findAll(filters);
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number for pagination',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+  })
+  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+    return this.projectService.findAll({ page, limit });
+  }
+
+  @Get('search')
+  @ApiOperation({ summary: 'Search projects with filters' })
+  @ApiResponse({
+    status: 200,
+    type: [ProjectResponseDto],
+    description: 'Search results',
+  })
+  search(@Query() searchParams: SearchProjectDto) {
+    return this.projectService.search(searchParams);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get project details' })
+  @ApiOperation({ summary: 'Get project details by ID' })
   @ApiResponse({
     status: 200,
     type: ProjectResponseDto,
@@ -77,7 +99,7 @@ export class ProjectController {
   @ApiResponse({
     status: 200,
     type: ProjectResponseDto,
-    description: 'Project updated',
+    description: 'Project successfully updated',
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -92,7 +114,7 @@ export class ProjectController {
   @ApiOperation({ summary: 'Delete a project' })
   @ApiResponse({
     status: 204,
-    description: 'Project deleted',
+    description: 'Project successfully deleted',
   })
   remove(
     @Param('id', ParseUUIDPipe) id: string,
@@ -102,13 +124,13 @@ export class ProjectController {
   }
 
   @Get(':id/pavements')
-  @ApiOperation({ summary: 'Get project pavements' })
+  @ApiOperation({ summary: 'Get pavements of a project' })
   getPavements(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectService.getProjectPavements(id);
   }
 
   @Get(':id/pathologies')
-  @ApiOperation({ summary: 'Get project pathologies' })
+  @ApiOperation({ summary: 'Get pathologies of a project' })
   getPathologies(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectService.getProjectPathologies(id);
   }

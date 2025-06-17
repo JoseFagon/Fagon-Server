@@ -108,19 +108,19 @@ export class StorageService {
   async getSignedUrl(
     filePath: string,
     bucket?: string,
-    expiresIn = 60 * 5, // 5 minutos
+    expiresIn = 60 * 60 * 24 * 7, // 7 dias
   ): Promise<string> {
     const targetBucket = bucket || this.bucketName;
 
-    const { data, error } = await this.supabase.storage
+    const { data: signedUrlData, error } = await this.supabase.storage
       .from(targetBucket)
       .createSignedUrl(filePath, expiresIn);
 
-    if (error || !data?.signedUrl) {
+    if (error || !signedUrlData?.signedUrl) {
       throw new Error(`Erro ao gerar URL assinada: ${error?.message}`);
     }
 
-    return data.signedUrl;
+    return signedUrlData.signedUrl;
   }
 
   async deleteFile(filePath: string, bucket?: string): Promise<void> {

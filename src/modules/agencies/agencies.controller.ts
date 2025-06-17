@@ -40,11 +40,11 @@ export class AgencyController {
   constructor(private readonly agencyService: AgencyService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Cria uma nova agência' })
+  @ApiOperation({ summary: 'Create a new agency' })
   @ApiResponse({
     status: 201,
     type: AgencyResponseDto,
-    description: 'Agência criada com sucesso',
+    description: 'Agency successfully created',
   })
   @ApiBody({ type: CreateAgencyDto })
   create(
@@ -57,61 +57,61 @@ export class AgencyController {
   @Get()
   @CacheKey('agencies_all')
   @CacheTTL(30)
-  @ApiOperation({ summary: 'Lista todas as agências' })
+  @ApiOperation({ summary: 'List all agencies' })
   @ApiResponse({
     status: 200,
     type: [AgencyResponseDto],
-    description: 'Lista de agências',
+    description: 'List of agencies',
   })
   @ApiQuery({
     name: 'page',
     required: false,
-    description: 'Página para paginação',
+    description: 'Page number for pagination',
   })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Limite de itens por página',
+    description: 'Number of items per page',
   })
   findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
     return this.agencyService.findAll({ page, limit });
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Busca agências com filtros' })
+  @ApiOperation({ summary: 'Search agencies with filters' })
   @ApiResponse({
     status: 200,
     type: [AgencyResponseDto],
-    description: 'Resultados da busca',
+    description: 'Search results',
   })
   search(@Query() searchParams: SearchAgencyDto) {
     return this.agencyService.search(searchParams);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtém uma agência por ID' })
-  @ApiParam({ name: 'id', description: 'UUID da agência' })
+  @ApiOperation({ summary: 'Get an agency by ID' })
+  @ApiParam({ name: 'id', description: 'Agency UUID' })
   @ApiResponse({
     status: 200,
     type: AgencyResponseDto,
-    description: 'Agência encontrada',
+    description: 'Agency found',
   })
   @ApiResponse({
     status: 404,
-    description: 'Agência não encontrada',
+    description: 'Agency not found',
   })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.agencyService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualiza uma agência' })
-  @ApiParam({ name: 'id', description: 'UUID da agência' })
+  @ApiOperation({ summary: 'Update an agency' })
+  @ApiParam({ name: 'id', description: 'Agency UUID' })
   @ApiBody({ type: CreateAgencyDto })
   @ApiResponse({
     status: 200,
     type: AgencyResponseDto,
-    description: 'Agência atualizada',
+    description: 'Agency updated',
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -122,11 +122,11 @@ export class AgencyController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove uma agência' })
-  @ApiParam({ name: 'id', description: 'UUID da agência' })
+  @ApiOperation({ summary: 'Delete an agency' })
+  @ApiParam({ name: 'id', description: 'Agency UUID' })
   @ApiResponse({
     status: 204,
-    description: 'Agência removida',
+    description: 'Agency deleted',
   })
   remove(
     @Param('id', ParseUUIDPipe) id: string,

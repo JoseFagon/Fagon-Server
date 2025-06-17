@@ -38,11 +38,11 @@ export class PathologyController {
   constructor(private readonly pathologyService: PathologyService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Registra uma nova patologia' })
+  @ApiOperation({ summary: 'Register a new pathology' })
   @ApiResponse({
     status: 201,
     type: PathologyResponseDto,
-    description: 'Patologia registrada com sucesso',
+    description: 'Pathology successfully created',
   })
   create(
     @Body() createPathologyDto: CreatePathologyDto,
@@ -52,49 +52,49 @@ export class PathologyController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lista todas as patologias' })
+  @ApiOperation({ summary: 'List all pathologies' })
   @ApiResponse({
     status: 200,
     type: [PathologyResponseDto],
-    description: 'Lista de patologias',
+    description: 'List of pathologies',
   })
   @ApiQuery({
     name: 'projectId',
     required: false,
-    description: 'Filtrar por ID do projeto',
+    description: 'Filter by project ID',
   })
   findAll(@Query('projectId') projectId?: string) {
     return this.pathologyService.findAll(projectId);
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Busca patologias com filtros' })
+  @ApiOperation({ summary: 'Search pathologies with filters' })
   @ApiResponse({
     status: 200,
     type: [PathologyResponseDto],
-    description: 'Resultados da busca',
+    description: 'Search results',
   })
   search(@Query() searchParams: SearchPathologyDto) {
     return this.pathologyService.search(searchParams);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtém detalhes de uma patologia' })
+  @ApiOperation({ summary: 'Get pathology details' })
   @ApiResponse({
     status: 200,
     type: PathologyResponseDto,
-    description: 'Detalhes da patologia',
+    description: 'Pathology details',
   })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.pathologyService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualiza uma patologia' })
+  @ApiOperation({ summary: 'Update a pathology' })
   @ApiResponse({
     status: 200,
     type: PathologyResponseDto,
-    description: 'Patologia atualizada',
+    description: 'Pathology updated',
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -110,10 +110,10 @@ export class PathologyController {
 
   @Delete(':id')
   @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
-  @ApiOperation({ summary: 'Remove uma patologia' })
+  @ApiOperation({ summary: 'Delete a pathology' })
   @ApiResponse({
     status: 204,
-    description: 'Patologia removida',
+    description: 'Pathology successfully deleted',
   })
   remove(
     @Param('id', ParseUUIDPipe) id: string,

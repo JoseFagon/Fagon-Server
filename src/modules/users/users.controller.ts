@@ -42,12 +42,12 @@ export class UserController {
   @Get()
   @Roles(ROLES.ADMIN)
   @CacheKey('users_list')
-  @CacheTTL(30) // 30 segundos de cache
+  @CacheTTL(30) // 30 seconds
   @ApiOperation({ summary: 'List all users (Admin)' })
   @ApiResponse({
     status: 200,
     type: [UserResponseDto],
-    description: 'Lista de usuários',
+    description: 'List of users',
   })
   @ApiQuery({ name: 'status', required: false, type: String })
   findAll(@Query('status') status?: string) {
@@ -59,13 +59,12 @@ export class UserController {
   @ApiResponse({
     status: 200,
     type: [UserResponseDto],
-    description: 'Resultados da busca',
+    description: 'Search results',
   })
   search(@Query() searchParams: SearchUserDto) {
     return this.userService.search(searchParams);
   }
 
-  // --- USER PROFILE ---
   @Get(':id')
   @ApiOperation({ summary: 'Get user profile' })
   @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
@@ -73,14 +72,14 @@ export class UserController {
   @ApiResponse({
     status: 200,
     type: UserResponseDto,
-    description: 'Perfil do usuário',
+    description: 'User profile',
   })
   findOne(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: JwtPayload,
   ) {
     if (currentUser.role !== ROLES.ADMIN && currentUser.sub !== id) {
-      throw new ForbiddenException('Acesso não autorizado');
+      throw new ForbiddenException('Unauthorized access');
     }
     return this.userService.findOne(id);
   }
@@ -92,7 +91,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     type: UserResponseDto,
-    description: 'Perfil atualizado',
+    description: 'User profile updated',
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -100,13 +99,11 @@ export class UserController {
     @CurrentUser() currentUser: JwtPayload,
   ) {
     if (currentUser.sub !== id && currentUser.role !== ROLES.ADMIN) {
-      throw new ForbiddenException('Acesso não autorizado');
+      throw new ForbiddenException('Unauthorized access');
     }
 
     if (updateUserDto.role && currentUser.role !== ROLES.ADMIN) {
-      throw new ForbiddenException(
-        'Apenas administradores podem alterar roles',
-      );
+      throw new ForbiddenException('Only administrators can change roles');
     }
 
     return this.userService.update(id, updateUserDto);
@@ -117,14 +114,14 @@ export class UserController {
   @ApiParam({ name: 'id', description: 'User UUID' })
   @ApiResponse({
     status: 204,
-    description: 'Usuário removido',
+    description: 'User successfully deleted',
   })
   remove(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: JwtPayload,
   ) {
     if (currentUser.sub === id) {
-      throw new ForbiddenException('Você não pode se auto-excluir');
+      throw new ForbiddenException('You cannot delete yourself');
     }
     return this.userService.remove(id);
   }

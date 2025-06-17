@@ -31,24 +31,27 @@ export class AgencyService {
     });
   }
 
-  async search(searchAgencyDto: SearchAgencyDto) {
-    const { name, agencyNumber, state, city, district } = searchAgencyDto;
+  async search(params: Partial<SearchAgencyDto>) {
+    const { name, agencyNumber, state, city, district } = params;
 
     const orFilters: Prisma.AgencyWhereInput[] = [];
 
     if (name) {
       orFilters.push({ name: { contains: name, mode: 'insensitive' } });
     }
-    if (agencyNumber) {
-      const agencyNumberInt = parseInt(agencyNumber, 10);
-      orFilters.push({ agencyNumber: { equals: agencyNumberInt } });
+
+    if (agencyNumber && !isNaN(Number(agencyNumber))) {
+      orFilters.push({ agencyNumber: { equals: Number(agencyNumber) } });
     }
+
     if (state) {
       orFilters.push({ state: { startsWith: state, mode: 'insensitive' } });
     }
+
     if (city) {
       orFilters.push({ city: { startsWith: city, mode: 'insensitive' } });
     }
+
     if (district) {
       orFilters.push({
         district: { startsWith: district, mode: 'insensitive' },
@@ -57,9 +60,11 @@ export class AgencyService {
 
     const whereClause = orFilters.length > 0 ? { OR: orFilters } : {};
 
-    return this.prisma.agency.findMany({
+    const response = this.prisma.agency.findMany({
       where: whereClause,
     });
+
+    return response;
   }
 
   async findOne(id: string) {

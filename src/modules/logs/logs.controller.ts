@@ -22,43 +22,43 @@ export class LogController {
   constructor(private readonly logService: LogService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Lista todos os logs' })
+  @ApiOperation({ summary: 'List all logs' })
   @ApiResponse({
     status: 200,
     type: [LogResponseDto],
-    description: 'Lista de logs',
+    description: 'List of logs',
   })
   @ApiQuery({
     name: 'page',
     required: false,
-    description: 'Página para paginação',
+    description: 'Page number for pagination',
   })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Limite de itens por página',
+    description: 'Number of items per page',
   })
   findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
     return this.logService.findAll({ page, limit });
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Busca logs com filtros' })
+  @ApiOperation({ summary: 'Search logs with filters' })
   @ApiResponse({
     status: 200,
     type: [LogResponseDto],
-    description: 'Resultados da busca',
+    description: 'Search results',
   })
   search(@Query() searchParams: SearchLogDto) {
     return this.logService.search(searchParams);
   }
 
   @Get('user/:userId')
-  @ApiOperation({ summary: 'Obtém logs por usuário' })
+  @ApiOperation({ summary: 'Get logs by user' })
   @ApiResponse({
     status: 200,
     type: [LogResponseDto],
-    description: 'Logs do usuário',
+    description: 'User logs',
   })
   findByUser(@Param('userId', ParseUUIDPipe) userId: string) {
     return this.logService.findByUser(userId);

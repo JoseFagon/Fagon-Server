@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsBoolean, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreatePhotoDto {
   @Expose()
@@ -17,4 +17,10 @@ export class CreatePhotoDto {
   @ApiProperty()
   @IsBoolean()
   selectedForPdf!: boolean | undefined;
+
+  @Expose()
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  name?: string;
 }

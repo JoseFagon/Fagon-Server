@@ -37,11 +37,11 @@ export class EngineerController {
   constructor(private readonly engineerService: EngineerService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Cria um novo engenheiro' })
+  @ApiOperation({ summary: 'Create a new engineer' })
   @ApiResponse({
     status: 201,
     type: EngineerResponseDto,
-    description: 'Engenheiro criado com sucesso',
+    description: 'Engineer successfully created',
   })
   @ApiBody({ type: CreateEngineerDto })
   create(@Body() createEngineerDto: CreateEngineerDto) {
@@ -51,61 +51,61 @@ export class EngineerController {
   @Get()
   @CacheKey('engineers_all')
   @CacheTTL(30)
-  @ApiOperation({ summary: 'Lista todos os engenheiros' })
+  @ApiOperation({ summary: 'List all engineers' })
   @ApiResponse({
     status: 200,
     type: [EngineerResponseDto],
-    description: 'Lista de engenheiros',
+    description: 'List of engineers',
   })
   @ApiQuery({
     name: 'page',
     required: false,
-    description: 'Página para paginação',
+    description: 'Page number for pagination',
   })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Limite de itens por página',
+    description: 'Number of items per page',
   })
   findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
     return this.engineerService.findAll({ page, limit });
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Busca engenheiros com filtros' })
+  @ApiOperation({ summary: 'Search engineers with filters' })
   @ApiResponse({
     status: 200,
     type: [EngineerResponseDto],
-    description: 'Resultados da busca',
+    description: 'Search results',
   })
   search(@Query() searchParams: SearchEngineerDto) {
     return this.engineerService.search(searchParams);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtém um engenheiro por ID' })
-  @ApiParam({ name: 'id', description: 'UUID do engenheiro' })
+  @ApiOperation({ summary: 'Get an engineer by ID' })
+  @ApiParam({ name: 'id', description: 'Engineer UUID' })
   @ApiResponse({
     status: 200,
     type: EngineerResponseDto,
-    description: 'Engenheiro encontrado',
+    description: 'Engineer found',
   })
   @ApiResponse({
     status: 404,
-    description: 'Engenheiro não encontrado',
+    description: 'Engineer not found',
   })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.engineerService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualiza um engenheiro' })
-  @ApiParam({ name: 'id', description: 'UUID do engenheiro' })
+  @ApiOperation({ summary: 'Update an engineer' })
+  @ApiParam({ name: 'id', description: 'Engineer UUID' })
   @ApiBody({ type: UpdateEngineerDto })
   @ApiResponse({
     status: 200,
     type: EngineerResponseDto,
-    description: 'Engenheiro atualizado',
+    description: 'Engineer updated',
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -115,11 +115,11 @@ export class EngineerController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove um engenheiro' })
-  @ApiParam({ name: 'id', description: 'UUID do engenheiro' })
+  @ApiOperation({ summary: 'Delete an engineer' })
+  @ApiParam({ name: 'id', description: 'Engineer UUID' })
   @ApiResponse({
     status: 204,
-    description: 'Engenheiro removido',
+    description: 'Engineer deleted',
   })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.engineerService.remove(id);

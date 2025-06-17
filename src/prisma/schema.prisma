@@ -168,6 +168,7 @@ model Photo {
   locationId     String
   filePath       String
   selectedForPdf Boolean
+  name           String?
   
   location       Location @relation(fields: [locationId], references: [id])
 }
@@ -190,6 +191,7 @@ model PathologyPhoto {
   id          String    @id @default(uuid())
   pathologyId String
   filePath    String
+  name        String?
   
   pathology   Pathology @relation(fields: [pathologyId], references: [id])
 }

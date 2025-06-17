@@ -36,14 +36,14 @@ export class PathologyPhotoController {
   @Post('upload/:pathologyId')
   @UseInterceptors(FilesInterceptor('files'))
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Upload de fotos para uma patologia' })
+  @ApiOperation({ summary: 'Upload photos for a pathology' })
   @ApiResponse({
     status: 201,
     type: PathologyPhotoResponseDto,
-    description: 'Foto da patologia enviada com sucesso',
+    description: 'Pathology photos successfully uploaded',
   })
   @ApiBody({
-    description: 'Upload de fotos para uma patologia',
+    description: 'Upload photos for a pathology',
     schema: {
       type: 'object',
       properties: {
@@ -69,22 +69,22 @@ export class PathologyPhotoController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtém uma foto específica de patologia' })
+  @ApiOperation({ summary: 'Get specific pathology photo details' })
   @ApiResponse({
     status: 200,
     type: PathologyPhotoResponseDto,
-    description: 'Detalhes da foto da patologia',
+    description: 'Pathology photo details',
   })
   getOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.pathologyPhotoService.getPhotoByPathology(id);
   }
 
   @Get('pathology/:pathologyId')
-  @ApiOperation({ summary: 'Lista fotos de uma patologia' })
+  @ApiOperation({ summary: 'List photos of a pathology' })
   @ApiResponse({
     status: 200,
     type: [PathologyPhotoResponseDto],
-    description: 'Lista de fotos da patologia',
+    description: 'List of pathology photos',
   })
   getPhotosByPathology(
     @Param('pathologyId', ParseUUIDPipe) pathologyId: string,
@@ -94,10 +94,10 @@ export class PathologyPhotoController {
 
   @Delete(':id')
   @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
-  @ApiOperation({ summary: 'Remove uma foto de patologia' })
+  @ApiOperation({ summary: 'Delete a pathology photo' })
   @ApiResponse({
     status: 204,
-    description: 'Foto removida com sucesso',
+    description: 'Pathology photo successfully deleted',
   })
   deletePhoto(@Param('id', ParseUUIDPipe) id: string) {
     return this.pathologyPhotoService.deletePhoto(id);

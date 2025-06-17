@@ -29,7 +29,10 @@ export class LocationService {
     private logHelper: LogHelperService,
   ) {}
 
-  async create(createLocationDto: CreateLocationDto) {
+  async create(
+    createLocationDto: CreateLocationDto,
+    // userId: string
+  ) {
     const { projectId, ...locationData } = createLocationDto;
 
     await this.projectService.validateProjectExists(projectId);

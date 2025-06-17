@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsEnum, IsUUID, IsNumber, Min } from 'class-validator';
+import { IsOptional, IsEnum, IsNumber, Min, IsString } from 'class-validator';
 import { ProjectStatus, ProjectType } from '@prisma/client';
 import { Expose } from 'class-transformer';
 
@@ -19,14 +19,38 @@ export class SearchProjectDto {
   @Expose()
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsUUID()
-  agencyId?: string;
+  @IsString()
+  upeCode?: string;
 
   @Expose()
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsUUID()
-  engineerId?: string;
+  @IsString()
+  inspectorName?: string;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  agencyNumber?: number;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  state?: string;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  engineerName?: string;
 
   @Expose()
   @ApiProperty({ required: false, default: 1 })

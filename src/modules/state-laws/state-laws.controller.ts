@@ -33,32 +33,32 @@ export class StateLawController {
   constructor(private readonly stateLawService: StateLawService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Cria uma nova legislação estadual' })
+  @ApiOperation({ summary: 'Create a new state law' })
   @ApiResponse({
     status: 201,
     type: StateLawResponseDto,
-    description: 'Legislação criada com sucesso',
+    description: 'State law successfully created',
   })
   create(@Body() createStateLawDto: CreateStateLawDto) {
     return this.stateLawService.create(createStateLawDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lista todas as legislações estaduais' })
+  @ApiOperation({ summary: 'List all state laws' })
   @ApiResponse({
     status: 200,
     type: [StateLawResponseDto],
-    description: 'Lista de legislações',
+    description: 'List of state laws',
   })
   @ApiQuery({
     name: 'state',
     required: false,
-    description: 'Filtrar por estado',
+    description: 'Filter by state',
   })
   @ApiQuery({
     name: 'active',
     required: false,
-    description: 'Filtrar por status ativo/inativo',
+    description: 'Filter by active/inactive status',
     type: Boolean,
   })
   findAll(@Query('state') state?: string, @Query('active') active?: boolean) {
@@ -66,22 +66,22 @@ export class StateLawController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtém uma legislação específica' })
+  @ApiOperation({ summary: 'Get details of a specific state law' })
   @ApiResponse({
     status: 200,
     type: StateLawResponseDto,
-    description: 'Detalhes da legislação',
+    description: 'State law details',
   })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.stateLawService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualiza uma legislação estadual' })
+  @ApiOperation({ summary: 'Update a state law' })
   @ApiResponse({
     status: 200,
     type: StateLawResponseDto,
-    description: 'Legislação atualizada',
+    description: 'State law updated',
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -91,10 +91,10 @@ export class StateLawController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove uma legislação estadual' })
+  @ApiOperation({ summary: 'Delete a state law' })
   @ApiResponse({
     status: 204,
-    description: 'Legislação removida',
+    description: 'State law successfully deleted',
   })
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.stateLawService.remove(id);

@@ -10,6 +10,7 @@ import {
   Patch,
   UploadedFiles,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
@@ -26,6 +27,7 @@ import { ROLES } from '../../common/constants/roles.constant';
 import { PhotoService } from './photos.service';
 import { PhotoResponseDto } from './dto/response-photo.dto';
 import { UpdatePhotoDto } from './dto/update-photo.dto';
+import { StorageService } from 'src/storage/storage.service';
 
 @ApiTags('Photos')
 @ApiBearerAuth()
@@ -33,7 +35,10 @@ import { UpdatePhotoDto } from './dto/update-photo.dto';
 @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO, ROLES.VISTORIADOR)
 @Controller('photos')
 export class PhotoController {
-  constructor(private readonly photoService: PhotoService) {}
+  constructor(
+    private readonly photoService: PhotoService,
+    private readonly storageService: StorageService,
+  ) {}
 
   @Post('upload/:locationId')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'photos', maxCount: 10 }]))
@@ -73,8 +78,9 @@ export class PhotoController {
   })
   async getPhotosByLocation(
     @Param('locationId', ParseUUIDPipe) locationId: string,
+    @Query('signed') signed: string,
   ) {
-    return this.photoService.getPhotosByLocation(locationId);
+    return this.photoService.getPhotosByLocation(locationId, signed === 'true');
   }
 
   @Patch(':id')
@@ -90,6 +96,24 @@ export class PhotoController {
     @Body() updatePhotoDto: UpdatePhotoDto,
   ) {
     return this.photoService.updatePhoto(id, updatePhotoDto.selectedForPdf);
+  }
+
+  @Get(':id/signed-url')
+  @ApiOperation({ summary: 'Obtém URL assinada para uma foto' })
+  @ApiResponse({
+    status: 200,
+    description: 'URL assinada gerada com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+      },
+    },
+  })
+  async getSignedUrl(@Param('id', ParseUUIDPipe) id: string) {
+    const photo = await this.photoService.getPhotoById(id);
+    const signedUrl = await this.storageService.getSignedUrl(photo.filePath);
+    return { url: signedUrl };
   }
 
   @Delete(':id')

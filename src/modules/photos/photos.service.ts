@@ -64,7 +64,19 @@ export class PhotoService {
     }
   }
 
-  async getPhotosByLocation(locationId: string) {
+  async getPhotoById(id: string) {
+    const photo = await this.prisma.photo.findUnique({
+      where: { id },
+    });
+
+    if (!photo) {
+      throw new NotFoundException('Foto não encontrada');
+    }
+
+    return photo;
+  }
+
+  async getPhotosByLocation(locationId: string, includeSignedUrl = false) {
     const photos = await this.prisma.photo.findMany({
       where: { locationId },
       include: {
@@ -77,10 +89,16 @@ export class PhotoService {
       },
     });
 
-    return photos.map((photo) => ({
-      ...photo,
-      url: this.storageService.getSignedUrl(photo.filePath),
-    }));
+    if (includeSignedUrl) {
+      return Promise.all(
+        photos.map(async (photo) => ({
+          ...photo,
+          signedUrl: await this.storageService.getSignedUrl(photo.filePath),
+        })),
+      );
+    }
+
+    return photos;
   }
 
   async updatePhoto(id: string, selectedForPdf: boolean | undefined) {

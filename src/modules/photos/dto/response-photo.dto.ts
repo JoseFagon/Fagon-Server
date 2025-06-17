@@ -14,7 +14,10 @@ export class PhotoResponseDto {
   selectedForPdf!: boolean;
 
   @ApiProperty()
-  url!: string;
+  name!: string;
+
+  @ApiProperty()
+  signedUrl?: string;
 
   @ApiProperty()
   location!: {

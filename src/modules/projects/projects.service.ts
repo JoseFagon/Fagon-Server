@@ -61,30 +61,80 @@ export class ProjectService {
     });
   }
 
-  async findAll(filters: SearchProjectDto) {
+  async findAll({ page, limit }: { page: number; limit: number }) {
+    const skip = (page - 1) * limit;
+    return this.prisma.project.findMany({
+      skip,
+      take: limit,
+      include: this.projectIncludes(),
+    });
+  }
+
+  async search(params: SearchProjectDto) {
     const {
-      status,
       projectType,
-      agencyId,
-      engineerId,
+      upeCode,
+      inspectorName,
+      engineerName,
+      agencyNumber,
+      state,
+      city,
       page = 1,
       limit = 10,
-    } = filters;
+    } = params;
 
-    const where = {};
-    if (status) where['status'] = status;
-    if (projectType) where['projectType'] = projectType;
-    if (agencyId) where['agencyId'] = agencyId;
-    if (engineerId) where['engineerId'] = engineerId;
+    const skip = (page - 1) * limit;
+
+    const orFilters: Prisma.ProjectWhereInput[] = [];
+
+    if (projectType) {
+      orFilters.push({ projectType: { equals: projectType } });
+    }
+
+    if (upeCode && !isNaN(Number(upeCode))) {
+      orFilters.push({ upeCode: { equals: Number(upeCode) } });
+    }
+
+    if (inspectorName) {
+      orFilters.push({
+        inspectorName: { contains: inspectorName, mode: 'insensitive' },
+      });
+    }
+
+    if (engineerName) {
+      orFilters.push({
+        engineer: { name: { startsWith: engineerName, mode: 'insensitive' } },
+      });
+    }
+
+    if (agencyNumber) {
+      orFilters.push({
+        agency: { agencyNumber: { equals: Number(agencyNumber) } },
+      });
+    }
+
+    if (state) {
+      orFilters.push({
+        agency: { state: { startsWith: state, mode: 'insensitive' } },
+      });
+    }
+
+    if (city) {
+      orFilters.push({
+        agency: { city: { startsWith: city, mode: 'insensitive' } },
+      });
+    }
+
+    const whereClause = orFilters.length > 0 ? { OR: orFilters } : {};
 
     const [projects, total] = await Promise.all([
       this.prisma.project.findMany({
-        where,
-        skip: (page - 1) * limit,
+        where: whereClause,
+        skip,
         take: limit,
         include: this.projectIncludes(),
       }),
-      this.prisma.project.count({ where }),
+      this.prisma.project.count({ where: whereClause }),
     ]);
 
     return {
