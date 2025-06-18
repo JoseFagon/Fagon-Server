@@ -4,6 +4,6 @@ export interface JwtPayload {
   sub: string;
   email?: string;
   role: UserRole;
-  cameraType?: CameraType;
+  cameraType: CameraType | null;
   isActive: boolean;
 }

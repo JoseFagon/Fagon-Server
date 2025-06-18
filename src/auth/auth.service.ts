@@ -16,6 +16,7 @@ import { RegisterResponse } from 'src/common/interfaces/response.register.interf
 import { LoginResponse } from 'src/common/interfaces/response.login.interface';
 import { ADMIN_EMAILS } from 'src/common/constants/admin-emails.constant';
 import { User } from '@prisma/client';
+import { UserResponseDto } from 'src/modules/users/dto/response-user.dto';
 // import { EmailJobType } from 'src/queue/jobs/email.job';
 // import { InjectQueue } from '@nestjs/bull';
 // import { Queue } from 'bull';
@@ -61,6 +62,35 @@ export class AuthService {
     return user;
   }
 
+  async getMe(token: string): Promise<UserResponseDto> {
+    try {
+      const payload = this.jwtService.verify<JwtPayload>(token);
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          cameraType: true,
+          status: true,
+        },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('Usuário não encontrado');
+      }
+
+      return user;
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new UnauthorizedException('Token inválido ou expirado');
+    }
+  }
+
   async loginEmployee(loginDto: LoginDto): Promise<LoginResponse> {
     const { email, password } = loginDto;
 
@@ -85,7 +115,10 @@ export class AuthService {
 
     const accessKey = await this.prisma.accessKey.findFirst({
       where: { token: accessKeyToken },
-      include: { user: true },
+      include: {
+        user: true,
+        project: true,
+      },
     });
 
     if (!accessKey || new Date(accessKey.expiresAt) < new Date()) {
@@ -99,7 +132,12 @@ export class AuthService {
       throw new UnauthorizedException('Configuração de vistoriador inválida');
     }
 
-    return this.generateToken(accessKey.user);
+    const tokenResponse = this.generateToken(accessKey.user);
+
+    return {
+      ...tokenResponse,
+      projectId: accessKey.projectId,
+    };
   }
 
   async register(registerDto: RegisterDto): Promise<RegisterResponse> {
@@ -125,7 +163,7 @@ export class AuthService {
       sub: user.id,
       email: user.email || undefined,
       role: user.role,
-      cameraType: user.cameraType || undefined,
+      cameraType: user.cameraType || null,
       isActive: user.status,
     };
 
@@ -135,7 +173,7 @@ export class AuthService {
         sub: user.id,
         email: user.email,
         role: user.role,
-        cameraType: user.cameraType || undefined,
+        cameraType: user.cameraType || null,
         isActive: user.status,
       },
     };
@@ -196,7 +234,7 @@ export class AuthService {
       cameraType:
         user.role === ROLES.VISTORIADOR && user.cameraType != null
           ? user.cameraType
-          : undefined,
+          : null,
       isActive: user.status,
     };
 
@@ -206,10 +244,11 @@ export class AuthService {
         id: user.id,
         name: user.name,
         role: user.role,
+        status: user.status,
         cameraType:
           user.role === ROLES.VISTORIADOR && user.cameraType != null
             ? user.cameraType
-            : undefined,
+            : null,
       },
     };
   }

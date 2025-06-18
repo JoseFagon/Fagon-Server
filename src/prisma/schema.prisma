@@ -11,6 +11,7 @@ enum ProjectType {
 
 enum ProjectStatus {
   aguardando_vistoria
+  vistoria_em_progresso
   aguardando_gerar_pdfs    @map("aguardando_gerar_pdfs")
   aguardando_assinatura_de_pdfs
   finalizado

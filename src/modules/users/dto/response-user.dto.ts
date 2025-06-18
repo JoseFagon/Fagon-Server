@@ -17,12 +17,6 @@ export class UserResponseDto {
   @ApiProperty()
   status!: boolean;
 
-  @ApiProperty({ required: false })
-  cameraType?: CameraType;
-
   @ApiProperty()
-  createdAt!: Date;
-
-  @ApiProperty()
-  updatedAt!: Date;
+  cameraType!: CameraType | null;
 }
