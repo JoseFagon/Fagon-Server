@@ -21,7 +21,7 @@ export class PathologyService {
     private pathologyPhotoService: PathologyPhotoService,
   ) {}
 
-  async create(createPathologyDto: CreatePathologyDto) {
+  async create(createPathologyDto: CreatePathologyDto, userId: string) {
     const { photos, ...pathologyData } = createPathologyDto;
     const pathology = await this.prisma.pathology.create({
       data: {
@@ -43,7 +43,7 @@ export class PathologyService {
       await this.pathologyPhotoService.uploadPhotos(photos, pathology.id); // Corrigido para usar pathology.id
     }
 
-    // await this.logHelper.createLog(userId, 'CREATE', 'Pathology', pathology.id);
+    await this.logHelper.createLog(userId, 'CREATE', 'Pathology', pathology.id);
 
     return pathology;
   }
@@ -122,7 +122,7 @@ export class PathologyService {
   async update(
     id: string,
     updatePathologyDto: UpdatePathologyDto,
-    // userId: string,
+    userId: string,
   ) {
     const pathology = await this.prisma.pathology.update({
       where: { id },
@@ -143,17 +143,17 @@ export class PathologyService {
       },
     });
 
-    // await this.logHelper.createLog(userId, 'UPDATE', 'Pathology', pathology.id);
+    await this.logHelper.createLog(userId, 'UPDATE', 'Pathology', pathology.id);
 
     return pathology;
   }
 
-  async remove(id: string) {
-    // const pathology = await this.findOne(id);
+  async remove(id: string, userId: string) {
+    const pathology = await this.findOne(id);
 
     await this.prisma.pathology.delete({ where: { id } });
 
-    // await this.logHelper.createLog(userId, 'DELETE', 'Pathology', pathology.id);
+    await this.logHelper.createLog(userId, 'DELETE', 'Pathology', pathology.id);
 
     return;
   }

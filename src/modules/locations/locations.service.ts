@@ -29,10 +29,7 @@ export class LocationService {
     private logHelper: LogHelperService,
   ) {}
 
-  async create(
-    createLocationDto: CreateLocationDto,
-    // userId: string
-  ) {
+  async create(createLocationDto: CreateLocationDto, userId: string) {
     const { projectId, ...locationData } = createLocationDto;
 
     await this.projectService.validateProjectExists(projectId);
@@ -44,7 +41,7 @@ export class LocationService {
       },
     });
 
-    // await this.logHelper.createLog(userId, 'CREATE', 'Location', location.id);
+    await this.logHelper.createLog(userId, 'CREATE', 'Location', location.id);
 
     return location;
   }
@@ -88,7 +85,7 @@ export class LocationService {
   async update(
     id: string,
     updateLocationDto: UpdateLocationDto,
-    // userId: string
+    userId: string,
   ) {
     const location = await this.findOne(id);
 
@@ -137,7 +134,7 @@ export class LocationService {
           });
       }
 
-      // await this.logHelper.createLog(userId, 'UPDATE_LOCATION', 'Location', id);
+      await this.logHelper.createLog(userId, 'UPDATE_LOCATION', 'Location', id);
 
       return this.findOne(id);
     } catch (error) {
@@ -146,7 +143,7 @@ export class LocationService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
     const location = await this.findOne(id);
 
     if (location.pavement) {
@@ -167,7 +164,7 @@ export class LocationService {
       where: { id },
     });
 
-    // await this.logHelper.createLog(userId, 'DELETE', 'Location', id);
+    await this.logHelper.createLog(userId, 'DELETE', 'Location', id);
 
     return deletedLocation;
   }

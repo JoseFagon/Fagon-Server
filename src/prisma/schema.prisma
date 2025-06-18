@@ -43,7 +43,7 @@ enum PdfType {
 
 generator client {
   provider = "prisma-client-js"
-
+  seed     = "ts-node src/prisma/seed.ts"
 }
 
 datasource db {

@@ -1,4 +1,10 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -26,6 +32,10 @@ export class AuthController {
     @Body() accessKeyDto: AccessKeyDto,
     @CurrentUser() currentUser: JwtPayload,
   ): Promise<{ token: string }> {
+    console.log('CurrentUser:', currentUser);
+    if (!currentUser?.sub) {
+      throw new UnauthorizedException('ID do usuário não encontrado no token');
+    }
     return this.authService.generateAccessKey(accessKeyDto, currentUser.sub);
   }
 

@@ -13,12 +13,12 @@ export class AgencyService {
     private logHelper: LogHelperService,
   ) {}
 
-  async create(createAgencyDto: CreateAgencyDto) {
+  async create(createAgencyDto: CreateAgencyDto, userId: string) {
     const agency = await this.prisma.agency.create({
       data: createAgencyDto,
     });
 
-    // await this.logHelper.createLog(userId, 'CREATE', 'Agency', agency.id);
+    await this.logHelper.createLog(userId, 'CREATE', 'Agency', agency.id);
 
     return agency;
   }
@@ -32,39 +32,84 @@ export class AgencyService {
   }
 
   async search(params: Partial<SearchAgencyDto>) {
-    const { name, agencyNumber, state, city, district } = params;
+    const {
+      name,
+      agencyNumber,
+      state,
+      city,
+      district,
+      page = 1,
+      limit = 10,
+    } = params;
+
+    const skip = (page - 1) * limit;
 
     const orFilters: Prisma.AgencyWhereInput[] = [];
 
     if (name) {
-      orFilters.push({ name: { contains: name, mode: 'insensitive' } });
+      orFilters.push({
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      });
     }
 
     if (agencyNumber && !isNaN(Number(agencyNumber))) {
-      orFilters.push({ agencyNumber: { equals: Number(agencyNumber) } });
+      orFilters.push({
+        agencyNumber: {
+          equals: Number(agencyNumber),
+        },
+      });
     }
 
     if (state) {
-      orFilters.push({ state: { startsWith: state, mode: 'insensitive' } });
+      orFilters.push({
+        state: {
+          startsWith: state,
+          mode: 'insensitive',
+        },
+      });
     }
 
     if (city) {
-      orFilters.push({ city: { startsWith: city, mode: 'insensitive' } });
+      orFilters.push({
+        city: {
+          startsWith: city,
+          mode: 'insensitive',
+        },
+      });
     }
 
     if (district) {
       orFilters.push({
-        district: { startsWith: district, mode: 'insensitive' },
+        district: {
+          startsWith: district,
+          mode: 'insensitive',
+        },
       });
     }
 
     const whereClause = orFilters.length > 0 ? { OR: orFilters } : {};
 
-    const response = this.prisma.agency.findMany({
-      where: whereClause,
-    });
+    const [agencies, total] = await Promise.all([
+      this.prisma.agency.findMany({
+        where: whereClause,
+        skip,
+        take: limit,
+      }),
+      this.prisma.agency.count({ where: whereClause }),
+    ]);
 
-    return response;
+    return {
+      data: agencies,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOne(id: string) {
@@ -73,7 +118,7 @@ export class AgencyService {
     });
   }
 
-  async update(id: string, updateAgencyDto: UpdateAgencyDto) {
+  async update(id: string, updateAgencyDto: UpdateAgencyDto, userId: string) {
     await this.findOne(id);
 
     const updatedAgency = await this.prisma.agency.update({
@@ -81,17 +126,17 @@ export class AgencyService {
       data: updateAgencyDto,
     });
 
-    // await this.logHelper.createLog(userId, 'UPDATE', 'Agency', id);
+    await this.logHelper.createLog(userId, 'UPDATE', 'Agency', id);
 
     return updatedAgency;
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
     const deletedAgency = await this.prisma.agency.delete({
       where: { id },
     });
 
-    // await this.logHelper.createLog(userId, 'DELETE', 'Agency', id);
+    await this.logHelper.createLog(userId, 'DELETE', 'Agency', id);
 
     return deletedAgency;
   }

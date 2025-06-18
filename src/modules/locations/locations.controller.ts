@@ -22,14 +22,14 @@ import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { LocationResponseDto } from './dto/response-location.dto';
 import {
-  // CurrentUser,
+  CurrentUser,
   RequireAuth,
 } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { LocationService } from './locations.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-// import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Locations')
 @ApiBearerAuth()
@@ -49,9 +49,9 @@ export class LocationController {
   @ApiBody({ type: CreateLocationDto })
   create(
     @Body() createLocationDto: CreateLocationDto,
-    // @CurrentUser() currentUser: JwtPayload,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.locationService.create(createLocationDto);
+    return this.locationService.create(createLocationDto, currentUser.sub);
   }
 
   @Get('project/:projectId')
@@ -94,14 +94,18 @@ export class LocationController {
   @UseInterceptors(FileFieldsInterceptor([{ name: 'photos', maxCount: 10 }]))
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    // @CurrentUser() currentUser: JwtPayload,
+    @CurrentUser() currentUser: JwtPayload,
     @Body() updateLocationDto: UpdateLocationDto,
     @UploadedFiles() files: { photos?: Express.Multer.File[] },
   ) {
-    return this.locationService.update(id, {
-      ...updateLocationDto,
-      photos: files?.photos,
-    });
+    return this.locationService.update(
+      id,
+      {
+        ...updateLocationDto,
+        photos: files?.photos,
+      },
+      currentUser.sub,
+    );
   }
 
   @Delete(':id')
@@ -113,8 +117,8 @@ export class LocationController {
   })
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    // @CurrentUser() currentUser: JwtPayload,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.locationService.remove(id);
+    return this.locationService.remove(id, currentUser.sub);
   }
 }

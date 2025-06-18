@@ -24,12 +24,12 @@ import { AgencyResponseDto } from './dto/response-agency.dto';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { SearchAgencyDto } from './dto/search-agency.dto';
 import {
-  // CurrentUser,
+  CurrentUser,
   RequireAuth,
 } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { ROLES } from 'src/common/constants/roles.constant';
-// import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Agencies')
 @ApiBearerAuth()
@@ -49,9 +49,9 @@ export class AgencyController {
   @ApiBody({ type: CreateAgencyDto })
   create(
     @Body() createAgencyDto: CreateAgencyDto,
-    // @CurrentUser() currentUser: JwtPayload,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.agencyService.create(createAgencyDto);
+    return this.agencyService.create(createAgencyDto, currentUser.sub);
   }
 
   @Get()
@@ -116,9 +116,9 @@ export class AgencyController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAgencyDto: CreateAgencyDto,
-    // @CurrentUser() currentUser: JwtPayload,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.agencyService.update(id, updateAgencyDto);
+    return this.agencyService.update(id, updateAgencyDto, currentUser.sub);
   }
 
   @Delete(':id')
@@ -130,8 +130,8 @@ export class AgencyController {
   })
   remove(
     @Param('id', ParseUUIDPipe) id: string,
-    // @CurrentUser() currentUser: JwtPayload,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.agencyService.remove(id);
+    return this.agencyService.remove(id, currentUser.sub);
   }
 }
