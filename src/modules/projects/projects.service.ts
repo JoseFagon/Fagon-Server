@@ -213,30 +213,13 @@ export class ProjectService {
 
   private projectIncludes() {
     return {
-      agency: {
+      agency: true,
+      engineer: true,
+      pavement: true,
+      location: {
         select: {
-          id: true,
-          name: true,
-          agencyNumber: true,
-          cnpj: true,
-          cep: true,
-          state: true,
-          city: true,
-          district: true,
-          street: true,
-          number: true,
-        },
-      },
-      engineer: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      pavement: {
-        select: {
-          id: true,
-          pavement: true,
+          photo: true,
+          materialFinishing: true,
         },
       },
     };

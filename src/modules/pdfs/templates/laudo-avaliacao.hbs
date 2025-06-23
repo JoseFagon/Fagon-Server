@@ -18,15 +18,15 @@
 
       h1 {
         text-align: center;
-        font-size: 18pt;
-        margin-bottom: 30px;
+        font-size: 14pt;
+        margin-bottom: 20px;
         text-transform: uppercase;
       }
 
       h2 {
-        font-size: 14pt;
+        font-size: 12pt;
         margin-top: 30px;
-        margin-bottom: 15px;
+        /*    margin-bottom: 15px;*/
         border-bottom: 1px solid #ddd;
         padding-bottom: 5px;
       }
@@ -35,17 +35,23 @@
         margin-bottom: 25px;
       }
 
+      .info p {
+        margin: 0.1em 0;
+      }
+
       .signature-section {
-        margin-top: 60px;
+        margin-top: 40px;
         text-align: left;
       }
 
-      .signature-line {
-        width: 300px;
-        border-top: 1px solid #333;
-        margin-top: 60px;
-        display: inline-block;
+      .signature-section p {
+        margin: 0.05em 0;
       }
+
+      .signature-section .date {
+        margin-bottom: 10px;
+      }
+
       @media print {
         body {
           padding: 0;
@@ -57,18 +63,22 @@
     <h1>LAUDO DE AVALIAÇÃO DE ESTABILIDADE E SEGURANÇA DE CONSTRUÇÃO</h1>
 
     <!-- Seção 1: Identificação -->
-    <section class='section'>
+    <section class='section info'>
       <h2>1. IDENTIFICAÇÃO DA EDIFICAÇÃO</h2>
       <p><strong>Razão Social:</strong>
         {{agency.name}}
         — AG.
-        {{agency.agencyNumber}}/{{agency.city}}
+        {{formatNumberAgency agency.agencyNumber}}
+        /
+        {{agency.city}}
         -
         {{agency.district}}</p>
       <p><strong>Nome Fantasia:</strong>
         {{agency.name}}
         — AG.
-        {{agency.agencyNumber}}/{{agency.city}}
+        {{formatNumberAgency agency.agencyNumber}}
+        /
+        {{agency.city}}
         -
         {{agency.district}}</p>
       <p><strong>CNPJ:</strong> {{formatCNPJ agency.cnpj}}</p>
@@ -86,10 +96,12 @@
       <h2>2. OBJETIVO</h2>
       <p>Os dados para elaboração deste laudo foram extraídos de Memorial
         Descritivo conforme levantamento realizado pelo escritório Fagon em
-        {{formatDate project.inspectionDate 'MMMM, yyyy'}}. Os dados do memorial
-        foram utilizados para avaliação do Tempo de Resistência ao Fogo (TRF),
-        que foi comparado ao Tempo Requerido de Resistência ao Fogo (TRRF) para
-        atendimento das exigências do Corpo de Bombeiros do PPCI do Imóvel.</p>
+        {{formatDate now 'MMMM'}}
+        de
+        {{formatDate now 'yyyy'}}. Os dados do memorial foram utilizados para
+        avaliação do Tempo de Resistência ao Fogo (TRF), que foi comparado ao
+        Tempo Requerido de Resistência ao Fogo (TRRF) para atendimento das
+        exigências do Corpo de Bombeiros do PPCI do Imóvel.</p>
     </section>
 
     <!-- Seção 3: Descrição da Estrutura -->
@@ -97,25 +109,24 @@
       <h2>3. DESCRIÇÃO DA ESTRUTURA</h2>
       <p>Trata-se de uma construção em estrutura de
         {{project.structureType}}, sendo
-        {{#each pavements}}{{this.pavement}}{{#unless @last}},
-          {{else}}.{{/unless}}{{/each}}
-        As alvenarias são de espessura total de 13cm ou superior.</p>
+        {{formatPavementList pavement}}. As alvenarias são de espessura total de
+        13cm ou superior.</p>
 
-      {{#each pavements}}
-        <p>O pavimento
-          {{this.pavement}}
+      {{#each (sortPavements pavement)}}
+        <p>
+          O pavimento
+          {{formatPavementName this.pavement}}
           tem aproximadamente
-          {{this.area}}m².
+          {{formatNumber this.area}}m<sup>2</sup>.
           <br />
-          O pé direito livre do
-          {{this.pavement}}
-          é de
-          {{this.height}}m.</p>
+          O pé direito livre é de
+          {{formatNumber this.height}}m.
+        </p>
       {{/each}}
 
       <ul>
         <li>Valor piso a piso de
-          {{project.floorHeight}}
+          {{formatNumber project.floorHeight}}
           é o que deve ser utilizado na avaliação do TRRF, correspondendo ao "h"
           (altura do pavimento habitável mais Elevado da construção).
         </li>
@@ -138,13 +149,15 @@
 
     <!-- Data e Assinatura -->
     <section class='signature-section'>
-      <p>São Paulo,
+      <p class='date'>São Paulo,
         {{formatDate now 'dd'}}
         de
         {{formatDate now 'MMMM'}}
         de
         {{formatDate now 'yyyy'}}.</p>
-      <p>Resp. Técnico {{engineer.registrationNumber}}</p>
+      <p>Resp. Técnico</p>
+      <p>{{engineer.registrationEntity}}
+        {{engineer.registrationNumber}}</p>
     </section>
   </body>
 </html>

@@ -5,8 +5,14 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RequestWithUser } from 'src/common/interfaces/request.user.interface';
 import { UserRole } from '@prisma/client';
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    role: UserRole;
+    [key: string]: any;
+  };
+}
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -18,14 +24,19 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
     );
 
-    if (!requiredRoles) {
+    // Se não há roles definidos, permite acesso
+    if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
 
-    const req = context.switchToHttp().getRequest<RequestWithUser>();
-    const user = req.user;
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const user = request.user;
 
-    console.log('Decoded user:', user);
+    if (!user) {
+      throw new ForbiddenException('Usuário não autenticado');
+    }
+
+    console.log('User role:', user.role, 'Required roles:', requiredRoles);
 
     if (!requiredRoles.includes(user.role)) {
       throw new ForbiddenException(

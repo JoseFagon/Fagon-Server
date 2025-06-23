@@ -19,7 +19,6 @@ import { PrismaModule } from './prisma/prisma.module';
 import { QueueModule } from './queue/queue.module';
 import { LoggerModule } from './core/logger/logger.module';
 import { RateLimitModule } from './core/rate-limit/rate-limit.module';
-import { GraphqlModule } from './graphql/graphql.module';
 import { StorageModule } from './storage/storage.module';
 
 import { AgencyModule } from './modules/agencies/agencies.module';
@@ -35,6 +34,7 @@ import { PathologyModule } from './modules/pathologies/pathologies.module';
 import { PathologyPhotoModule } from './modules/pathology-photos/pathology-photos.module';
 import { StateLawModule } from './modules/state-laws/state-laws.module';
 import { LogModule } from './modules/logs/logs.module';
+import { AuthExceptionFilter } from './common/filters/auth-exception.filter';
 
 @Module({
   imports: [
@@ -48,7 +48,7 @@ import { LogModule } from './modules/logs/logs.module';
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
-      exclude: ['/api*', '/graphql'],
+      exclude: ['/api*'],
     }),
     SwaggerModule,
     LoggerModule,
@@ -57,7 +57,6 @@ import { LogModule } from './modules/logs/logs.module';
     MetricsModule,
     GatewaysModule,
     QueueModule,
-    GraphqlModule,
     PrismaModule,
     AuthModule,
     StorageModule,
@@ -91,6 +90,10 @@ import { LogModule } from './modules/logs/logs.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AuthExceptionFilter,
     },
     {
       provide: APP_FILTER,

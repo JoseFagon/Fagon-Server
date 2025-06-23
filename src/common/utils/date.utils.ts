@@ -25,6 +25,19 @@ export class DateUtils {
     });
   }
 
+  static formatForDisplay(date: Date | string, pattern = 'MMMM, yyyy'): string {
+    try {
+      const dt =
+        typeof date === 'string'
+          ? DateTime.fromSQL(date) || DateTime.fromISO(date)
+          : DateTime.fromJSDate(date);
+
+      return format(dt.toJSDate(), pattern, { locale: ptBR });
+    } catch {
+      return '';
+    }
+  }
+
   static nowInTimezone(timezone = 'America/Sao_Paulo'): DateTime {
     return DateTime.now().setZone(timezone);
   }

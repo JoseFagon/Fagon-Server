@@ -62,12 +62,10 @@ export class AuthService {
     return user;
   }
 
-  async getMe(token: string): Promise<UserResponseDto> {
+  async getMe(userId: string): Promise<UserResponseDto> {
     try {
-      const payload = this.jwtService.verify<JwtPayload>(token);
-
       const user = await this.prisma.user.findUnique({
-        where: { id: payload.sub },
+        where: { id: userId },
         select: {
           id: true,
           name: true,
@@ -113,6 +111,7 @@ export class AuthService {
   async loginWithAccessKey(loginDto: LoginDto): Promise<LoginResponse> {
     const { accessKeyToken } = loginDto;
 
+    // 1. Validação da chave de acesso
     const accessKey = await this.prisma.accessKey.findFirst({
       where: { token: accessKeyToken },
       include: {
@@ -121,15 +120,33 @@ export class AuthService {
       },
     });
 
-    if (!accessKey || new Date(accessKey.expiresAt) < new Date()) {
-      throw new UnauthorizedException('Chave de acesso inválida ou expirada');
+    if (!accessKey) {
+      throw new UnauthorizedException({
+        error: 'Chave de acesso não encontrada',
+        userType: 'vistoriador',
+      });
     }
 
-    if (
-      accessKey.user.role !== ROLES.VISTORIADOR ||
-      accessKey.user.cameraType !== accessKey.cameraType
-    ) {
-      throw new UnauthorizedException('Configuração de vistoriador inválida');
+    if (new Date(accessKey.expiresAt) < new Date()) {
+      throw new UnauthorizedException({
+        error: 'Chave de acesso expirada',
+        userType: 'vistoriador',
+      });
+    }
+
+    if (accessKey.user.role !== ROLES.VISTORIADOR) {
+      throw new UnauthorizedException({
+        error: 'Acesso permitido apenas para vistoriadores',
+        userType: 'not_vistoriador',
+      });
+    }
+
+    if (accessKey.user.cameraType !== accessKey.cameraType) {
+      throw new UnauthorizedException({
+        error: 'Tipo de câmera não corresponde ao vistoriador',
+        userType: 'vistoriador',
+        cameraMismatch: true,
+      });
     }
 
     const tokenResponse = this.generateToken(accessKey.user);
@@ -137,6 +154,10 @@ export class AuthService {
     return {
       ...tokenResponse,
       projectId: accessKey.projectId,
+      user: {
+        ...tokenResponse.user,
+        cameraType: accessKey.user.cameraType,
+      },
     };
   }
 

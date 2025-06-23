@@ -6,7 +6,12 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
 import { PUBLIC_KEY } from '../../common/decorators/public.decorator';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { User } from '@prisma/client';
+
+interface AuthenticatedRequest extends Request {
+  user?: User;
+  logIn: (user: User) => Promise<void>;
+}
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -22,16 +27,21 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     if (isPublic) return true;
 
-    const can = (await super.canActivate(context)) as boolean;
+    context.switchToHttp().getRequest<AuthenticatedRequest>();
 
-    return can;
+    try {
+      const result = await super.canActivate(context);
+      return result as boolean;
+    } catch (err: unknown) {
+      throw new UnauthorizedException(
+        err instanceof Error ? err.message : 'Token inválido ou expirado',
+      );
+    }
   }
 
-  handleRequest<TUser = JwtPayload>(err: unknown, user: TUser): TUser {
+  handleRequest<TUser = User>(err: unknown, user: TUser | false): TUser {
     if (err || !user) {
-      throw err instanceof Error
-        ? err
-        : new UnauthorizedException('Acesso não autorizado');
+      throw new UnauthorizedException('Acesso não autorizado');
     }
     return user;
   }

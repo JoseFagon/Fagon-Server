@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -28,10 +29,13 @@ import {
   RequireAuth,
 } from 'src/common/decorators/current-user.decorator';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiTags('Projects')
 @ApiBearerAuth()
 @RequireAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
 @Controller('projects')
 export class ProjectController {

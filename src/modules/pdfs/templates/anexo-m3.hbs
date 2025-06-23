@@ -18,13 +18,13 @@
 
       h1 {
         text-align: center;
-        font-size: 18pt;
+        font-size: 14pt;
         margin-bottom: 30px;
         text-transform: uppercase;
       }
 
       h2 {
-        font-size: 14pt;
+        font-size: 12pt;
         margin-top: 30px;
         margin-bottom: 15px;
         border-bottom: 1px solid #ddd;
@@ -33,6 +33,10 @@
 
       .section {
         margin-bottom: 25px;
+      }
+
+     .info p {
+        margin: 0.1em 0;
       }
 
       .checkbox-container {
@@ -57,15 +61,16 @@
       }
 
       .signature-section {
-        margin-top: 60px;
-        text-align: right;
+        margin-top: 40px;
+        text-align: left;
       }
 
-      .signature-line {
-        width: 300px;
-        border-top: 1px solid #333;
-        margin-top: 60px;
-        display: inline-block;
+      .signature-section p {
+        margin: 0.05em 0;
+      }
+
+      .signature-section .date {
+        margin-bottom: 10px;
       }
 
       @media print {
@@ -80,18 +85,22 @@
       INCÊNDIO</h1>
 
     <!-- Seção 1: Identificação da Edificação -->
-    <section class='section'>
+    <section class='section info'>
       <h2>1. IDENTIFICAÇÃO DA EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
       <p><strong>Razão Social:</strong>
         {{agency.name}}
         — AG.
-        {{agency.agencyNumber}}/{{agency.city}}
+        {{formatNumberAgency agency.agencyNumber}}
+        /
+        {{agency.city}}
         -
         {{agency.district}}</p>
       <p><strong>Nome Fantasia:</strong>
         {{agency.name}}
         — AG.
-        {{agency.agencyNumber}}/{{agency.city}}
+        {{formatNumberAgency agency.agencyNumber}}
+        /
+        {{agency.city}}
         -
         {{agency.district}}</p>
       <p><strong>CNPJ:</strong> {{formatCNPJ agency.cnpj}}</p>
@@ -105,7 +114,7 @@
     </section>
 
     <!-- Seção 2: Identificação do Proprietário -->
-    <section class='section'>
+    <section class='section info'>
       <h2>2. IDENTIFICAÇÃO DO PROPRIETÁRIO OU RESPONSÁVEL PELO USO DA EDIFICAÇÃO</h2>
       <p><strong>Nome do Proprietário:</strong> Itaú Unibanco S/A</p>
       <p><strong>CNPJ:</strong> 60.701.190/3544-04</p>
@@ -117,11 +126,11 @@
     </section>
 
     <!-- Seção 3: Identificação do Responsável Técnico -->
-    <section class='section'>
+    <section class='section info'>
       <h2>3. IDENTIFICAÇÃO DO RESPONSÁVEL TÉCNICO PELO LAUDO TÉCNICO</h2>
       <p><strong>Nome do profissional:</strong> {{engineer.name}}</p>
       <p><strong>CPF:</strong> {{formatCPF engineer.cpf}}</p>
-      <p><strong>Telefone:</strong> {{engineer.phone}}</p>
+      <p><strong>Telefone:</strong> {{formatPhone engineer.phone}}</p>
       <p><strong>Email:</strong> {{engineer.email}}</p>
       <p><strong>Formação Profissional:</strong>
         {{engineer.education}}
@@ -147,7 +156,7 @@
         tecnicamente fundamentado na Instrução Técnica (IT)
         {{StateLaw.lawReference2}}, do Corpo de Bombeiros da Polícia Militar
         {{StateLaw.textState}}
-        {{StateLaw.policeAbbreviation}}, e suas normas técnicas correlatas. Os
+        ({{StateLaw.policeAbbreviation}}), e suas normas técnicas correlatas. Os
         Tempos Requeridos de Resistência ao Fogo (TRRF) exigidos para os
         subsolos e pavimentos acima do solo (altura da edificação - h) constam
         ao Anexo A da respectiva IT. (As divisões F-11 e F-12 deverão ser
@@ -163,15 +172,15 @@
         com as características da edificação analisada, são:</p>
 
       <p>a) TRRF dos pavimentos acima do solo (altura da edificação - h): (h =
-        {{paviment.height}}m térreo)
-        {{fireResistance}}
-        minutos;</p>
+        {{formatNumber pavement.height}}m térreo)
+        {{fireResistance}} minutos;</p>
 
       <p>b) TRRF dos pavimentos subsolo:
-        {{#if (eq this.name 'SUBSOLO')}}(h =
-          {{paviment.height}}m subsolo)
-          {{fireResistance}}
-          minutos{{else}}(não há subsolo){{/if}}</p>
+      {{#eq pavement.pavement 'subsolo'}}
+        (h = {{formatNumber pavement.height}}m subsolo) {{fireResistance}} minutos
+      {{else}}
+        (não há subsolo)
+      {{/eq}}
 
       <p>Informo ainda, conforme marcado nas opções abaixo, sobre a utilização
         ou não do método de Tempo Equivalente para redução do TRRF, como segue:</p>
@@ -219,7 +228,9 @@
 
       <p>Os dados para elaboração desse laudo foram extraídos de Memorial
         Descritivo conforme levantamento realizado pelo escritório Fagon em
-        {{formatDate project.inspectionDate 'MMMM, yyyy'}}.</p>
+       {{formatDate now 'MMMM'}}
+        de
+        {{formatDate now 'yyyy'}}.</p>
 
       <p>Os relatórios técnicos, laudos de ensaios, memórias de cálculo,
         projetos e especificações técnicas de produto, entre outros documentos
@@ -233,13 +244,15 @@
 
     <!-- Data e Assinatura -->
     <section class='signature-section'>
-      <p>São Paulo,
+      <p class='date'>São Paulo,
         {{formatDate now 'dd'}}
         de
         {{formatDate now 'MMMM'}}
         de
         {{formatDate now 'yyyy'}}.</p>
-      <p>Resp. Técnico {{engineer.registrationNumber}}</p>
+      <p>Resp. Técnico</p>
+      <p>{{engineer.registrationEntity}}
+        {{engineer.registrationNumber}}</p>
     </section>
   </body>
 </html>

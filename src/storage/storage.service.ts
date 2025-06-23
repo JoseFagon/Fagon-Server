@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { FileUpload, StorageResult } from './types/file-upload.type';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ConfigService } from '@nestjs/config';
 import { InjectSupabaseClient } from 'nestjs-supabase-js';
+import { Readable } from 'stream';
+import {
+  FileBufferResult,
+  FileStreamResult,
+} from 'src/common/interfaces/storage.interface';
 
 @Injectable()
 export class StorageService {
@@ -102,6 +107,112 @@ export class StorageService {
         throw new Error(`Falha no armazenamento: ${error.message}`);
       }
       throw new Error('Ocorreu um erro desconhecido durante o upload');
+    }
+  }
+
+  async getFileStream(
+    filePath: string,
+    bucket?: string,
+  ): Promise<FileStreamResult> {
+    const targetBucket = bucket || this.bucketName;
+
+    try {
+      const { data: publicUrlData } = this.supabase.storage
+        .from(targetBucket)
+        .getPublicUrl(filePath);
+
+      if (!publicUrlData || !publicUrlData.publicUrl) {
+        throw new NotFoundException(`Arquivo não encontrado: ${filePath}`);
+      }
+
+      const { data: downloadData, error: downloadError } =
+        await this.supabase.storage.from(targetBucket).download(filePath);
+
+      if (downloadError || !downloadData) {
+        throw new Error(downloadError?.message || 'Falha ao baixar o arquivo');
+      }
+
+      const { data: fileList, error: listError } = await this.supabase.storage
+        .from(targetBucket)
+        .list('', { search: filePath.split('/').pop() });
+
+      if (listError || !fileList || fileList.length === 0) {
+        throw new Error(listError?.message || 'Falha ao obter metadados');
+      }
+
+      const fileMeta = fileList.find(
+        (file) => file.name === filePath.split('/').pop(),
+      );
+
+      const stream = new Readable();
+      stream.push(Buffer.from(await downloadData.arrayBuffer()));
+      stream.push(null);
+
+      return {
+        stream,
+        metadata: {
+          contentType:
+            (fileMeta?.metadata as { mimetype?: string })?.mimetype ||
+            'application/octet-stream',
+          contentLength:
+            (fileMeta?.metadata as { size?: number })?.size ||
+            downloadData.size,
+          originalName: filePath.split('/').pop() || 'file',
+        },
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new Error(
+        `Erro ao obter o arquivo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
+      );
+    }
+  }
+
+  async getFileBuffer(
+    filePath: string,
+    bucket?: string,
+  ): Promise<FileBufferResult> {
+    const targetBucket = bucket || this.bucketName;
+
+    try {
+      const { data: downloadData, error: downloadError } =
+        await this.supabase.storage.from(targetBucket).download(filePath);
+
+      if (downloadError || !downloadData) {
+        throw new Error(downloadError?.message || 'Falha ao baixar o arquivo');
+      }
+
+      const buffer = Buffer.from(await downloadData.arrayBuffer());
+
+      const { data: fileList, error: listError } = await this.supabase.storage
+        .from(targetBucket)
+        .list('', { search: filePath.split('/').pop() });
+
+      if (listError || !fileList || fileList.length === 0) {
+        throw new Error(listError?.message || 'Falha ao obter metadados');
+      }
+
+      const fileMeta = fileList.find(
+        (file) => file.name === filePath.split('/').pop(),
+      );
+
+      return {
+        buffer,
+        metadata: {
+          contentType:
+            (fileMeta?.metadata as { mimetype?: string })?.mimetype ||
+            'application/octet-stream',
+          contentLength:
+            (fileMeta?.metadata as { size?: number })?.size ||
+            downloadData.size,
+          originalName: filePath.split('/').pop() || 'file',
+        },
+      };
+    } catch (error) {
+      const typedError = error as Error;
+      throw new Error(`Erro ao obter o arquivo: ${typedError.message}`);
     }
   }
 
