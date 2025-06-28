@@ -165,22 +165,23 @@
     </section>
 
     <!-- Seção 6: Tempo de Resistência ao Fogo -->
-    <section class='section'>
+    <p class='section'>
       <h2>6. TEMPO DE RESISTÊNCIA AO FOGO (TRF) DA EDIFICAÇÃO</h2>
       <p>De acordo com a fundamentação descrita no Capítulo 5 do presente Laudo
         Técnico, os Tempos Requeridos de Resistência ao Fogo, em conformidade
         com as características da edificação analisada, são:</p>
 
       <p>a) TRRF dos pavimentos acima do solo (altura da edificação - h): (h =
-        {{formatNumber pavement.height}}m térreo)
+        {{formatNumber maxHeight}}m térreo)
         {{fireResistance}} minutos;</p>
 
       <p>b) TRRF dos pavimentos subsolo:
-      {{#eq pavement.pavement 'subsolo'}}
-        (h = {{formatNumber pavement.height}}m subsolo) {{fireResistance}} minutos
-      {{else}}
-        (não há subsolo)
-      {{/eq}}
+        {{#with (lookup (filter pavement 'pavement' 'subsolo') 0)}}
+          (h = {{formatNumber height}}m subsolo) {{../fireResistance}} minutos
+        {{else}}
+          (não há subsolo)
+        {{/with}}
+      </p>
 
       <p>Informo ainda, conforme marcado nas opções abaixo, sobre a utilização
         ou não do método de Tempo Equivalente para redução do TRRF, como segue:</p>

@@ -2,7 +2,13 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateProjectDto } from './create-project.dto';
 import { ProjectStatus } from '@prisma/client';
 import { Expose } from 'class-transformer';
-import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @Expose()
@@ -16,6 +22,12 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @IsOptional()
   @IsString()
   structureType?: string;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  floorHeight?: number;
 
   @Expose()
   @ApiProperty({ required: false })

@@ -18,8 +18,6 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
-  ApiConsumes,
-  ApiBody,
 } from '@nestjs/swagger';
 import { RequireAuth } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -41,32 +39,18 @@ export class PhotoController {
   ) {}
 
   @Post('upload/:locationId')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'photos', maxCount: 10 }]))
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Upload de fotos para uma localização',
-    schema: {
-      type: 'object',
-      properties: {
-        photos: {
-          type: 'array',
-          items: {
-            type: 'string',
-            format: 'binary',
-          },
-          description: 'Array de fotos para upload',
-        },
-      },
-    },
-  })
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 10 }]))
   async uploadPhotos(
-    @UploadedFiles() files: { photos?: Express.Multer.File[] },
-    @Param('locationId', ParseUUIDPipe) locationId: string,
+    @UploadedFiles() files: { files?: Express.Multer.File[] },
+    @Param('locationId') locationId: string,
   ) {
-    if (!files?.photos || files.photos.length === 0) {
-      throw new BadRequestException('Nenhuma foto foi enviada');
+    console.log('Received files:', files);
+
+    if (!files?.files || files.files.length === 0) {
+      throw new BadRequestException('Nenhum arquivo enviado');
     }
-    return this.photoService.uploadPhotos(files.photos, locationId);
+
+    return this.photoService.uploadPhotos(files.files, locationId);
   }
 
   @Get('location/:locationId')

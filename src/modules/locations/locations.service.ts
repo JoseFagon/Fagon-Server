@@ -89,8 +89,8 @@ export class LocationService {
   ) {
     const location = await this.findOne(id);
 
-    const { photos, pavementId, finishes, height, ...locationData } =
-      updateLocationDto;
+    // Remova 'photos' do destructuring pois não será mais usado aqui
+    const { pavementId, finishes, height, ...locationData } = updateLocationDto;
 
     try {
       const updateData: Prisma.LocationUpdateInput = { ...locationData };
@@ -116,13 +116,6 @@ export class LocationService {
           location.pavement.id,
           height,
         );
-      }
-
-      if (photos?.length) {
-        await this.photoService.uploadPhotos(photos, id).catch((error) => {
-          console.error('Photo upload failed:', error);
-          throw new Error(`Falha no upload de fotos: ${error.message}`);
-        });
       }
 
       if (finishes) {

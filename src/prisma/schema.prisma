@@ -101,6 +101,7 @@ model Project {
   engineerId     String
   status         ProjectStatus
   structureType  String?
+  floorHeight    Float?
   inspectorName  String?
   inspectionDate DateTime?
   createdAt      DateTime      @default(now())

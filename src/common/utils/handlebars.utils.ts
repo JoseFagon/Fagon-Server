@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import { DateUtils } from './date.utils';
 import * as Handlebars from 'handlebars';
+import { Photo } from '@prisma/client';
 
 interface Location {
   locationType: string;
@@ -12,6 +13,50 @@ interface Pavement {
   area?: number;
   height?: number;
 }
+
+const locationLabelMap: Record<string, string> = {
+  fachada: 'Fachada',
+  'auto_-_atendimento': 'Auto-Atendimento',
+  caixas: 'Caixas',
+  guiche_atendimento: 'Guichê de Atendimento',
+  salao_principal: 'Salão Principal',
+  area_prioritaria: 'Área Prioritária',
+  sala_reunioes: 'Sala de Reuniões',
+  escritorios_internos: 'Escritórios Internos',
+  cofre: 'Cofre',
+  banheiro: 'Banheiro',
+  area_descanso: 'Área de Descanso',
+  sala_servidores: 'Sala de Servidores',
+  outros: 'Outros',
+};
+
+const floorLabelMap: Record<string, string> = {
+  ceramico: 'Cerâmico',
+  porcelanato: 'Porcelanato',
+  vinilico: 'Vinílico',
+  cimentado: 'Cimentado',
+  carpete: 'Carpete',
+  granito: 'Granito',
+  ardosia: 'Ardósia',
+  outro: 'Outro',
+};
+
+const ceilingLabelMap: Record<string, string> = {
+  gesso_acartonado: 'Gesso Acartonado',
+  laje: 'Laje',
+  amadeirado: 'Amadeirado',
+  mineral_acustico: 'Mineral Acústico',
+  outro: 'Outro',
+};
+
+const wallLabelMap: Record<string, string> = {
+  alvenaria: 'Alvenaria',
+  drywall: 'Drywall (Gesso)',
+  vidros: 'Vidros',
+  grades: 'Grades',
+  mdf: 'MDF',
+  outro: 'Outro',
+};
 
 export function registerHandlebarsHelpers(): void {
   const formatPavementName = (name: string): string => {
@@ -27,6 +72,51 @@ export function registerHandlebarsHelpers(): void {
     };
     return replacements[name.toLowerCase()] || name;
   };
+
+  const formatMaterial = (type: string, value: string): string => {
+    const maps: Record<string, Record<string, string>> = {
+      piso: floorLabelMap,
+      forro: ceilingLabelMap,
+      parede: wallLabelMap,
+    };
+
+    const map = maps[type] || {};
+    return map[value] || value;
+  };
+
+  Handlebars.registerHelper('formatLocationName', function (value: string) {
+    return locationLabelMap[value] || value;
+  });
+
+  Handlebars.registerHelper('formatFloorMaterial', function (value: string) {
+    return floorLabelMap[value] || value;
+  });
+
+  Handlebars.registerHelper('formatCeilingMaterial', function (value: string) {
+    return ceilingLabelMap[value] || value;
+  });
+
+  Handlebars.registerHelper('formatWallMaterial', function (value: string) {
+    return wallLabelMap[value] || value;
+  });
+
+  Handlebars.registerHelper(
+    'joinMaterialsWithSlash',
+    function (
+      materials: Array<{ surface: string; materialFinishing: string }>,
+      surfaceType: string,
+    ) {
+      if (!Array.isArray(materials)) return '—';
+
+      const filtered = materials
+        .filter((m) => m.surface === surfaceType)
+        .map((m) => {
+          return formatMaterial(surfaceType, m.materialFinishing.trim());
+        });
+
+      return filtered.length > 0 ? filtered.join(' / ') : '—';
+    },
+  );
 
   Handlebars.registerHelper(
     'formatDate',
@@ -61,6 +151,24 @@ export function registerHandlebarsHelpers(): void {
     },
   );
 
+  Handlebars.registerHelper('addOne', function (value: number) {
+    return value + 1;
+  });
+
+  Handlebars.registerHelper(
+    'ifMoreThanOnePhoto',
+    function (
+      this: Record<string, unknown>,
+      photos: unknown,
+      options: Handlebars.HelperOptions,
+    ): Handlebars.SafeString | string {
+      if (Array.isArray(photos) && photos.length > 1) {
+        return options.fn(this);
+      }
+      return '';
+    },
+  );
+
   Handlebars.registerHelper(
     'formatDateTime',
     function (datetime: Date | string, pattern?: string): string {
@@ -79,8 +187,21 @@ export function registerHandlebarsHelpers(): void {
   Handlebars.registerHelper(
     'filterLocations',
     function (locations: Location[], type: string): Location[] {
-      if (!Array.isArray(locations)) return [];
-      return locations.filter((loc) => loc.locationType === type);
+      if (!Array.isArray(locations)) {
+        console.error('filterLocations: locations não é um array', locations);
+        return [];
+      }
+      return locations.filter(
+        (loc) => loc.locationType.toLowerCase() === type.toLowerCase(),
+      );
+    },
+  );
+
+  Handlebars.registerHelper(
+    'lookup',
+    function (obj: Record<string, unknown> | null | undefined, key: string) {
+      if (!obj || typeof obj !== 'object') return undefined;
+      return obj[key];
     },
   );
 
@@ -92,10 +213,26 @@ export function registerHandlebarsHelpers(): void {
       b: unknown,
       options?: Handlebars.HelperOptions,
     ): string | boolean {
-      if (arguments.length < 4 || !options) {
+      if (!options) {
         return a === b;
       }
-      return a === b ? options.fn(this) : options.inverse?.(this);
+
+      const result = a === b;
+
+      if (result) {
+        return typeof options.fn === 'function' ? options.fn(this) : '';
+      } else {
+        return typeof options.inverse === 'function'
+          ? options.inverse(this)
+          : '';
+      }
+    },
+  );
+
+  Handlebars.registerHelper(
+    'filter',
+    function (arr: unknown[], prop: string, value: unknown) {
+      return Array.isArray(arr) ? arr.filter((i) => i?.[prop] === value) : [];
     },
   );
 
@@ -103,7 +240,16 @@ export function registerHandlebarsHelpers(): void {
     'formatNumber',
     function (number: number | undefined | null): string {
       if (number === undefined || number === null) return '—';
-      return number.toString().replace('.', ',');
+      const formatted = Number(number).toFixed(2);
+
+      return formatted.replace('.', ',');
+    },
+  );
+
+  Handlebars.registerHelper(
+    'filterPhotosByLocationId',
+    function (photos: Photo[], locationId: string) {
+      return photos.filter((photo) => photo.locationId === locationId);
     },
   );
 

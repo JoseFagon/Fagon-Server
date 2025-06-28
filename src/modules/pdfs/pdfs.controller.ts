@@ -8,6 +8,9 @@ import {
   Delete,
   UploadedFile,
   UseInterceptors,
+  InternalServerErrorException,
+  NotFoundException,
+  Res,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -26,6 +29,7 @@ import { ROLES } from '../../common/constants/roles.constant';
 import { PdfResponseDto } from './dto/response-pdf.dto';
 import { CreatePdfDto } from './dto/create-pdf.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 
 @ApiTags('PDFs')
 @ApiBearerAuth()
@@ -80,6 +84,26 @@ export class PdfController {
     return this.pdfService.findByProject(projectId);
   }
 
+  @Get(':id/signed-url')
+  @ApiOperation({ summary: 'Obtém URL assinada para um PDF' })
+  @ApiResponse({
+    status: 200,
+    description: 'URL assinada gerada com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+      },
+    },
+  })
+  async getSignedUrl(@Param('id', ParseUUIDPipe) id: string) {
+    const pdf = await this.pdfService.getPdfById(id);
+
+    const pathToUse = pdf.signedFilePath || pdf.filePath;
+    const signedUrl = await this.storageService.getSignedUrl(pathToUse);
+    return { url: signedUrl };
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get PDF document details' })
   @ApiParam({
@@ -99,8 +123,6 @@ export class PdfController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.pdfService.getPdfById(id);
   }
-
-  // pdf.controller.ts
 
   @Get(':id/download')
   @ApiOperation({ summary: 'Download PDF document' })
@@ -125,8 +147,34 @@ export class PdfController {
     status: 404,
     description: 'PDF document not found',
   })
-  async downloadPdf(@Param('id', ParseUUIDPipe) id: string) {
-    return this.pdfService.downloadPdf(id);
+  async downloadPdf(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() res: Response,
+  ) {
+    try {
+      const result = await this.pdfService.downloadPdf(id);
+
+      if (!result) {
+        throw new NotFoundException('PDF não encontrado');
+      }
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${result.filename}"`,
+      );
+
+      result.fileStream.stream.pipe(res);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        error instanceof Error
+          ? error.message
+          : 'Erro desconhecido ao baixar PDF',
+      );
+    }
   }
 
   @Delete(':id')

@@ -217,7 +217,7 @@ export class ProjectService {
       engineer: true,
       pavement: true,
       location: {
-        select: {
+        include: {
           photo: true,
           materialFinishing: true,
         },

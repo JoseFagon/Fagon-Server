@@ -117,11 +117,11 @@ export class StorageService {
     const targetBucket = bucket || this.bucketName;
 
     try {
-      const { data: publicUrlData } = this.supabase.storage
+      const { data: fileInfo } = this.supabase.storage
         .from(targetBucket)
         .getPublicUrl(filePath);
 
-      if (!publicUrlData || !publicUrlData.publicUrl) {
+      if (!fileInfo) {
         throw new NotFoundException(`Arquivo não encontrado: ${filePath}`);
       }
 
@@ -132,18 +132,6 @@ export class StorageService {
         throw new Error(downloadError?.message || 'Falha ao baixar o arquivo');
       }
 
-      const { data: fileList, error: listError } = await this.supabase.storage
-        .from(targetBucket)
-        .list('', { search: filePath.split('/').pop() });
-
-      if (listError || !fileList || fileList.length === 0) {
-        throw new Error(listError?.message || 'Falha ao obter metadados');
-      }
-
-      const fileMeta = fileList.find(
-        (file) => file.name === filePath.split('/').pop(),
-      );
-
       const stream = new Readable();
       stream.push(Buffer.from(await downloadData.arrayBuffer()));
       stream.push(null);
@@ -151,13 +139,9 @@ export class StorageService {
       return {
         stream,
         metadata: {
-          contentType:
-            (fileMeta?.metadata as { mimetype?: string })?.mimetype ||
-            'application/octet-stream',
-          contentLength:
-            (fileMeta?.metadata as { size?: number })?.size ||
-            downloadData.size,
-          originalName: filePath.split('/').pop() || 'file',
+          contentType: 'application/pdf',
+          contentLength: downloadData.size,
+          originalName: filePath.split('/').pop() || 'document.pdf',
         },
       };
     } catch (error) {

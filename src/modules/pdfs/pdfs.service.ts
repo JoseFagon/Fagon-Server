@@ -2,9 +2,23 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { StorageService } from 'src/storage/storage.service';
 import { generatePdfFromTemplate } from './utils/pdf-generator';
-import { PdfType } from '@prisma/client';
+import { Location, PdfType, Photo } from '@prisma/client';
 import { ProjectService } from '../projects/projects.service';
 import { ProjectWithIncludes } from 'src/common/interfaces/project-includes.interface';
+
+interface LocationWithPhotos extends Location {
+  photo: Photo[];
+  materialFinishing?: string;
+}
+
+interface PhotoWithSignedUrl extends Photo {
+  signedUrl: string;
+}
+
+interface LocationWithSignedUrls extends Location {
+  photo: PhotoWithSignedUrl[];
+  materialFinishing?: string;
+}
 
 @Injectable()
 export class PdfService {
@@ -30,6 +44,10 @@ export class PdfService {
     const maxHeight = this.calculateMaxHeight(project);
     const fireResistance = this.calculateFireResistance(project);
 
+    const locationsWithSignedUrls = await this.getPhotosWithSignedUrls(
+      project.location as unknown as LocationWithPhotos[],
+    );
+
     const data = {
       agency: project.agency,
       engineer: project.engineer,
@@ -38,19 +56,17 @@ export class PdfService {
       fireResistance,
       maxHeight,
       pavement: project.pavement,
-      locations: project.location.map((location) => ({
+      location: locationsWithSignedUrls.map((location) => ({
         id: location.id,
         name: location.name,
         locationType: location.locationType,
         height: location.height,
         materialFinishing: location.materialFinishing,
-        photo: location.photo
-          .filter((p) => p.selectedForPdf)
-          .map((p) => ({
-            id: p.id,
-            filePath: p.filePath,
-            selectedForPdf: p.selectedForPdf,
-          })),
+        photo: location.photo.map((p) => ({
+          id: p.id,
+          filePath: p.signedUrl,
+          selectedForPdf: p.selectedForPdf,
+        })),
       })),
     };
 
@@ -78,20 +94,21 @@ export class PdfService {
 
   async signPdf(id: string, signedFile: Express.Multer.File) {
     const pdf = await this.getPdfById(id);
-
     if (!pdf) {
       throw new NotFoundException('PDF não encontrado');
     }
 
-    const uploadResult = await this.storageService.uploadFile(
-      {
-        buffer: signedFile.buffer,
-        originalname: `${pdf.pdfType}-signed.pdf`,
-        mimetype: 'application/pdf',
-        size: signedFile.size,
-      },
-      'signed-pdfs',
-    );
+    const project = await this.projectService.findOne(pdf.projectId);
+    if (!project) {
+      throw new NotFoundException('Projeto não encontrado');
+    }
+
+    const uploadResult = await this.storageService.uploadFile({
+      buffer: signedFile.buffer,
+      originalname: `${pdf.pdfType}-assinado-${project.agency.agencyNumber}-${project.upeCode}.pdf`,
+      mimetype: 'application/pdf',
+      size: signedFile.size,
+    });
 
     return this.updateSignedPdf(id, uploadResult.key);
   }
@@ -109,13 +126,21 @@ export class PdfService {
     if (!pdf) {
       throw new NotFoundException('PDF não encontrado');
     }
-
-    const fileStream = await this.storageService.getFileStream(pdf.filePath);
-
-    return {
-      fileStream,
-      filename: `${pdf.pdfType}-${pdf.projectId}.pdf`,
-    };
+    console.log(pdf);
+    try {
+      const fileStream = await this.storageService.getFileStream(pdf.filePath);
+      console.log(fileStream);
+      return {
+        fileStream,
+        filename: `${pdf.pdfType}-${pdf.projectId}.pdf`,
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(
+          `Falha ao preparar o PDF para download: ${error.message}`,
+        );
+      }
+    }
   }
 
   private calculateMaxHeight(project: ProjectWithIncludes): number {
@@ -135,10 +160,44 @@ export class PdfService {
     return hasSubsolo || hasOver6m ? 60 : 30;
   }
 
+  private async getPhotosWithSignedUrls(
+    locations: LocationWithPhotos[],
+  ): Promise<LocationWithSignedUrls[]> {
+    return Promise.all(
+      locations.map(async (location) => {
+        const photosWithUrls: PhotoWithSignedUrl[] = await Promise.all(
+          location.photo
+            .filter((p): p is Photo => p.selectedForPdf !== undefined)
+            .filter((p) => p.selectedForPdf)
+            .map(async (p) => {
+              const signedUrl = await this.storageService.getSignedUrl(
+                p.filePath,
+              );
+              return {
+                ...p,
+                signedUrl,
+              };
+            }),
+        );
+
+        return {
+          ...location,
+          photo: photosWithUrls,
+        };
+      }),
+    );
+  }
+
   async getPdfById(id: string) {
-    return this.prisma.pdf.findUnique({
+    const photo = await this.prisma.pdf.findUnique({
       where: { id },
     });
+
+    if (!photo) {
+      throw new NotFoundException('Pdf não encontrado');
+    }
+
+    return photo;
   }
 
   async findByProject(projectId: string) {

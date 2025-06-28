@@ -81,20 +81,6 @@
         margin-bottom: 10px;
       }
 
-      /* .footer {
-        margin-top: 30px;
-        font-size: 9pt;
-        text-align: center;
-        border-top: 1px solid #ddd;
-        padding-top: 10px;
-        color: #666;
-      }
-
-      .footer a {
-        color: #0066cc;
-        text-decoration: none;
-      } */
-
       .observation {
         margin-top: 10px;
         font-style: italic;
@@ -159,94 +145,70 @@
       de
       {{formatDate now 'yyyy'}}.</p>
 
-    <table>
-      <thead>
-        <tr>
-          <th>AMBIENTE</th>
-          <th>PAVIMENTO</th>
-          <th>PISO</th>
-          <th>PAREDES</th>
-          <th>FORROS</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Seção de Acabamentos Externos -->
-        <tr>
-          <td
-            colspan='5'
-            style='background-color: #f5f5f5; font-weight: bold;'
-          >ACABAMENTOS EXTERNOS</td>
-        </tr>
+<table>
+  <thead>
+    <tr>
+      <th>AMBIENTE</th>
+      <th>PAVIMENTO</th>
+      <th>PISO</th>
+      <th>PAREDES</th>
+      <th>FORROS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Seção de Acabamentos Externos -->
+    <tr>
+      <td colspan='5' style='background-color: #f5f5f5; font-weight: bold;'>ACABAMENTOS EXTERNOS</td>
+    </tr>
 
-        {{#each (filterLocations location 'externo')}}
-          <tr>
-            <td>{{this.name}}</td>
-            <td>—</td>
-            <td>
-              {{#each this.MaterialFinishing}}
-                {{#if (eq this.surface 'piso')}}
-                  {{this.materialFinishing}}
-                {{/if}}
-              {{/each}}
-            </td>
-            <td>
-              {{#each this.MaterialFinishing}}
-                {{#if (eq this.surface 'parede')}}
-                  {{this.materialFinishing}}
-                {{/if}}
-              {{/each}}
-            </td>
-            <td>
-              {{#if (eq this.name 'FACHADA')}}
-                —
-              {{else}}
-                {{#each this.MaterialFinishing}}
-                  {{#if (eq this.surface 'forro')}}
-                    {{this.materialFinishing}}
-                  {{/if}}
-                {{/each}}
-              {{/if}}
-            </td>
-          </tr>
-        {{/each}}
+    {{#each (filterLocations location 'externo')}}
+      <tr>
+        <td>{{formatLocationName this.name}}</td>
+        <td>
+          {{#with (lookup ../pavement this.pavementId) as |pavement|}}
+            {{formatPavementName pavement.pavement}}
+          {{else}}
+            —
+          {{/with}}
+        </td>
+        <td>
+          {{joinMaterialsWithSlash this.materialFinishing 'piso'}}
+        </td>
+        <td>
+          {{joinMaterialsWithSlash this.materialFinishing 'parede'}}
+        </td>
+        <td>
+          {{#if (eq this.name 'fachada')}}
+            —
+          {{else}}
+            {{joinMaterialsWithSlash this.materialFinishing 'forro'}}
+          {{/if}}
+        </td>
+      </tr>
+    {{/each}}
 
-        <!-- Seção de Acabamentos Internos -->
-        <tr>
-          <td
-            colspan='5'
-            style='background-color: #f5f5f5; font-weight: bold;'
-          >ACABAMENTOS INTERNOS</td>
-        </tr>
+    <!-- Seção de Acabamentos Internos -->
+    <tr>
+      <td colspan='5' style='background-color: #f5f5f5; font-weight: bold;'>ACABAMENTOS INTERNOS</td>
+    </tr>
 
-        {{#each (filterLocations location 'interno')}}
-          <tr>
-            <td>{{this.name}}</td>
-            <td>{{this.pavement.pavement}}</td>
-            <td>
-              {{#each this.MaterialFinishing}}
-                {{#eq this.surface 'piso'}}
-                  {{this.materialFinishing}}
-                {{/eq}}
-              {{/each}}
-            </td>
-            <td>
-              {{#each this.MaterialFinishing}}
-                {{#eq this.surface 'parede'}}
-                  {{this.materialFinishing}}
-                {{/eq}}
-              {{/each}}
-            </td>
-            <td>
-              {{#each this.MaterialFinishing}}
-                {{#eq this.surface 'forro'}}
-                  {{this.materialFinishing}}
-                {{/eq}}
-              {{/each}}
-            </td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
+    {{#each (filterLocations location 'interno')}}
+      <tr>
+        <td>{{formatLocationName this.name}}</td>
+        <td>
+          {{#with (lookup ../pavement this.pavementId) as |pavement|}}
+            {{formatPavementName pavement.pavement}}
+          {{else}}
+            —
+          {{/with}}
+        </td>
+        <td>{{joinMaterialsWithSlash this.materialFinishing 'piso'}}</td>
+        <td>{{joinMaterialsWithSlash this.materialFinishing 'parede'}}</td>
+        <td>{{joinMaterialsWithSlash this.materialFinishing 'forro'}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
 
     <section class='observation'>
       <p><strong>Obs:</strong>

@@ -7,8 +7,6 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  UploadedFiles,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,7 +14,6 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiBody,
-  ApiConsumes,
 } from '@nestjs/swagger';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
@@ -28,7 +25,6 @@ import {
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { LocationService } from './locations.service';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Locations')
@@ -89,23 +85,12 @@ export class LocationController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update location information' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UpdateLocationDto })
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'photos', maxCount: 10 }]))
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: JwtPayload,
     @Body() updateLocationDto: UpdateLocationDto,
-    @UploadedFiles() files: { photos?: Express.Multer.File[] },
   ) {
-    return this.locationService.update(
-      id,
-      {
-        ...updateLocationDto,
-        photos: files?.photos,
-      },
-      currentUser.sub,
-    );
+    return this.locationService.update(id, updateLocationDto, currentUser.sub);
   }
 
   @Delete(':id')

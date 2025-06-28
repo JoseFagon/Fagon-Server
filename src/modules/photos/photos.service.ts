@@ -127,7 +127,7 @@ export class PhotoService {
       throw new NotFoundException('Foto não encontrada');
     }
 
-    await this.storageService.deleteFile(photo.filePath, 'locations');
+    await this.storageService.deleteFile(photo.filePath);
     await this.prisma.photo.delete({ where: { id } });
 
     return { success: true, message: 'Foto deletada com sucesso' };

@@ -7,19 +7,6 @@ import { LocationFinishingInputDto } from 'src/modules/material-finishings/dto/l
 
 export class UpdateLocationDto extends PartialType(CreateLocationDto) {
   @Expose()
-  @ApiProperty({
-    required: false,
-    type: 'array',
-    items: {
-      type: 'string',
-      format: 'binary',
-    },
-    description: 'Array de fotos para upload',
-  })
-  @IsOptional()
-  photos?: Express.Multer.File[];
-
-  @Expose()
   @ApiProperty({ required: false })
   @IsOptional()
   @IsUUID()
