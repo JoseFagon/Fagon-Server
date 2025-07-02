@@ -8,6 +8,8 @@ import {
   Delete,
   ParseUUIDPipe,
   Query,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -28,6 +30,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { PathologyService } from './pathologies.service';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Pathologies')
 @ApiBearerAuth()
@@ -44,11 +47,16 @@ export class PathologyController {
     type: PathologyResponseDto,
     description: 'Pathology successfully created',
   })
+  @UseInterceptors(FilesInterceptor('photos'))
   create(
-    @Body() createPathologyDto: CreatePathologyDto,
+    @UploadedFiles() photos: Express.Multer.File[],
+    @Body() createPathologyDto: Omit<CreatePathologyDto, 'photos'>,
     @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.pathologyService.create(createPathologyDto, currentUser.sub);
+    return this.pathologyService.create(
+      { ...createPathologyDto, photos },
+      currentUser.sub,
+    );
   }
 
   @Get()

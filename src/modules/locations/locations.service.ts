@@ -89,7 +89,6 @@ export class LocationService {
   ) {
     const location = await this.findOne(id);
 
-    // Remova 'photos' do destructuring pois não será mais usado aqui
     const { pavementId, finishes, height, ...locationData } = updateLocationDto;
 
     try {
@@ -170,5 +169,7 @@ export class LocationService {
     if (!location) {
       throw new NotFoundException('Localização não encontrada');
     }
+
+    return location;
   }
 }

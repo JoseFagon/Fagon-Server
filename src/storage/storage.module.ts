@@ -12,6 +12,7 @@ import { MulterModule } from '@nestjs/platform-express';
       limits: {
         fileSize: 10 * 1024 * 1024, // 10MB
       },
+      dest: './upload',
     }),
     ConfigModule,
     PrismaModule,

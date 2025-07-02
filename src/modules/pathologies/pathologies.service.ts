@@ -21,26 +21,27 @@ export class PathologyService {
     private pathologyPhotoService: PathologyPhotoService,
   ) {}
 
-  async create(createPathologyDto: CreatePathologyDto, userId: string) {
+  async create(
+    createPathologyDto: Omit<CreatePathologyDto, 'photos'> & {
+      photos?: Express.Multer.File[];
+    },
+    userId: string,
+  ) {
     const { photos, ...pathologyData } = createPathologyDto;
+
     const pathology = await this.prisma.pathology.create({
       data: {
         ...pathologyData,
-        recordDate: new Date(createPathologyDto.recordDate),
+        recordDate: new Date(),
       },
       include: {
-        project: {
-          select: {
-            id: true,
-            upeCode: true,
-          },
-        },
+        project: true,
         location: true,
       },
     });
 
     if (photos?.length) {
-      await this.pathologyPhotoService.uploadPhotos(photos, pathology.id); // Corrigido para usar pathology.id
+      await this.pathologyPhotoService.uploadPhotos(photos, pathology.id);
     }
 
     await this.logHelper.createLog(userId, 'CREATE', 'Pathology', pathology.id);
@@ -55,13 +56,9 @@ export class PathologyService {
     return this.prisma.pathology.findMany({
       where,
       include: {
-        project: {
-          select: {
-            id: true,
-            upeCode: true,
-          },
-        },
+        project: true,
         location: true,
+        pathologyPhoto: true,
       },
       orderBy: {
         recordDate: 'desc',
@@ -102,13 +99,9 @@ export class PathologyService {
     const pathology = await this.prisma.pathology.findUnique({
       where: { id },
       include: {
-        project: {
-          select: {
-            id: true,
-            upeCode: true,
-          },
-        },
+        project: true,
         location: true,
+        pathologyPhoto: true,
       },
     });
 
@@ -128,17 +121,9 @@ export class PathologyService {
       where: { id },
       data: {
         ...updatePathologyDto,
-        recordDate: updatePathologyDto.recordDate
-          ? new Date(updatePathologyDto.recordDate)
-          : undefined,
       },
       include: {
-        project: {
-          select: {
-            id: true,
-            upeCode: true,
-          },
-        },
+        project: true,
         location: true,
       },
     });

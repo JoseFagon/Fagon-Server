@@ -23,7 +23,8 @@ export class PhotoService {
   ) {}
 
   async uploadPhotos(files: Express.Multer.File[], locationId: string) {
-    await this.locationService.validateLocationExists(locationId);
+    const location =
+      await this.locationService.validateLocationExists(locationId);
 
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     const invalidFiles = files.filter(
@@ -37,9 +38,15 @@ export class PhotoService {
       );
     }
 
+    const existingPhotoCount = await this.prisma.photo.count({
+      where: { locationId },
+    });
+
     try {
       const uploadedPhotos = await Promise.all(
-        files.map(async (file) => {
+        files.map(async (file, index) => {
+          const photoNumber = existingPhotoCount + index + 1;
+
           const uploadResult = await this.storageService.uploadFile({
             originalname: file.originalname || `photo-${Date.now()}.jpg`,
             buffer: file.buffer,
@@ -49,6 +56,7 @@ export class PhotoService {
 
           return this.prisma.photo.create({
             data: {
+              name: `Foto${photoNumber}-${location.name}`,
               locationId,
               filePath: uploadResult.key,
               selectedForPdf: false,
@@ -58,8 +66,7 @@ export class PhotoService {
       );
 
       return uploadedPhotos;
-    } catch (error) {
-      console.error('Upload failed:', error);
+    } catch {
       throw new InternalServerErrorException('Falha ao fazer upload das fotos');
     }
   }

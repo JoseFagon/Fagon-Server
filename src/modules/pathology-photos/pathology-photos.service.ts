@@ -1,13 +1,14 @@
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { SupabaseClient } from '@supabase/supabase-js';
 import { StorageService } from 'src/storage/storage.service';
-import { PathologyPhotoResponseDto } from './dto/response-pathology-photo.dto';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { InjectSupabaseClient } from 'nestjs-supabase-js';
 import { PathologyService } from '../pathologies/pathologies.service';
 
@@ -22,59 +23,63 @@ export class PathologyPhotoService {
   ) {}
 
   async uploadPhotos(files: Express.Multer.File[], pathologyId: string) {
-    const pathologyExists = await this.pathologyService.findOne(pathologyId);
+    const pathology = await this.pathologyService.findOne(pathologyId);
 
-    if (!pathologyExists) {
-      throw new NotFoundException('Patologia não encontrada');
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    const invalidFiles = files.filter(
+      (file) =>
+        file.size > MAX_FILE_SIZE || !file.mimetype?.startsWith('image/'),
+    );
+
+    if (invalidFiles.length > 0) {
+      throw new BadRequestException(
+        `Arquivos inválidos: tamanho máximo 10MB e apenas imagens são permitidas`,
+      );
     }
 
-    const uploadedPhotos: PathologyPhotoResponseDto[] = [];
-
-    for (const file of files) {
-      const uploadResult = await this.storageService.uploadFile({
-        originalname: file.originalname,
-        buffer: file.buffer,
-        mimetype: file.mimetype,
-        size: file.size,
-      });
-
-      const photo = await this.prisma.pathologyPhoto.create({
-        data: {
-          pathologyId,
-          filePath: uploadResult.key,
-        },
-      });
-
-      uploadedPhotos.push({
-        ...photo,
-        url: uploadResult.url,
-      });
-    }
-
-    return uploadedPhotos;
-  }
-
-  async getPhotosByPathology(pathologyId: string) {
-    const photos = await this.prisma.pathologyPhoto.findMany({
+    const existingPhotoCount = await this.prisma.pathologyPhoto.count({
       where: { pathologyId },
-      include: {
-        pathology: {
-          include: {
-            project: {
-              select: {
-                id: true,
-                upeCode: true,
-              },
-            },
-          },
-        },
-      },
     });
 
-    return photos.map((photo) => ({
-      ...photo,
-      url: this.storageService.getSignedUrl(photo.filePath),
-    }));
+    try {
+      const uploadedPhotos = await Promise.all(
+        files.map(async (file, index) => {
+          const photoNumber = existingPhotoCount + index + 1;
+
+          const uploadResult = await this.storageService.uploadFile({
+            originalname:
+              file.originalname || `pathology-photo-${Date.now()}.jpg`,
+            buffer: file.buffer,
+            mimetype: file.mimetype || 'image/jpeg',
+            size: file.size,
+          });
+
+          return this.prisma.pathologyPhoto.create({
+            data: {
+              name: `Foto-Patologia${photoNumber}-${pathology.referenceLocation}`,
+              pathologyId,
+              filePath: uploadResult.key,
+            },
+            include: {
+              pathology: {
+                include: {
+                  project: {
+                    select: {
+                      id: true,
+                      upeCode: true,
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }),
+      );
+
+      return uploadedPhotos;
+    } catch {
+      throw new InternalServerErrorException('Falha ao fazer upload das fotos');
+    }
   }
 
   async getPhotoByPathology(id: string) {
@@ -98,30 +103,45 @@ export class PathologyPhotoService {
       throw new NotFoundException('Foto da patologia não encontrada');
     }
 
-    return {
-      ...photo,
-      url: await this.storageService.getSignedUrl(photo.filePath),
-    };
+    return photo;
   }
 
-  async deletePhoto(id: string) {
-    const photo = await this.prisma.pathologyPhoto.findUnique({
-      where: { id },
+  async getPhotosByPathology(pathologyId: string, includeSignedUrl = false) {
+    const photos = await this.prisma.pathologyPhoto.findMany({
+      where: { pathologyId },
       include: {
         pathology: {
-          select: {
-            projectId: true,
+          include: {
+            project: true,
+            location: true,
           },
         },
       },
     });
 
+    if (includeSignedUrl) {
+      return Promise.all(
+        photos.map(async (photo) => ({
+          ...photo,
+          signedUrl: await this.storageService.getSignedUrl(photo.filePath),
+        })),
+      );
+    }
+
+    return photos;
+  }
+
+  async deletePhoto(id: string) {
+    const photo = await this.prisma.pathologyPhoto.findUnique({
+      where: { id },
+    });
     if (!photo) {
       throw new NotFoundException('Foto da patologia não encontrada');
     }
 
     await this.storageService.deleteFile(photo.filePath);
-
     await this.prisma.pathologyPhoto.delete({ where: { id } });
+
+    return { success: true, message: 'Foto da patologia deletada com sucesso' };
   }
 }

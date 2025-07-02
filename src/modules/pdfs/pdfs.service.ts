@@ -126,10 +126,10 @@ export class PdfService {
     if (!pdf) {
       throw new NotFoundException('PDF não encontrado');
     }
-    console.log(pdf);
+
     try {
       const fileStream = await this.storageService.getFileStream(pdf.filePath);
-      console.log(fileStream);
+
       return {
         fileStream,
         filename: `${pdf.pdfType}-${pdf.projectId}.pdf`,

@@ -8,22 +8,22 @@ import {
   ParseUUIDPipe,
   Body,
   UploadedFiles,
+  BadRequestException,
+  Query,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
-  ApiConsumes,
-  ApiBody,
 } from '@nestjs/swagger';
-import { PathologyPhotoResponseDto } from './dto/response-pathology-photo.dto';
 import { RequireAuth } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
-import { CreatePathologyPhotoDto } from './dto/create-pathology-photo.dto';
+import { PathologyPhotoResponseDto } from './dto/response-pathology-photo.dto';
 import { PathologyPhotoService } from './pathology-photos.service';
+import { StorageService } from 'src/storage/storage.service';
 
 @ApiTags('Pathology Photos')
 @ApiBearerAuth()
@@ -31,75 +31,74 @@ import { PathologyPhotoService } from './pathology-photos.service';
 @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO, ROLES.VISTORIADOR)
 @Controller('pathology-photos')
 export class PathologyPhotoController {
-  constructor(private readonly pathologyPhotoService: PathologyPhotoService) {}
+  constructor(
+    private readonly pathologyPhotoService: PathologyPhotoService,
+    private readonly storageService: StorageService,
+  ) {}
 
   @Post('upload/:pathologyId')
-  @UseInterceptors(FilesInterceptor('files'))
-  @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Upload photos for a pathology' })
-  @ApiResponse({
-    status: 201,
-    type: PathologyPhotoResponseDto,
-    description: 'Pathology photos successfully uploaded',
-  })
-  @ApiBody({
-    description: 'Upload photos for a pathology',
-    schema: {
-      type: 'object',
-      properties: {
-        files: {
-          type: 'array',
-          items: {
-            type: 'string',
-            format: 'binary',
-          },
-        },
-      },
-      required: ['files'],
-    },
-  })
-  uploadPathologyPhoto(
-    @UploadedFiles() files: Express.Multer.File[],
-    @Param() createPathologyPhotoDto: CreatePathologyPhotoDto,
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 10 }]))
+  async uploadPhotos(
+    @UploadedFiles() files: { files?: Express.Multer.File[] },
+    @Param('pathologyId') pathologyId: string,
   ) {
-    return this.pathologyPhotoService.uploadPhotos(
-      files,
-      createPathologyPhotoDto.pathologyId,
-    );
-  }
+    if (!files?.files || files.files.length === 0) {
+      throw new BadRequestException('Nenhum arquivo enviado');
+    }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get specific pathology photo details' })
-  @ApiResponse({
-    status: 200,
-    type: PathologyPhotoResponseDto,
-    description: 'Pathology photo details',
-  })
-  getOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.pathologyPhotoService.getPhotoByPathology(id);
+    return this.pathologyPhotoService.uploadPhotos(files.files, pathologyId);
   }
 
   @Get('pathology/:pathologyId')
-  @ApiOperation({ summary: 'List photos of a pathology' })
+  @ApiOperation({ summary: 'Lista fotos de uma patologia' })
   @ApiResponse({
     status: 200,
     type: [PathologyPhotoResponseDto],
-    description: 'List of pathology photos',
+    description: 'Lista de fotos da patologia',
   })
-  getPhotosByPathology(
+  async getPhotosByPathology(
     @Param('pathologyId', ParseUUIDPipe) pathologyId: string,
+    @Query('signed') signed: string,
   ) {
-    return this.pathologyPhotoService.getPhotosByPathology(pathologyId);
+    return this.pathologyPhotoService.getPhotosByPathology(
+      pathologyId,
+      signed === 'true',
+    );
+  }
+
+  @Get(':id/signed-url')
+  @ApiOperation({ summary: 'Obtém URL assinada para uma foto de patologia' })
+  @ApiResponse({
+    status: 200,
+    description: 'URL assinada gerada com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+      },
+    },
+  })
+  async getSignedUrl(@Param('id', ParseUUIDPipe) id: string) {
+    const photo = await this.pathologyPhotoService.getPhotoByPathology(id);
+    const signedUrl = await this.storageService.getSignedUrl(photo.filePath);
+    return { url: signedUrl };
   }
 
   @Delete(':id')
   @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
-  @ApiOperation({ summary: 'Delete a pathology photo' })
+  @ApiOperation({ summary: 'Remove uma foto de patologia' })
   @ApiResponse({
-    status: 204,
-    description: 'Pathology photo successfully deleted',
+    status: 200,
+    description: 'Foto removida com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean' },
+        message: { type: 'string' },
+      },
+    },
   })
-  deletePhoto(@Param('id', ParseUUIDPipe) id: string) {
+  async deletePhoto(@Param('id', ParseUUIDPipe) id: string) {
     return this.pathologyPhotoService.deletePhoto(id);
   }
 }

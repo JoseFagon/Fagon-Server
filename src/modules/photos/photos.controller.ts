@@ -44,8 +44,6 @@ export class PhotoController {
     @UploadedFiles() files: { files?: Express.Multer.File[] },
     @Param('locationId') locationId: string,
   ) {
-    console.log('Received files:', files);
-
     if (!files?.files || files.files.length === 0) {
       throw new BadRequestException('Nenhum arquivo enviado');
     }

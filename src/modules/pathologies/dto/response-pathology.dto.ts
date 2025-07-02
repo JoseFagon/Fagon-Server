@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Location, PathologyPhoto, Project } from '@prisma/client';
 
 export class PathologyResponseDto {
   @ApiProperty()
@@ -17,15 +18,11 @@ export class PathologyResponseDto {
   recordDate!: Date;
 
   @ApiProperty()
-  project!: {
-    id: string;
-    upeCode: number;
-  };
+  project!: Project;
 
   @ApiProperty()
-  location!: {
-    id: string;
-    name: string;
-    coordinates: string;
-  };
+  location!: Location;
+
+  @ApiProperty()
+  photos!: PathologyPhoto[];
 }

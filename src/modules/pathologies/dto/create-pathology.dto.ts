@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import {
-  IsUUID,
-  IsString,
-  IsNotEmpty,
-  IsDateString,
-  IsOptional,
-} from 'class-validator';
+import { IsUUID, IsString, IsNotEmpty } from 'class-validator';
 
 export class CreatePathologyDto {
   @Expose()
@@ -39,15 +33,5 @@ export class CreatePathologyDto {
 
   @Expose()
   @ApiProperty()
-  @IsDateString()
-  recordDate!: string;
-
-  @Expose()
-  @ApiProperty({
-    required: false,
-    type: 'array',
-    items: { type: 'string', format: 'binary' },
-  })
-  @IsOptional()
-  photos?: Express.Multer.File[];
+  photos!: Express.Multer.File[];
 }

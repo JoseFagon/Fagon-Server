@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreatePathologyPhotoDto {
   @Expose()
@@ -12,4 +12,10 @@ export class CreatePathologyPhotoDto {
   @ApiProperty()
   @IsString()
   filePath!: string;
+
+  @Expose()
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  name?: string;
 }
