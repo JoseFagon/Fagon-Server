@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -131,7 +132,13 @@ export class PathologyPhotoService {
     return photos;
   }
 
-  async deletePhoto(id: string) {
+  async deletePhoto(id: string, currentUser?: { role: string }) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para deletar foto da patologia',
+      );
+    }
+
     const photo = await this.prisma.pathologyPhoto.findUnique({
       where: { id },
     });

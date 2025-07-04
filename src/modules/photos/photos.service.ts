@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -108,7 +109,17 @@ export class PhotoService {
     return photos;
   }
 
-  async updatePhoto(id: string, selectedForPdf: boolean | undefined) {
+  async updatePhoto(
+    id: string,
+    selectedForPdf: boolean | undefined,
+    currentUser?: { role: string },
+  ) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para atualizar foto',
+      );
+    }
+
     const photo = await this.prisma.photo.update({
       where: { id },
       data: { selectedForPdf },
@@ -128,7 +139,13 @@ export class PhotoService {
     };
   }
 
-  async deletePhoto(id: string) {
+  async deletePhoto(id: string, currentUser?: { role: string }) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para deletar foto',
+      );
+    }
+
     const photo = await this.prisma.photo.findUnique({ where: { id } });
     if (!photo) {
       throw new NotFoundException('Foto não encontrada');

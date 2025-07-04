@@ -30,6 +30,7 @@ import {
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { ROLES } from 'src/common/constants/roles.constant';
 import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { UpdateAgencyDto } from './dto/update-agency.dto';
 
 @ApiTags('Agencies')
 @ApiBearerAuth()
@@ -51,7 +52,7 @@ export class AgencyController {
     @Body() createAgencyDto: CreateAgencyDto,
     @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.agencyService.create(createAgencyDto, currentUser.sub);
+    return this.agencyService.create(createAgencyDto, currentUser);
   }
 
   @Get()
@@ -73,8 +74,12 @@ export class AgencyController {
     required: false,
     description: 'Number of items per page',
   })
-  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-    return this.agencyService.findAll({ page, limit });
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.agencyService.findAll({ page, limit }, currentUser);
   }
 
   @Get('search')
@@ -84,8 +89,11 @@ export class AgencyController {
     type: [AgencyResponseDto],
     description: 'Search results',
   })
-  search(@Query() searchParams: SearchAgencyDto) {
-    return this.agencyService.search(searchParams);
+  search(
+    @Query() searchParams: SearchAgencyDto,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.agencyService.search(searchParams, currentUser);
   }
 
   @Get(':id')
@@ -100,14 +108,17 @@ export class AgencyController {
     status: 404,
     description: 'Agency not found',
   })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.agencyService.findOne(id);
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.agencyService.findOne(id, currentUser);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update an agency' })
   @ApiParam({ name: 'id', description: 'Agency UUID' })
-  @ApiBody({ type: CreateAgencyDto })
+  @ApiBody({ type: UpdateAgencyDto })
   @ApiResponse({
     status: 200,
     type: AgencyResponseDto,
@@ -115,10 +126,10 @@ export class AgencyController {
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateAgencyDto: CreateAgencyDto,
+    @Body() updateAgencyDto: UpdateAgencyDto,
     @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.agencyService.update(id, updateAgencyDto, currentUser.sub);
+    return this.agencyService.update(id, updateAgencyDto, currentUser);
   }
 
   @Delete(':id')
@@ -132,6 +143,6 @@ export class AgencyController {
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.agencyService.remove(id, currentUser.sub);
+    return this.agencyService.remove(id, currentUser);
   }
 }

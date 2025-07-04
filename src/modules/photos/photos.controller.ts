@@ -19,13 +19,17 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { RequireAuth } from '../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  RequireAuth,
+} from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { PhotoService } from './photos.service';
 import { PhotoResponseDto } from './dto/response-photo.dto';
 import { UpdatePhotoDto } from './dto/update-photo.dto';
 import { StorageService } from 'src/storage/storage.service';
+import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Photos')
 @ApiBearerAuth()
@@ -76,8 +80,13 @@ export class PhotoController {
   async updatePhoto(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePhotoDto: UpdatePhotoDto,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.photoService.updatePhoto(id, updatePhotoDto.selectedForPdf);
+    return this.photoService.updatePhoto(
+      id,
+      updatePhotoDto.selectedForPdf,
+      currentUser,
+    );
   }
 
   @Get(':id/signed-url')
@@ -112,7 +121,10 @@ export class PhotoController {
       },
     },
   })
-  async deletePhoto(@Param('id', ParseUUIDPipe) id: string) {
-    return this.photoService.deletePhoto(id);
+  async deletePhoto(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.photoService.deletePhoto(id, currentUser);
   }
 }

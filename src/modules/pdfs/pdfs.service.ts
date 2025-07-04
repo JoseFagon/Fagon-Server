@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { StorageService } from 'src/storage/storage.service';
 import { generatePdfFromTemplate } from './utils/pdf-generator';
 import { Location, PdfType, Photo } from '@prisma/client';
 import { ProjectService } from '../projects/projects.service';
 import { ProjectWithIncludes } from 'src/common/interfaces/project-includes.interface';
+import { LogHelperService } from '../logs/log-helper.service';
 
 interface LocationWithPhotos extends Location {
   photo: Photo[];
@@ -26,9 +31,20 @@ export class PdfService {
     private prisma: PrismaService,
     private storageService: StorageService,
     private projectService: ProjectService,
+    private logHelper: LogHelperService,
   ) {}
 
-  async generatePdf(projectId: string, pdfType: string) {
+  async generatePdf(
+    projectId: string,
+    pdfType: string,
+    currentUser: { sub: string; role: string },
+  ) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para gerar PDF',
+      );
+    }
+
     const project = (await this.projectService.findOne(
       projectId,
     )) as unknown as ProjectWithIncludes;
@@ -82,7 +98,7 @@ export class PdfService {
 
     const { key } = await this.storageService.uploadFile(file);
 
-    return this.prisma.pdf.create({
+    const newPdf = await this.prisma.pdf.create({
       data: {
         projectId,
         filePath: key,
@@ -90,9 +106,23 @@ export class PdfService {
         pdfType: pdfType as PdfType,
       },
     });
+
+    await this.logHelper.createLog(currentUser.sub, 'CREATE', 'Pdf', newPdf.id);
+
+    return newPdf;
   }
 
-  async signPdf(id: string, signedFile: Express.Multer.File) {
+  async signPdf(
+    id: string,
+    signedFile: Express.Multer.File,
+    currentUser: { sub: string; role: string },
+  ) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para assinar PDF',
+      );
+    }
+
     const pdf = await this.getPdfById(id);
     if (!pdf) {
       throw new NotFoundException('PDF não encontrado');
@@ -110,18 +140,36 @@ export class PdfService {
       size: signedFile.size,
     });
 
-    return this.updateSignedPdf(id, uploadResult.key);
+    return this.updateSignedPdf(id, uploadResult.key, currentUser);
   }
 
-  async updateSignedPdf(pdfId: string, signedFilePath: string) {
+  async updateSignedPdf(
+    pdfId: string,
+    signedFilePath: string,
+    currentUser: { sub: string; role: string },
+  ) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para atualizar PDF',
+      );
+    }
+
+    await this.logHelper.createLog(currentUser.sub, 'UPDATE', 'Pdf', pdfId);
+
     return this.prisma.pdf.update({
       where: { id: pdfId },
       data: { signedFilePath },
     });
   }
 
-  async downloadPdf(id: string) {
-    const pdf = await this.getPdfById(id);
+  async downloadPdf(id: string, currentUser?: { role: string }) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para fazer download do PDF',
+      );
+    }
+
+    const pdf = await this.getPdfById(id, currentUser);
 
     if (!pdf) {
       throw new NotFoundException('PDF não encontrado');
@@ -188,7 +236,13 @@ export class PdfService {
     );
   }
 
-  async getPdfById(id: string) {
+  async getPdfById(id: string, currentUser?: { role: string }) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para visualizar PDF',
+      );
+    }
+
     const photo = await this.prisma.pdf.findUnique({
       where: { id },
     });
@@ -200,13 +254,25 @@ export class PdfService {
     return photo;
   }
 
-  async findByProject(projectId: string) {
+  async findByProject(projectId: string, currentUser?: { role: string }) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para listar PDFs',
+      );
+    }
+
     return this.prisma.pdf.findMany({
       where: { projectId },
     });
   }
 
-  async deletePdf(id: string) {
+  async deletePdf(id: string, currentUser: { sub: string; role: string }) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para deletar PDF',
+      );
+    }
+
     const pdf = await this.getPdfById(id);
     if (!pdf) {
       throw new NotFoundException('PDF não encontrado');

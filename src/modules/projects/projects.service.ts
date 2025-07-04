@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -28,9 +29,18 @@ export class ProjectService {
     private logHelper: LogHelperService,
   ) {}
 
-  async create(createProjectDto: CreateProjectDto, userId: string) {
+  async create(
+    createProjectDto: CreateProjectDto,
+    currentUser: { sub: string; role: string },
+  ) {
     const { agencyId, engineerId, pavements, ...projectData } =
       createProjectDto;
+
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para criar projeto',
+      );
+    }
 
     await this.validateRelationsExist(agencyId, engineerId);
 
@@ -53,7 +63,12 @@ export class ProjectService {
       }
     }
 
-    await this.logHelper.createLog(userId, 'CREATE', 'Project', project.id);
+    await this.logHelper.createLog(
+      currentUser.sub,
+      'CREATE',
+      'Project',
+      project.id,
+    );
 
     return this.prisma.project.findUnique({
       where: { id: project.id },
@@ -61,7 +76,16 @@ export class ProjectService {
     });
   }
 
-  async findAll({ page, limit }: { page: number; limit: number }) {
+  async findAll(
+    { page, limit }: { page: number; limit: number },
+    currentUser?: { role: string },
+  ) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para listar projetos',
+      );
+    }
+
     const skip = (page - 1) * limit;
     return this.prisma.project.findMany({
       skip,
@@ -70,7 +94,7 @@ export class ProjectService {
     });
   }
 
-  async search(params: SearchProjectDto) {
+  async search(params: SearchProjectDto, currentUser?: { role: string }) {
     const {
       projectType,
       upeCode,
@@ -83,8 +107,13 @@ export class ProjectService {
       limit = 10,
     } = params;
 
-    const skip = (page - 1) * limit;
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para pesquisar projetos',
+      );
+    }
 
+    const skip = (page - 1) * limit;
     const orFilters: Prisma.ProjectWhereInput[] = [];
 
     if (projectType) {
@@ -161,7 +190,17 @@ export class ProjectService {
     return project;
   }
 
-  async update(id: string, updateProjectDto: UpdateProjectDto, userId: string) {
+  async update(
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+    currentUser: { sub: string; role: string },
+  ) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para atualizar projeto',
+      );
+    }
+
     await this.findOne(id);
 
     const { agencyId, engineerId, ...projectData } = updateProjectDto;
@@ -183,12 +222,18 @@ export class ProjectService {
       include: this.projectIncludes(),
     });
 
-    await this.logHelper.createLog(userId, 'UPDATE', 'Project', id);
+    await this.logHelper.createLog(currentUser.sub, 'UPDATE', 'Project', id);
 
     return updatedProject;
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, currentUser: { sub: string; role: string }) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para deletar projeto',
+      );
+    }
+
     await this.findOne(id);
 
     const project = await this.prisma.project.update({
@@ -196,7 +241,7 @@ export class ProjectService {
       data: { status: 'cancelado' },
     });
 
-    await this.logHelper.createLog(userId, 'CANCEL', 'Project', id);
+    await this.logHelper.createLog(currentUser.sub, 'CANCEL', 'Project', id);
 
     return project;
   }

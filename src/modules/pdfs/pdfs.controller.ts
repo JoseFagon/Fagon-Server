@@ -23,13 +23,17 @@ import {
 } from '@nestjs/swagger';
 import { PdfService } from './pdfs.service';
 import { StorageService } from 'src/storage/storage.service';
-import { RequireAuth } from '../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  RequireAuth,
+} from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { PdfResponseDto } from './dto/response-pdf.dto';
 import { CreatePdfDto } from './dto/create-pdf.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('PDFs')
 @ApiBearerAuth()
@@ -50,10 +54,14 @@ export class PdfController {
     description: 'PDF generated successfully',
   })
   @ApiBody({ type: CreatePdfDto })
-  async generatePdf(@Body() createPdfDto: CreatePdfDto) {
+  async generatePdf(
+    @Body() createPdfDto: CreatePdfDto,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
     return this.pdfService.generatePdf(
       createPdfDto.projectId,
       createPdfDto.pdfType,
+      currentUser,
     );
   }
 
@@ -64,8 +72,9 @@ export class PdfController {
   async signPdf(
     @Param('id', ParseUUIDPipe) id: string,
     @UploadedFile() signedFile: Express.Multer.File,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.pdfService.signPdf(id, signedFile);
+    return this.pdfService.signPdf(id, signedFile, currentUser);
   }
 
   @Get('project/:projectId')
@@ -80,8 +89,11 @@ export class PdfController {
     type: [PdfResponseDto],
     description: 'List of PDFs for the project',
   })
-  async findByProject(@Param('projectId', ParseUUIDPipe) projectId: string) {
-    return this.pdfService.findByProject(projectId);
+  async findByProject(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.pdfService.findByProject(projectId, currentUser);
   }
 
   @Get(':id/signed-url')
@@ -96,8 +108,11 @@ export class PdfController {
       },
     },
   })
-  async getSignedUrl(@Param('id', ParseUUIDPipe) id: string) {
-    const pdf = await this.pdfService.getPdfById(id);
+  async getSignedUrl(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    const pdf = await this.pdfService.getPdfById(id, currentUser);
 
     const pathToUse = pdf.signedFilePath || pdf.filePath;
     const signedUrl = await this.storageService.getSignedUrl(pathToUse);
@@ -120,8 +135,11 @@ export class PdfController {
     status: 404,
     description: 'PDF document not found',
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.pdfService.getPdfById(id);
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.pdfService.getPdfById(id, currentUser);
   }
 
   @Get(':id/download')
@@ -150,9 +168,10 @@ export class PdfController {
   async downloadPdf(
     @Param('id', ParseUUIDPipe) id: string,
     @Res() res: Response,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
     try {
-      const result = await this.pdfService.downloadPdf(id);
+      const result = await this.pdfService.downloadPdf(id, currentUser);
 
       if (!result) {
         throw new NotFoundException('PDF não encontrado');
@@ -200,7 +219,10 @@ export class PdfController {
     status: 404,
     description: 'PDF document not found',
   })
-  async deletePdf(@Param('id', ParseUUIDPipe) id: string) {
-    return this.pdfService.deletePdf(id);
+  async deletePdf(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.pdfService.deletePdf(id, currentUser);
   }
 }

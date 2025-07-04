@@ -6,18 +6,11 @@ import {
   IsArray,
   ValidateNested,
   ArrayMinSize,
-  IsNotEmpty,
 } from 'class-validator';
 import { ProjectType } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
 import { IsUnique } from 'src/common/decorators/is-unique.decorator';
-
-class PavementItemDto {
-  @Expose()
-  @ApiProperty({ description: 'Nome do pavimento' })
-  @IsNotEmpty()
-  pavement!: string;
-}
+import { PavementItemDto } from 'src/modules/pavements/dto/item-pavement.dto';
 
 export class CreateProjectDto {
   @Expose()

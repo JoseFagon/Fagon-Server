@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -53,6 +54,8 @@ export class LocationService {
       where: { projectId },
       include: {
         pavement: true,
+        materialFinishing: true,
+        photo: true,
       },
     });
   }
@@ -62,6 +65,11 @@ export class LocationService {
 
     return this.prisma.location.findMany({
       where: { pavementId },
+      include: {
+        pavement: true,
+        materialFinishing: true,
+        photo: true,
+      },
     });
   }
 
@@ -135,7 +143,13 @@ export class LocationService {
     }
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, currentUser: { sub: string; role: string }) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para deletar local',
+      );
+    }
+
     const location = await this.findOne(id);
 
     if (location.pavement) {
@@ -156,7 +170,7 @@ export class LocationService {
       where: { id },
     });
 
-    await this.logHelper.createLog(userId, 'DELETE', 'Location', id);
+    await this.logHelper.createLog(currentUser.sub, 'DELETE', 'Location', id);
 
     return deletedLocation;
   }

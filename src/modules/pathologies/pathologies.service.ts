@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -133,12 +134,23 @@ export class PathologyService {
     return pathology;
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, currentUser: { sub: string; role: string }) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para deletar patologia',
+      );
+    }
+
     const pathology = await this.findOne(id);
 
     await this.prisma.pathology.delete({ where: { id } });
 
-    await this.logHelper.createLog(userId, 'DELETE', 'Pathology', pathology.id);
+    await this.logHelper.createLog(
+      currentUser.sub,
+      'DELETE',
+      'Pathology',
+      pathology.id,
+    );
 
     return;
   }

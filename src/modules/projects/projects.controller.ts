@@ -52,7 +52,7 @@ export class ProjectController {
     @Body() createProjectDto: CreateProjectDto,
     @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.projectService.create(createProjectDto, currentUser.sub);
+    return this.projectService.create(createProjectDto, currentUser);
   }
 
   @Get()
@@ -72,8 +72,12 @@ export class ProjectController {
     required: false,
     description: 'Number of items per page',
   })
-  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-    return this.projectService.findAll({ page, limit });
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.projectService.findAll({ page, limit }, currentUser);
   }
 
   @Get('search')
@@ -83,8 +87,11 @@ export class ProjectController {
     type: [ProjectResponseDto],
     description: 'Search results',
   })
-  search(@Query() searchParams: SearchProjectDto) {
-    return this.projectService.search(searchParams);
+  search(
+    @Query() searchParams: SearchProjectDto,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.projectService.search(searchParams, currentUser);
   }
 
   @Get(':id')
@@ -110,7 +117,7 @@ export class ProjectController {
     @Body() updateProjectDto: UpdateProjectDto,
     @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.projectService.update(id, updateProjectDto, currentUser.sub);
+    return this.projectService.update(id, updateProjectDto, currentUser);
   }
 
   @Delete(':id')
@@ -124,7 +131,7 @@ export class ProjectController {
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.projectService.remove(id, currentUser.sub);
+    return this.projectService.remove(id, currentUser);
   }
 
   @Get(':id/pavements')

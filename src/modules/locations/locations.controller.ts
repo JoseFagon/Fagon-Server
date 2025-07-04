@@ -104,6 +104,6 @@ export class LocationController {
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.locationService.remove(id, currentUser.sub);
+    return this.locationService.remove(id, currentUser);
   }
 }

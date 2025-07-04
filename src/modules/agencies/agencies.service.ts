@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAgencyDto } from './dto/create-agency.dto';
 import { SearchAgencyDto } from './dto/search-agency.dto';
@@ -13,17 +17,40 @@ export class AgencyService {
     private logHelper: LogHelperService,
   ) {}
 
-  async create(createAgencyDto: CreateAgencyDto, userId: string) {
+  async create(
+    createAgencyDto: CreateAgencyDto,
+    currentUser: { sub: string; role: string },
+  ) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para criar agências',
+      );
+    }
+
     const agency = await this.prisma.agency.create({
       data: createAgencyDto,
     });
 
-    await this.logHelper.createLog(userId, 'CREATE', 'Agency', agency.id);
+    await this.logHelper.createLog(
+      currentUser?.sub,
+      'CREATE',
+      'Agency',
+      agency.id,
+    );
 
     return agency;
   }
 
-  async findAll({ page, limit }: { page: number; limit: number }) {
+  async findAll(
+    { page, limit }: { page: number; limit: number },
+    currentUser?: { role: string },
+  ) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para listar agências',
+      );
+    }
+
     const skip = (page - 1) * limit;
     return this.prisma.agency.findMany({
       skip,
@@ -31,7 +58,10 @@ export class AgencyService {
     });
   }
 
-  async search(params: Partial<SearchAgencyDto>) {
+  async search(
+    params: Partial<SearchAgencyDto>,
+    currentUser?: { role: string },
+  ) {
     const {
       name,
       agencyNumber,
@@ -42,8 +72,13 @@ export class AgencyService {
       limit = 10,
     } = params;
 
-    const skip = (page - 1) * limit;
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para pesquisar agências',
+      );
+    }
 
+    const skip = (page - 1) * limit;
     const orFilters: Prisma.AgencyWhereInput[] = [];
 
     if (name) {
@@ -112,13 +147,29 @@ export class AgencyService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, currentUser?: { role: string }) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para selecionar agência',
+      );
+    }
+
     return this.prisma.agency.findUnique({
       where: { id },
     });
   }
 
-  async update(id: string, updateAgencyDto: UpdateAgencyDto, userId: string) {
+  async update(
+    id: string,
+    updateAgencyDto: UpdateAgencyDto,
+    currentUser: { sub: string; role: string },
+  ) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para atualizar agência',
+      );
+    }
+
     await this.findOne(id);
 
     const updatedAgency = await this.prisma.agency.update({
@@ -126,17 +177,23 @@ export class AgencyService {
       data: updateAgencyDto,
     });
 
-    await this.logHelper.createLog(userId, 'UPDATE', 'Agency', id);
+    await this.logHelper.createLog(currentUser.sub, 'UPDATE', 'Agency', id);
 
     return updatedAgency;
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, currentUser: { sub: string; role: string }) {
+    if (currentUser.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para deletar agência',
+      );
+    }
+
     const deletedAgency = await this.prisma.agency.delete({
       where: { id },
     });
 
-    await this.logHelper.createLog(userId, 'DELETE', 'Agency', id);
+    await this.logHelper.createLog(currentUser.sub, 'DELETE', 'Agency', id);
 
     return deletedAgency;
   }

@@ -5,10 +5,11 @@ import { AppConfigModule } from 'src/config/config.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { ProjectModule } from '../projects/projects.module';
 import { PdfController } from './pdfs.controller';
+import { LogHelperService } from '../logs/log-helper.service';
 
 @Module({
   imports: [StorageModule, PrismaModule, AppConfigModule, ProjectModule],
-  providers: [PdfService],
+  providers: [PdfService, LogHelperService],
   controllers: [PdfController],
 })
 export class PdfModule {}

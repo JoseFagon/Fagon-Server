@@ -127,6 +127,6 @@ export class PathologyController {
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: JwtPayload,
   ) {
-    return this.pathologyService.remove(id, currentUser.sub);
+    return this.pathologyService.remove(id, currentUser);
   }
 }

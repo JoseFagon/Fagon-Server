@@ -18,12 +18,16 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { RequireAuth } from '../../common/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  RequireAuth,
+} from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { PathologyPhotoResponseDto } from './dto/response-pathology-photo.dto';
 import { PathologyPhotoService } from './pathology-photos.service';
 import { StorageService } from 'src/storage/storage.service';
+import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
 
 @ApiTags('Pathology Photos')
 @ApiBearerAuth()
@@ -98,7 +102,10 @@ export class PathologyPhotoController {
       },
     },
   })
-  async deletePhoto(@Param('id', ParseUUIDPipe) id: string) {
-    return this.pathologyPhotoService.deletePhoto(id);
+  async deletePhoto(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.pathologyPhotoService.deletePhoto(id, currentUser);
   }
 }
