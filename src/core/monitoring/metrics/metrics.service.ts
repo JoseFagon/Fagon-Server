@@ -3,7 +3,6 @@ import { Counter, Gauge, Histogram } from 'prom-client';
 
 @Injectable()
 export class MetricsService {
-  // Métricas HTTP (original)
   public httpRequestCounter = new Counter({
     name: 'http_requests_total',
     help: 'Total de requisições HTTP',
@@ -17,21 +16,18 @@ export class MetricsService {
     buckets: [0.1, 0.5, 1, 2, 5],
   });
 
-  // Métricas de Sistema (original)
   public memoryUsageGauge = new Gauge({
     name: 'nodejs_memory_usage_bytes',
     help: 'Uso de memória da aplicação',
     labelNames: ['type'],
   });
 
-  // Métricas de Negócio (nova)
   public businessErrorsCounter = new Counter({
     name: 'business_errors_total',
     help: 'Erros de regras de negócio',
     labelNames: ['error_type'],
   });
 
-  // Métricas Customizadas
   registerRequest(
     method: string,
     route: string,

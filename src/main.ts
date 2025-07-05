@@ -19,7 +19,12 @@ async function bootstrap() {
   prismaService.enableShutdownHooks(app);
 
   app.enableCors({
-    origin: ['http://localhost:8080', 'http://localhost:3001'],
+    origin: [
+      'http://localhost:8080',
+      'http://localhost:3001',
+      'https://fagon-server.onrender.com',
+      'https://fagon-client.vercel.app',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
     allowedHeaders: [
