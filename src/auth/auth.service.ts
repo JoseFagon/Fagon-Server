@@ -182,7 +182,7 @@ export class AuthService {
 
     const payload: JwtPayload = {
       sub: user.id,
-      email: user.email || undefined,
+      email: user.email,
       role: user.role,
       cameraType: user.cameraType || null,
       isActive: user.status,
@@ -247,10 +247,7 @@ export class AuthService {
   private generateToken(user: User) {
     const payload: JwtPayload = {
       sub: user.id,
-      email:
-        user.role === ROLES.FUNCIONARIO || user.role === ROLES.ADMIN
-          ? user.email
-          : undefined,
+      email: user.email,
       role: user.role,
       cameraType:
         user.role === ROLES.VISTORIADOR && user.cameraType != null
