@@ -3,12 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { StorageService } from 'src/storage/storage.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { StorageService } from '../../storage/storage.service';
 import { generatePdfFromTemplate } from './utils/pdf-generator';
 import { Location, PdfType, Photo } from '@prisma/client';
 import { ProjectService } from '../projects/projects.service';
-import { ProjectWithIncludes } from 'src/common/interfaces/project-includes.interface';
+import { ProjectWithIncludes } from '../../common/interfaces/project-includes.interface';
 import { LogHelperService } from '../logs/log-helper.service';
 
 interface LocationWithPhotos extends Location {

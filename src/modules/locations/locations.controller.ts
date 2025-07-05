@@ -25,7 +25,7 @@ import {
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { LocationService } from './locations.service';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
 
 @ApiTags('Locations')
 @ApiBearerAuth()

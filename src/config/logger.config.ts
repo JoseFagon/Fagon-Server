@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Params } from 'nestjs-pino';
-import { RequestWithUser } from 'src/common/interfaces/request.user.interface';
+import { RequestWithUser } from '../common/interfaces/request.user.interface';
 
 export const loggerConfig = (configService: ConfigService): Params => ({
   pinoHttp: {

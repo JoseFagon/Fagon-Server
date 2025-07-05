@@ -21,13 +21,10 @@ import { CreateStateLawDto } from './dto/create-state-law.dto';
 import { StateLawResponseDto } from './dto/response-state-law.dto';
 import { UpdateStateLawDto } from './dto/update-state-law.dto';
 import { StateLawService } from './state-laws.service';
-import { ROLES } from 'src/common/constants/roles.constant';
-import { Roles } from 'src/common/decorators/roles.decorator';
 
 @ApiTags('State Laws')
 @ApiBearerAuth()
 @RequireAuth()
-@Roles(ROLES.ADMIN)
 @Controller('state-laws')
 export class StateLawController {
   constructor(private readonly stateLawService: StateLawService) {}

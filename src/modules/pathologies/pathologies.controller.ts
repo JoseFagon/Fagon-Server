@@ -29,7 +29,7 @@ import {
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { PathologyService } from './pathologies.service';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Pathologies')

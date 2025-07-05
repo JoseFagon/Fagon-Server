@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { LogHelperService } from '../logs/log-helper.service';
 import { Prisma } from '@prisma/client';
 import { PavementService } from '../pavements/pavements.service';

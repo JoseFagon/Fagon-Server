@@ -28,8 +28,8 @@ import { ROLES } from '../../common/constants/roles.constant';
 import { PhotoService } from './photos.service';
 import { PhotoResponseDto } from './dto/response-photo.dto';
 import { UpdatePhotoDto } from './dto/update-photo.dto';
-import { StorageService } from 'src/storage/storage.service';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { StorageService } from '../../storage/storage.service';
+import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
 
 @ApiTags('Photos')
 @ApiBearerAuth()

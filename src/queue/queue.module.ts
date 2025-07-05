@@ -5,7 +5,7 @@ import { EmailWorker } from './workers/email.worker';
 import { PdfWorker } from './workers/pdf.worker';
 import { ImageWorker } from './workers/image.worker';
 import { redisConfig } from '../config/redis.config';
-import { MailerModule } from 'src/mailer/mailer.module';
+import { MailerModule } from '../mailer/mailer.module';
 
 @Module({
   imports: [

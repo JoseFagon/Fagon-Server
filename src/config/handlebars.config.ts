@@ -1,5 +1,5 @@
 import * as Handlebars from 'handlebars';
-import { registerHandlebarsHelpers } from 'src/common/utils/handlebars.utils';
+import { registerHandlebarsHelpers } from '../common/utils/handlebars.utils';
 
 registerHandlebarsHelpers();
 

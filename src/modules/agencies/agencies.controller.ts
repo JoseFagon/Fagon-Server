@@ -26,16 +26,13 @@ import { SearchAgencyDto } from './dto/search-agency.dto';
 import {
   CurrentUser,
   RequireAuth,
-} from 'src/common/decorators/current-user.decorator';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { ROLES } from 'src/common/constants/roles.constant';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+} from '../../common/decorators/current-user.decorator';
+import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
 import { UpdateAgencyDto } from './dto/update-agency.dto';
 
 @ApiTags('Agencies')
 @ApiBearerAuth()
 @RequireAuth()
-@Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
 @Controller('agencies')
 export class AgencyController {
   constructor(private readonly agencyService: AgencyService) {}

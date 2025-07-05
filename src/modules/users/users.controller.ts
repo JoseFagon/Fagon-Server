@@ -19,28 +19,24 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { CacheKey, CacheTTL } from '@nestjs/cache-manager';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { ROLES } from 'src/common/constants/roles.constant';
 import { UserResponseDto } from './dto/response-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './users.service';
 import {
   CurrentUser,
   RequireAuth,
-} from 'src/common/decorators/current-user.decorator';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+} from '../../common/decorators/current-user.decorator';
+import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
 import { SearchUserDto } from './dto/search-user.dto';
 
 @ApiTags('Users Management')
 @ApiBearerAuth()
 @RequireAuth()
-@Roles(ROLES.ADMIN)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  @Roles(ROLES.ADMIN)
   @CacheKey('users_list')
   @CacheTTL(30) // 30 seconds
   @ApiOperation({ summary: 'List all users (Admin)' })
@@ -67,20 +63,13 @@ export class UserController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user profile' })
-  @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
   @ApiParam({ name: 'id', description: 'User UUID' })
   @ApiResponse({
     status: 200,
     type: UserResponseDto,
     description: 'User profile',
   })
-  findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() currentUser: JwtPayload,
-  ) {
-    if (currentUser.role !== ROLES.ADMIN && currentUser.sub !== id) {
-      throw new ForbiddenException('Unauthorized access');
-    }
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.findOne(id);
   }
 
@@ -96,16 +85,7 @@ export class UserController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
-    @CurrentUser() currentUser: JwtPayload,
   ) {
-    if (currentUser.sub !== id && currentUser.role !== ROLES.ADMIN) {
-      throw new ForbiddenException('Unauthorized access');
-    }
-
-    if (updateUserDto.role && currentUser.role !== ROLES.ADMIN) {
-      throw new ForbiddenException('Only administrators can change roles');
-    }
-
     return this.userService.update(id, updateUserDto);
   }
 

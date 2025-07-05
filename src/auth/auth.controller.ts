@@ -3,11 +3,9 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AccessKeyDto } from './dto/access-key.dto';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
-import { Public } from 'src/common/decorators/public.decorator';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { ROLES } from 'src/common/constants/roles.constant';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { JwtPayload } from '../common/interfaces/jwt.payload.interface';
+import { Public } from '../common/decorators/public.decorator';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -16,7 +14,6 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
-@Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

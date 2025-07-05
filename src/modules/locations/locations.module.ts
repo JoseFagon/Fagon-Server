@@ -1,8 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { LocationController } from './locations.controller';
 import { LocationService } from './locations.service';
-import { AppConfigModule } from 'src/config/config.module';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { AppConfigModule } from '../../config/config.module';
+import { PrismaModule } from '../../prisma/prisma.module';
 import { ProjectModule } from '../projects/projects.module';
 import { PavementModule } from '../pavements/pavements.module';
 import { MaterialFinishingModule } from '../material-finishings/material-finishings.module';

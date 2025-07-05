@@ -26,8 +26,8 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { ROLES } from '../../common/constants/roles.constant';
 import { PathologyPhotoResponseDto } from './dto/response-pathology-photo.dto';
 import { PathologyPhotoService } from './pathology-photos.service';
-import { StorageService } from 'src/storage/storage.service';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { StorageService } from '../../storage/storage.service';
+import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
 
 @ApiTags('Pathology Photos')
 @ApiBearerAuth()

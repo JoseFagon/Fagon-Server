@@ -7,7 +7,7 @@ import { Readable } from 'stream';
 import {
   FileBufferResult,
   FileStreamResult,
-} from 'src/common/interfaces/storage.interface';
+} from '../common/interfaces/storage.interface';
 
 @Injectable()
 export class StorageService {

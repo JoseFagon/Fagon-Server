@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as puppeteer from 'puppeteer';
-import Handlebars from 'src/config/handlebars.config';
+import Handlebars from '../../../config/handlebars.config';
 
 export async function generatePdfFromTemplate(templateName: string, data: any) {
   const templatePath = path.join(

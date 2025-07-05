@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerService } from './logger.service';
-import { loggerConfig } from 'src/config/logger.config';
+import { loggerConfig } from '../../config/logger.config';
 
 @Module({
   imports: [

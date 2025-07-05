@@ -17,26 +17,23 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from '@nestjs/swagger';
-import { Roles } from 'src/common/decorators/roles.decorator';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectResponseDto } from './dto/response-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectService } from './projects.service';
-import { ROLES } from 'src/common/constants/roles.constant';
 import { SearchProjectDto } from './dto/search-project.dto';
 import {
   CurrentUser,
   RequireAuth,
-} from 'src/common/decorators/current-user.decorator';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
-import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
+} from '../../common/decorators/current-user.decorator';
+import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
+import { JwtAuthGuard } from '../../auth/guards/auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
 
 @ApiTags('Projects')
 @ApiBearerAuth()
 @RequireAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
 @Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
@@ -121,7 +118,6 @@ export class ProjectController {
   }
 
   @Delete(':id')
-  @Roles(ROLES.ADMIN)
   @ApiOperation({ summary: 'Delete a project' })
   @ApiResponse({
     status: 204,

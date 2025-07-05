@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RateLimitService } from './rate-limit.service';
-import { throttlerConfig } from 'src/config/throttler.config';
+import { throttlerConfig } from '../../config/throttler.config';
 
 @Module({
   imports: [

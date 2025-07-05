@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { SupabaseCustomConfig } from 'src/common/interfaces/supabase-config.interface';
+import { SupabaseCustomConfig } from '../common/interfaces/supabase-config.interface';
 
 export const supabaseConfig = (
   configService: ConfigService,

@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { LogController } from './logs.controller';
 import { LogService } from './logs.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { LogHelperService } from './log-helper.service';
 
 @Global()

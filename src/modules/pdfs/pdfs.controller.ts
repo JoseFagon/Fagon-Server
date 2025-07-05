@@ -22,7 +22,7 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 import { PdfService } from './pdfs.service';
-import { StorageService } from 'src/storage/storage.service';
+import { StorageService } from '../../storage/storage.service';
 import {
   CurrentUser,
   RequireAuth,
@@ -33,7 +33,7 @@ import { PdfResponseDto } from './dto/response-pdf.dto';
 import { CreatePdfDto } from './dto/create-pdf.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import { JwtPayload } from 'src/common/interfaces/jwt.payload.interface';
+import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
 
 @ApiTags('PDFs')
 @ApiBearerAuth()

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreatePavementDto } from './dto/create-pavement.dto';
 import { UpdatePavementDto } from './dto/update-pavement.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { LocationService } from '../locations/locations.service';
 import { ProjectService } from '../projects/projects.service';
 
