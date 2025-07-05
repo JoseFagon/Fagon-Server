@@ -41,7 +41,7 @@ async function bootstrap() {
     }),
   );
   await app.listen(port);
-  console.log(app.getHttpServer()._events.request._router.stack);
+  console.log(app.getHttpServer()._events.request._router);
   logger.log(`Application running on port ${port}`);
 }
 
