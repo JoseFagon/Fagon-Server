@@ -4,14 +4,7 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { UserRole } from '@prisma/client';
-
-type UserFromRequest = {
-  id: string;
-  email: string;
-  role: UserRole;
-  isActive: boolean;
-};
+import { UserFromRequest } from 'src/types/express';
 
 export const CurrentUser = createParamDecorator<
   keyof UserFromRequest | undefined
