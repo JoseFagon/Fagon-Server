@@ -20,7 +20,6 @@ export class PrismaService
   async onModuleInit() {
     try {
       await this.$connect();
-      await this.testConnection();
     } catch (error) {
       console.error('Database connection error:', error);
       process.exit(1);
@@ -29,16 +28,6 @@ export class PrismaService
 
   async onModuleDestroy() {
     await this.$disconnect();
-  }
-
-  private async testConnection() {
-    try {
-      await this.$queryRaw`SELECT 1`;
-      console.log('✅ Conexão com o banco estabelecida');
-    } catch (error) {
-      console.error('❌ Falha na conexão com o banco:', error);
-      throw error;
-    }
   }
 
   enableShutdownHooks(app: INestApplication) {
