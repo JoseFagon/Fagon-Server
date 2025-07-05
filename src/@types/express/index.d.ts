@@ -1,10 +1,11 @@
-import { UserRole } from '@prisma/client';
+import { UserRole, CameraType } from '@prisma/client';
 
 type UserFromRequest = {
-  id: string;
+  sub: string;
   email: string;
   role: UserRole;
   isActive: boolean;
+  cameraType: CameraType | null;
 };
 
 declare global {
