@@ -12,8 +12,7 @@ export const setupSwagger = (app: INestApplication) => {
       scheme: 'bearer',
       bearerFormat: 'JWT',
     })
-    // .addServer('http://localhost:3000/', 'Development')
-    .addServer('https://fagon-server.onrender.com/', 'Production')
+    .addServer('/api/v1', 'Base Path')
     .setContact('Suporte', '', 'suporte@empresa.com')
     .setLicense('MIT', '')
     .build();
