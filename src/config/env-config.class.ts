@@ -94,10 +94,6 @@ export class EnvConfig {
 
   @IsString()
   @IsOptional()
-  SENTRY_DSN?: string;
-
-  @IsString()
-  @IsOptional()
   LOG_LEVEL = 'info';
 
   @IsNumber()
