@@ -193,14 +193,8 @@ export class ProjectService {
   async update(
     id: string,
     updateProjectDto: UpdateProjectDto,
-    currentUser: { sub: string; role: string },
+    currentUser: { sub: string },
   ) {
-    if (currentUser.role === 'vistoriador') {
-      throw new ForbiddenException(
-        'Vistoriadores não têm permissão para atualizar projeto',
-      );
-    }
-
     await this.findOne(id);
 
     const { agencyId, engineerId, ...projectData } = updateProjectDto;

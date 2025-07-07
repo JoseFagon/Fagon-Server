@@ -24,6 +24,7 @@ async function bootstrap() {
       'http://localhost:3001',
       'https://fagon-server.onrender.com',
       'https://fagon-client.vercel.app',
+      'https://fagon-server-production.up.railway.app',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
