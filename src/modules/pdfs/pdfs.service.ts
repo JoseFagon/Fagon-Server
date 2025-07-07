@@ -90,7 +90,7 @@ export class PdfService {
     const pdfBuffer = await generatePdfFromTemplate(formatPdfType, data);
 
     const file = {
-      buffer: pdfBuffer,
+      buffer: Buffer.from(pdfBuffer),
       originalname: `${pdfType}-${project.agency.agencyNumber}-${project.upeCode}.pdf`,
       mimetype: 'application/pdf',
       size: pdfBuffer.length,
