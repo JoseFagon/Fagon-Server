@@ -197,17 +197,32 @@ export class ProjectService {
   ) {
     await this.findOne(id);
 
-    const { agencyId, engineerId, ...projectData } = updateProjectDto;
+    const { pavements, ...projectData } = updateProjectDto;
     const updateData: Prisma.ProjectUpdateInput = { ...projectData };
 
-    if (agencyId) {
-      await this.agencyService.validateAgencyExists(agencyId);
-      updateData.agency = { connect: { id: agencyId } };
-    }
+    if (pavements) {
+      const existingPavements = await this.pavementService.findByProject(id);
+      const existingPavementValues = existingPavements.map((p) => p.pavement);
 
-    if (engineerId) {
-      await this.engineerService.validateEngineerExists(engineerId);
-      updateData.engineer = { connect: { id: engineerId } };
+      const newPavements = pavements.filter(
+        (p) => !existingPavementValues.includes(p.pavement),
+      );
+
+      const pavementsToRemove = existingPavements.filter(
+        (p) => !pavements.some((np) => np.pavement === p.pavement),
+      );
+
+      await Promise.all([
+        ...newPavements.map((pavement) =>
+          this.pavementService.create({
+            pavement: pavement.pavement,
+            projectId: id,
+          }),
+        ),
+        ...pavementsToRemove.map((pavement) =>
+          this.pavementService.remove(pavement.id),
+        ),
+      ]);
     }
 
     const updatedProject = await this.prisma.project.update({

@@ -97,10 +97,14 @@ export class LocationService {
   ) {
     const location = await this.findOne(id);
 
-    const { pavementId, finishes, height, ...locationData } = updateLocationDto;
+    const { pavementId, finishes, height, projectId, ...locationData } =
+      updateLocationDto;
 
     try {
-      const updateData: Prisma.LocationUpdateInput = { ...locationData };
+      const updateData: Prisma.LocationUpdateInput = {
+        ...locationData,
+        project: projectId ? { connect: { id: projectId } } : undefined,
+      };
 
       if (pavementId) {
         await this.pavementService.validatePavementExists(pavementId);
@@ -111,7 +115,7 @@ export class LocationService {
         updateData.height = height;
       }
 
-      await this.prisma.location.update({
+      const updatedLocation = await this.prisma.location.update({
         where: { id },
         data: updateData,
       });
@@ -136,7 +140,7 @@ export class LocationService {
 
       await this.logHelper.createLog(userId, 'UPDATE_LOCATION', 'Location', id);
 
-      return this.findOne(id);
+      return updatedLocation;
     } catch (error) {
       console.error('Location update error:', error);
       throw new InternalServerErrorException('Falha ao atualizar localização');
