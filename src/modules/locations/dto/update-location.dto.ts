@@ -2,7 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateLocationDto } from './create-location.dto';
 import { Expose, Type } from 'class-transformer';
-import { IsOptional, ValidateNested, IsUUID, IsNumber } from 'class-validator';
+import {
+  IsOptional,
+  ValidateNested,
+  IsUUID,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import { LocationFinishingInputDto } from '../../../modules/material-finishings/dto/location-finishing-input.dto';
 
 export class UpdateLocationDto extends PartialType(CreateLocationDto) {
@@ -17,6 +23,12 @@ export class UpdateLocationDto extends PartialType(CreateLocationDto) {
   @IsOptional()
   @IsNumber()
   height?: number;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  facadeObservation?: string;
 
   @Expose()
   @ApiProperty({ required: false, type: LocationFinishingInputDto })

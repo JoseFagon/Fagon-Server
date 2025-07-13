@@ -69,7 +69,7 @@
       }
 
       .signature-section {
-        margin-top: 40px;
+        margin: 40px 0 40px;
         text-align: left;
       }
 
@@ -196,11 +196,11 @@
       <tr>
         <td>{{formatLocationName this.name}}</td>
         <td>
-          {{#with (lookup ../pavement this.pavementId) as |pavement|}}
-            {{formatPavementName pavement.pavement}}
+          {{#if this.pavement}}
+            {{formatPavementName this.pavement.pavement}}
           {{else}}
             —
-          {{/with}}
+          {{/if}}
         </td>
         <td>{{joinMaterialsWithSlash this.materialFinishing 'piso'}}</td>
         <td>{{joinMaterialsWithSlash this.materialFinishing 'parede'}}</td>

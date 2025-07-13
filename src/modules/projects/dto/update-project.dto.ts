@@ -26,7 +26,7 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PavementItemDto)
-  pavements?: PavementItemDto[];
+  pavement?: PavementItemDto[];
 
   @Expose()
   @ApiProperty({ required: false })

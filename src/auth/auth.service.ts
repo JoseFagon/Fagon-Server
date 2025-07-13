@@ -111,7 +111,6 @@ export class AuthService {
   async loginWithAccessKey(loginDto: LoginDto): Promise<LoginResponse> {
     const { accessKeyToken } = loginDto;
 
-    // 1. Validação da chave de acesso
     const accessKey = await this.prisma.accessKey.findFirst({
       where: { token: accessKeyToken },
       include: {

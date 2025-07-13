@@ -16,18 +16,33 @@ interface Pavement {
 
 const locationLabelMap: Record<string, string> = {
   fachada: 'Fachada',
+  espera_atendimento: 'Espera Atendimento',
+  atendimento: 'Atendimento',
   'auto_-_atendimento': 'Auto-Atendimento',
+  'auto_-_atendimento_-_6_horas': 'Auto-Atendimento - 6 Horas',
+  'manutencao_auto_-_atendimento': 'Manutenção Auto-Atendimento',
+  'casa_maquinas_-_ar_condicionado': 'Casa Máquinas - Ar Condicionado',
+  sala_online: 'Sala Online',
+  espera_caixas: 'Espera Caixas',
   caixas: 'Caixas',
-  guiche_atendimento: 'Guichê de Atendimento',
-  salao_principal: 'Salão Principal',
-  area_prioritaria: 'Área Prioritária',
-  sala_reunioes: 'Sala de Reuniões',
-  escritorios_internos: 'Escritórios Internos',
-  cofre: 'Cofre',
-  banheiro: 'Banheiro',
-  area_descanso: 'Área de Descanso',
-  sala_servidores: 'Sala de Servidores',
-  outros: 'Outros',
+  espera_gerencia: 'Espera Gerência',
+  gerencia: 'Gerência (GGA)',
+  expediente: 'Expediente',
+  tesouraria: 'Tesouraria',
+  copa: 'Copa',
+  circulacao: 'Circulação',
+  descanso: 'Descanso',
+  sala_go: 'Sala G.O.',
+  almoxarifado: 'Almoxarifado',
+  sala_de_reuniao: 'Sala de Reunião',
+  hall_spcd: 'Hall SPCD',
+  spcd_masculino: 'SPCD Masculino',
+  spcd_feminino: 'SPCD Feminino',
+  spcd_unissex: 'SPCD Unissex',
+  sanitario_masculino: 'Sanitário Masculino',
+  sanitario_feminino: 'Sanitário Feminino',
+  dml: 'DML',
+  dls: 'DLS',
 };
 
 const floorLabelMap: Record<string, string> = {
@@ -38,6 +53,7 @@ const floorLabelMap: Record<string, string> = {
   carpete: 'Carpete',
   granito: 'Granito',
   ardosia: 'Ardósia',
+  madeira: 'Madeira',
   outro: 'Outro',
 };
 
@@ -61,14 +77,17 @@ const wallLabelMap: Record<string, string> = {
 export function registerHandlebarsHelpers(): void {
   const formatPavementName = (name: string): string => {
     const replacements: Record<string, string> = {
-      subsolo: 'subsolo',
-      terreo: 'térreo',
-      mezanino: 'mezanino',
-      '1_andar': '1º andar',
-      '2_andar': '2º andar',
-      '3_andar': '3º andar',
-      '4_andar': '4º andar',
-      '5_andar': '5º andar',
+      '3_subsolo': '3º Subsolo',
+      '2_subsolo': '2° Subsolo',
+      '1_subsolo': '1° Subsolo',
+      subsolo: 'Subsolo',
+      terreo: 'Térreo',
+      mezanino: 'Mezanino',
+      '1_andar': '1º Andar',
+      '2_andar': '2º Andar',
+      '3_andar': '3º Andar',
+      '4_andar': '4º Andar',
+      '5_andar': '5º Andar',
     };
     return replacements[name.toLowerCase()] || name;
   };
@@ -81,23 +100,16 @@ export function registerHandlebarsHelpers(): void {
     };
 
     const map = maps[type] || {};
-    return map[value] || value;
+
+    if (map[value]) {
+      return map[value];
+    }
+
+    return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
   };
 
   Handlebars.registerHelper('formatLocationName', function (value: string) {
     return locationLabelMap[value] || value;
-  });
-
-  Handlebars.registerHelper('formatFloorMaterial', function (value: string) {
-    return floorLabelMap[value] || value;
-  });
-
-  Handlebars.registerHelper('formatCeilingMaterial', function (value: string) {
-    return ceilingLabelMap[value] || value;
-  });
-
-  Handlebars.registerHelper('formatWallMaterial', function (value: string) {
-    return wallLabelMap[value] || value;
   });
 
   Handlebars.registerHelper(
@@ -111,7 +123,8 @@ export function registerHandlebarsHelpers(): void {
       const filtered = materials
         .filter((m) => m.surface === surfaceType)
         .map((m) => {
-          return formatMaterial(surfaceType, m.materialFinishing.trim());
+          const material = m.materialFinishing.trim();
+          return formatMaterial(surfaceType, material);
         });
 
       return filtered.length > 0 ? filtered.join(' / ') : '—';

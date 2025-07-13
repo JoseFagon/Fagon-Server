@@ -118,6 +118,11 @@ export class LocationService {
       const updatedLocation = await this.prisma.location.update({
         where: { id },
         data: updateData,
+        include: {
+          materialFinishing: true,
+          pavement: true,
+          photo: true,
+        },
       });
 
       if (pavementId && height !== undefined) {

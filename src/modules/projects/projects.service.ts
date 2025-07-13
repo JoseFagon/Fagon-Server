@@ -33,8 +33,7 @@ export class ProjectService {
     createProjectDto: CreateProjectDto,
     currentUser: { sub: string; role: string },
   ) {
-    const { agencyId, engineerId, pavements, ...projectData } =
-      createProjectDto;
+    const { agencyId, engineerId, pavement, ...projectData } = createProjectDto;
 
     if (currentUser.role === 'vistoriador') {
       throw new ForbiddenException(
@@ -54,8 +53,8 @@ export class ProjectService {
       include: this.projectIncludes(),
     });
 
-    if (pavements?.length) {
-      for (const p of pavements) {
+    if (pavement?.length) {
+      for (const p of pavement) {
         await this.pavementService.create({
           pavement: p.pavement,
           projectId: project.id,
@@ -197,19 +196,19 @@ export class ProjectService {
   ) {
     await this.findOne(id);
 
-    const { pavements, ...projectData } = updateProjectDto;
+    const { pavement, ...projectData } = updateProjectDto;
     const updateData: Prisma.ProjectUpdateInput = { ...projectData };
 
-    if (pavements) {
+    if (pavement) {
       const existingPavements = await this.pavementService.findByProject(id);
       const existingPavementValues = existingPavements.map((p) => p.pavement);
 
-      const newPavements = pavements.filter(
+      const newPavements = pavement.filter(
         (p) => !existingPavementValues.includes(p.pavement),
       );
 
       const pavementsToRemove = existingPavements.filter(
-        (p) => !pavements.some((np) => np.pavement === p.pavement),
+        (p) => !pavement.some((np) => np.pavement === p.pavement),
       );
 
       await Promise.all([

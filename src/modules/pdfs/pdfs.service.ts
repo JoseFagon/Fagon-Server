@@ -77,6 +77,9 @@ export class PdfService {
         name: location.name,
         locationType: location.locationType,
         height: location.height,
+        pavementId: location.pavementId,
+        pavement:
+          project.pavement.find((p) => p.id === location.pavementId) ?? null,
         materialFinishing: location.materialFinishing,
         photo: location.photo.map((p) => ({
           id: p.id,
@@ -199,13 +202,30 @@ export class PdfService {
   private calculateFireResistance(project: ProjectWithIncludes): number {
     if (!project.pavement || project.pavement.length === 0) return 30;
 
-    const hasSubsolo = project.pavement.some((p) =>
+    const pavements = project.pavement;
+
+    const subsolos = pavements.filter((p) =>
       p.pavement.toLowerCase().includes('subsolo'),
     );
 
-    const hasOver6m = project.pavement.some((p) => (p.height ?? 0) > 6);
+    const subsoloHeightSum = subsolos.reduce(
+      (sum, p) => sum + (p.height ?? 0),
+      0,
+    );
 
-    return hasSubsolo || hasOver6m ? 60 : 30;
+    const anySubsoloOver10m = subsolos.some((p) => (p.height ?? 0) > 10);
+
+    if (anySubsoloOver10m || subsoloHeightSum > 10) {
+      return 90;
+    }
+
+    const hasOver6m = pavements.some((p) => (p.height ?? 0) > 6);
+
+    if (subsolos.length > 0 || hasOver6m) {
+      return 60;
+    }
+
+    return 30;
   }
 
   private async getPhotosWithSignedUrls(

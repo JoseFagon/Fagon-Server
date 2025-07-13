@@ -12,7 +12,7 @@ export class LoginDto {
   @Expose()
   @ApiProperty({ required: false })
   @IsString()
-  @MinLength(6)
+  @MinLength(4)
   @ValidateIf((o) => !o.accessKeyToken)
   password?: string;
 
