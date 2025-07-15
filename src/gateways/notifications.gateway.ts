@@ -8,7 +8,8 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // Restrinja em produção (ex: ['https://seusite.com'])
+    origin: 'https://fagon-client.vercel.app',
+    credentials: true,
   },
 })
 export class NotificationGateway

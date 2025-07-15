@@ -190,7 +190,7 @@ export class LocationService {
     });
 
     if (!location) {
-      throw new NotFoundException('Localização não encontrada');
+      throw new NotFoundException('Location not found');
     }
 
     return location;

@@ -33,7 +33,8 @@ export class ProjectService {
     createProjectDto: CreateProjectDto,
     currentUser: { sub: string; role: string },
   ) {
-    const { agencyId, engineerId, pavement, ...projectData } = createProjectDto;
+    const { agencyId, engineerId, pavements, ...projectData } =
+      createProjectDto;
 
     if (currentUser.role === 'vistoriador') {
       throw new ForbiddenException(
@@ -53,8 +54,8 @@ export class ProjectService {
       include: this.projectIncludes(),
     });
 
-    if (pavement?.length) {
-      for (const p of pavement) {
+    if (pavements?.length) {
+      for (const p of pavements) {
         await this.pavementService.create({
           pavement: p.pavement,
           projectId: project.id,
@@ -196,31 +197,58 @@ export class ProjectService {
   ) {
     await this.findOne(id);
 
-    const { pavement, ...projectData } = updateProjectDto;
+    const { pavements, ...projectData } = updateProjectDto;
     const updateData: Prisma.ProjectUpdateInput = { ...projectData };
 
-    if (pavement) {
+    if (pavements) {
       const existingPavements = await this.pavementService.findByProject(id);
       const existingPavementValues = existingPavements.map((p) => p.pavement);
 
-      const newPavements = pavement.filter(
+      const newPavements = pavements.filter(
         (p) => !existingPavementValues.includes(p.pavement),
       );
 
       const pavementsToRemove = existingPavements.filter(
-        (p) => !pavement.some((np) => np.pavement === p.pavement),
+        (p) => !pavements.some((np) => np.pavement === p.pavement),
+      );
+
+      const pavementsToUpdate = pavements.filter(
+        (p) =>
+          existingPavementValues.includes(p.pavement) &&
+          (p.height !== undefined || p.area !== undefined),
       );
 
       await Promise.all([
-        ...newPavements.map((pavement) =>
+        ...newPavements.map((p) =>
           this.pavementService.create({
-            pavement: pavement.pavement,
+            pavement: p.pavement,
             projectId: id,
           }),
         ),
-        ...pavementsToRemove.map((pavement) =>
-          this.pavementService.remove(pavement.id),
-        ),
+        ...pavementsToRemove.map((p) => this.pavementService.remove(p.id)),
+        ...pavementsToUpdate.map((p) => {
+          const existingPavement = existingPavements.find(
+            (ep) => ep.pavement === p.pavement,
+          );
+
+          if (!existingPavement) {
+            throw new NotFoundException(
+              `Pavement ${p.pavement} not found for update`,
+            );
+          }
+
+          const updateData: { area?: number; height?: number } = {};
+
+          if (p.area !== undefined) {
+            updateData.area = p.area;
+          }
+
+          if (p.height !== undefined) {
+            updateData.height = p.height;
+          }
+
+          return this.pavementService.update(existingPavement.id, updateData);
+        }),
       ]);
     }
 
@@ -268,7 +296,7 @@ export class ProjectService {
     return {
       agency: true,
       engineer: true,
-      pavement: true,
+      pavements: true,
       location: {
         include: {
           photo: true,

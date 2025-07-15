@@ -10,6 +10,7 @@ import { Location, PdfType, Photo } from '@prisma/client';
 import { ProjectService } from '../projects/projects.service';
 import { ProjectWithIncludes } from '../../common/interfaces/project-includes.interface';
 import { LogHelperService } from '../logs/log-helper.service';
+import { getPdfFileName } from '../../common/utils/pdf-naming-helper.utils';
 
 interface LocationWithPhotos extends Location {
   photo: Photo[];
@@ -67,11 +68,15 @@ export class PdfService {
     const data = {
       agency: project.agency,
       engineer: project.engineer,
+      inspectorName: project.inspectorName,
+      inspectionDate: project.inspectionDate,
+      structureType: project.structureType,
+      floorHeight: project.floorHeight,
       createdAt: project.createdAt,
       now: new Date(),
       fireResistance,
       maxHeight,
-      pavement: project.pavement,
+      pavements: project.pavements,
       location: locationsWithSignedUrls.map((location) => ({
         id: location.id,
         name: location.name,
@@ -79,7 +84,7 @@ export class PdfService {
         height: location.height,
         pavementId: location.pavementId,
         pavement:
-          project.pavement.find((p) => p.id === location.pavementId) ?? null,
+          project.pavements.find((p) => p.id === location.pavementId) ?? null,
         materialFinishing: location.materialFinishing,
         photo: location.photo.map((p) => ({
           id: p.id,
@@ -94,7 +99,10 @@ export class PdfService {
 
     const file = {
       buffer: Buffer.from(pdfBuffer),
-      originalname: `${pdfType}-${project.agency.agencyNumber}-${project.upeCode}.pdf`,
+      originalname: getPdfFileName(
+        pdfType as PdfType,
+        project.agency.agencyNumber,
+      ),
       mimetype: 'application/pdf',
       size: pdfBuffer.length,
     };
@@ -138,7 +146,7 @@ export class PdfService {
 
     const uploadResult = await this.storageService.uploadFile({
       buffer: signedFile.buffer,
-      originalname: `${pdf.pdfType}-assinado-${project.agency.agencyNumber}-${project.upeCode}.pdf`,
+      originalname: getPdfFileName(pdf.pdfType, project.agency.agencyNumber),
       mimetype: 'application/pdf',
       size: signedFile.size,
     });
@@ -180,10 +188,15 @@ export class PdfService {
 
     try {
       const fileStream = await this.storageService.getFileStream(pdf.filePath);
+      const project = await this.projectService.findOne(pdf.projectId);
+
+      if (!project) {
+        throw new NotFoundException('Projeto não encontrado');
+      }
 
       return {
         fileStream,
-        filename: `${pdf.pdfType}-${pdf.projectId}.pdf`,
+        filename: getPdfFileName(pdf.pdfType, project.agency.agencyNumber),
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -195,14 +208,14 @@ export class PdfService {
   }
 
   private calculateMaxHeight(project: ProjectWithIncludes): number {
-    if (!project.pavement || project.pavement.length === 0) return 0;
-    return Math.max(...project.pavement.map((p) => p.height ?? 0), 0);
+    if (!project.pavements || project.pavements.length === 0) return 0;
+    return Math.max(...project.pavements.map((p) => p.height ?? 0), 0);
   }
 
   private calculateFireResistance(project: ProjectWithIncludes): number {
-    if (!project.pavement || project.pavement.length === 0) return 30;
+    if (!project.pavements || project.pavements.length === 0) return 30;
 
-    const pavements = project.pavement;
+    const pavements = project.pavements;
 
     const subsolos = pavements.filter((p) =>
       p.pavement.toLowerCase().includes('subsolo'),

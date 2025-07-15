@@ -14,16 +14,13 @@ export class ProjectGateway {
     client: Socket,
     payload: { projectId: string; data: any },
   ) {
-    // Broadcast para todos exceto o emissor
     client.broadcast.emit('project-updated', payload);
 
-    // Ou para uma sala específica (ex: projeto específico)
     this.server
       .to(`project_${payload.projectId}`)
       .emit('project-updated', payload);
   }
 
-  // Entrar em uma sala (para updates específicos)
   @SubscribeMessage('join-project-room')
   handleJoinProjectRoom(client: Socket, projectId: string) {
     void client.join(`project_${projectId}`);

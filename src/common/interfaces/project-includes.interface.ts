@@ -15,13 +15,13 @@ export interface ProjectWithIncludes {
   projectType: ProjectType;
   status: ProjectStatus;
   structureType: string;
-  floorHeight: number;
+  floorHeight: string;
   inspectorName?: string;
   inspectionDate?: Date;
   createdAt: Date;
   agency: Agency;
   engineer: Engineer;
-  pavement: Pavement[];
+  pavements: Pavement[];
   location: (Location & {
     photo: Photo[];
     materialFinishing: MaterialFinishing[];

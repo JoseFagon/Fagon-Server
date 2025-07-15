@@ -35,8 +35,6 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('Usuário não autenticado');
     }
 
-    console.log('User role:', user.role, 'Required roles:', requiredRoles);
-
     if (!requiredRoles.includes(user.role)) {
       throw new ForbiddenException(
         `Acesso negado. Requer perfil: ${requiredRoles.join(' ou ')}`,

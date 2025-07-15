@@ -104,16 +104,14 @@
     <section class='section info'>
       <h2>1. IDENTIFICAÇÃO DA EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
       <p><strong>Razão Social:</strong>
-        {{agency.name}}
-        — AG.
+        Itaú Unibanco S/A — AG.
         {{formatNumberAgency agency.agencyNumber}}
         /
         {{agency.city}}
         -
         {{agency.district}}</p>
       <p><strong>Nome Fantasia:</strong>
-        {{agency.name}}
-        — AG.
+        Itaú Unibanco S/A — AG.
         {{formatNumberAgency agency.agencyNumber}}
         /
         {{agency.city}}
@@ -166,16 +164,16 @@
 
       <p>Os dados para elaboração deste laudo foram extraídos de Memorial
         Descritivo conforme levantamento realizado pelo escritório Fagon em
-        {{formatDate now 'MMMM'}}
+        {{formatDate inspectionDate 'MMMM'}}
         de
-        {{formatDate now 'yyyy'}}.</p>
+        {{formatDate inspectionDate 'yyyy'}}.</p>
     </section>
 
     <!-- Seção 5: Fundamentação Normativa -->
     <section class='section'>
       <h2>5. FUNDAMENTAÇÃO NORMATIVA</h2>
       <p>O Laudo Técnico de Controle dos Materiais de Acabamento e de
-        Revestimento está tecnicamente fundamentado na Instrução Técnica (IT) n°
+        Revestimento está tecnicamente fundamentado na Instrução Técnica (IT) nº
         {{StateLaw.lawReference}}, do Corpo de Bombeiros da Polícia Militar do
         Estado
         {{StateLaw.textState}}

@@ -28,7 +28,17 @@ async function main() {
     skipDuplicates: true,
   });
 
-  console.log('Vistoriadores criados!');
+  await prisma.engineer.create({
+    data: {
+      name: 'Cinara Aprecida Batista Gonçalves',
+      email: 'cinara.goncalves@fagon.com.br',
+      phone: '11980157566',
+      cpf: '09118249876',
+      education: 'Arquiteta',
+      registrationEntity: 'CAU-SP',
+      registrationNumber: 'A49590-5',
+    },
+  });
 }
 
 main()

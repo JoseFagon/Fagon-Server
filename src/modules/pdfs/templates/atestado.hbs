@@ -105,7 +105,7 @@
     <p class='text-info'>Eu,
       {{engineer.name}}, registrado no
       {{engineer.registrationEntity}}
-      sob o N°
+      sob o Nº
       {{engineer.registrationNumber}}, atesto para os devidos fins, que os
       materiais de acabamento e revestimento que foram aplicados nos pavimentos
       da edificação descrita abaixo atendem aos parâmetros técnicos da
@@ -114,7 +114,7 @@
 
     <section class='agency-info'>
       <p><strong>Razão Social:</strong>
-        {{agency.name}}
+        Itaú Unibanco S/A
         — AG.
         {{formatNumberAgency agency.agencyNumber}}
         /
@@ -122,7 +122,7 @@
         -
         {{agency.district}}</p>
       <p><strong>Nome Fantasia:</strong>
-        {{agency.name}}
+        Itaú Unibanco S/A
         — AG.
         {{formatNumberAgency agency.agencyNumber}}
         /
@@ -141,9 +141,9 @@
 
     <p>Os materiais constam na tabela subsequente e foram levantados pelo
       escritório Fagon em
-      {{formatDate now 'MMMM'}}
+      {{formatDate inspectionDate 'MMMM'}}
       de
-      {{formatDate now 'yyyy'}}.</p>
+      {{formatDate inspectionDate 'yyyy'}}.</p>
 
 <table>
   <thead>

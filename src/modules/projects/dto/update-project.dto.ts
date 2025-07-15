@@ -6,12 +6,11 @@ import {
   IsArray,
   IsDateString,
   IsEnum,
-  IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { PavementItemDto } from 'src/modules/pavements/dto/item-pavement.dto';
+import { PavementItemDto } from '../../../modules/pavements/dto/item-pavement.dto';
 
 export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @Expose()
@@ -26,7 +25,7 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PavementItemDto)
-  pavement?: PavementItemDto[];
+  pavements?: PavementItemDto[];
 
   @Expose()
   @ApiProperty({ required: false })
@@ -37,8 +36,8 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @Expose()
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsNumber()
-  floorHeight?: number;
+  @IsString()
+  floorHeight?: string;
 
   @Expose()
   @ApiProperty({ required: false })

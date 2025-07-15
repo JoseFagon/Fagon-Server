@@ -101,7 +101,7 @@ model Project {
   engineerId     String
   status         ProjectStatus
   structureType  String?
-  floorHeight    Float?
+  floorHeight    String?
   inspectorName  String?
   inspectionDate DateTime?
   createdAt      DateTime      @default(now())
@@ -109,7 +109,7 @@ model Project {
   accessKey      AccessKey[]
   location       Location[]
   pathology      Pathology[]
-  pavement       Pavement[]
+  pavements       Pavement[]
   pdf            Pdf[]
   agency         Agency        @relation(fields: [agencyId], references: [id])
   engineer       Engineer      @relation(fields: [engineerId], references: [id])

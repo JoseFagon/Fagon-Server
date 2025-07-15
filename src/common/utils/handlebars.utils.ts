@@ -78,8 +78,7 @@ export function registerHandlebarsHelpers(): void {
   const formatPavementName = (name: string): string => {
     const replacements: Record<string, string> = {
       '3_subsolo': '3º Subsolo',
-      '2_subsolo': '2° Subsolo',
-      '1_subsolo': '1° Subsolo',
+      '2_subsolo': '2º Subsolo',
       subsolo: 'Subsolo',
       terreo: 'Térreo',
       mezanino: 'Mezanino',
@@ -317,6 +316,20 @@ export function registerHandlebarsHelpers(): void {
 
       const last = processed.pop();
       return `${processed.join(', ')} e ${last}`;
+    },
+  );
+
+  Handlebars.registerHelper(
+    'formatFloorHeight',
+    function (floorHeight: string): string {
+      if (!floorHeight) return '';
+
+      const formatted = floorHeight.replace(
+        /(\d+,\d{2})(?=\s*(a|e|-|$))/gi,
+        '$1m',
+      );
+
+      return formatted;
     },
   );
 

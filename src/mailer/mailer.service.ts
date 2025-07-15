@@ -47,12 +47,6 @@ export class MailerService {
     }
   }
 
-  /**
-   * Envia email de recuperação de senha
-   * @param user Usuário que solicitou a recuperação
-   * @param token Token de recuperação
-   * @param expiresIn Tempo de expiração (ex: "30 minutos")
-   */
   async sendRecoveryPassword(
     user: { email: string; name: string },
     token: string,
@@ -73,12 +67,6 @@ export class MailerService {
     );
   }
 
-  /**
-   * Envia email de acesso concedido
-   * @param user Usuário que recebeu acesso
-   * @param resource Recurso acessado
-   * @param grantedBy Quem concedeu o acesso
-   */
   async sendAccessGranted(
     user: { email: string; name: string },
     resource: string,
@@ -92,12 +80,6 @@ export class MailerService {
     });
   }
 
-  /**
-   * Envia email de notificação genérico
-   * @param user Usuário destinatário
-   * @param notification Objeto com título e mensagem
-   * @param action Opcional: ação com texto e URL
-   */
   async sendNotificationEmail(
     user: { email: string; name: string },
     notification: { title: string; message: string },

@@ -32,7 +32,7 @@ export class CreateProjectDto {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => PavementItemDto)
-  pavement!: PavementItemDto[];
+  pavements!: PavementItemDto[];
 
   @Expose()
   @ApiProperty()

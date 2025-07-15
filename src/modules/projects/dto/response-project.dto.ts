@@ -18,7 +18,7 @@ export class ProjectResponseDto {
   structureType?: string;
 
   @ApiProperty({ required: false })
-  floorHeight?: number;
+  floorHeight?: string;
 
   @ApiProperty({ required: false })
   inspectorName?: string;

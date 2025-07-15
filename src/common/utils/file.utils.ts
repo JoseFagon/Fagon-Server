@@ -10,10 +10,6 @@ import { BadRequestException } from '@nestjs/common';
 const pipelineAsync = promisify(pipeline);
 
 export class FileUtils {
-  /**
-   * Verifica se um arquivo existe
-   * @param filePath Caminho do arquivo
-   */
   static async fileExists(filePath: string): Promise<boolean> {
     try {
       await fs.access(filePath);
@@ -23,10 +19,6 @@ export class FileUtils {
     }
   }
 
-  /**
-   * Cria um diretório se não existir
-   * @param dirPath Caminho do diretório
-   */
   static async ensureDirectoryExists(dirPath: string): Promise<void> {
     try {
       await fs.mkdir(dirPath, { recursive: true });
@@ -35,40 +27,21 @@ export class FileUtils {
     }
   }
 
-  /**
-   * Lê o conteúdo de um arquivo
-   * @param filePath Caminho do arquivo
-   * @returns Conteúdo do arquivo como string
-   */
   static async readFile(filePath: string): Promise<string> {
     return await fs.readFile(filePath, 'utf-8');
   }
 
-  /**
-   * Escreve conteúdo em um arquivo
-   * @param filePath Caminho do arquivo
-   * @param content Conteúdo a ser escrito
-   */
   static async writeFile(filePath: string, content: string): Promise<void> {
     await this.ensureDirectoryExists(path.dirname(filePath));
     await fs.writeFile(filePath, content, 'utf-8');
   }
 
-  /**
-   * Remove um arquivo
-   * @param filePath Caminho do arquivo
-   */
   static async deleteFile(filePath: string): Promise<void> {
     if (await this.fileExists(filePath)) {
       await fs.unlink(filePath);
     }
   }
 
-  /**
-   * Copia um arquivo para outro local
-   * @param source Caminho de origem
-   * @param destination Caminho de destino
-   */
   static async copyFile(source: string, destination: string): Promise<void> {
     await this.ensureDirectoryExists(path.dirname(destination));
     await pipelineAsync(
@@ -77,28 +50,15 @@ export class FileUtils {
     );
   }
 
-  /**
-   * Move um arquivo para outro local
-   * @param source Caminho de origem
-   * @param destination Caminho de destino
-   */
   static async moveFile(source: string, destination: string): Promise<void> {
     await this.ensureDirectoryExists(path.dirname(destination));
     await fs.rename(source, destination);
   }
 
-  /**
-   * Obtém a extensão de um arquivo
-   * @param filename Nome do arquivo
-   */
   static getFileExtension(filename: string): string {
     return path.extname(filename).toLowerCase();
   }
 
-  /**
-   * Gera um nome de arquivo único com timestamp e hash
-   * @param originalFilename Nome original do arquivo
-   */
   static generateUniqueFilename(originalFilename: string): string {
     const ext = this.getFileExtension(originalFilename);
     const timestamp = Date.now();
@@ -106,11 +66,6 @@ export class FileUtils {
     return `${timestamp}_${randomString}${ext}`;
   }
 
-  /**
-   * Valida o tipo MIME de um arquivo
-   * @param filePath Caminho do arquivo
-   * @param allowedMimeTypes Lista de MIME types permitidos
-   */
   static validateFileType(
     filePath: string,
     allowedMimeTypes: string[],
@@ -122,11 +77,6 @@ export class FileUtils {
     return Promise.resolve(false);
   }
 
-  /**
-   * Valida o tamanho de um arquivo
-   * @param filePath Caminho do arquivo
-   * @param maxSizeInBytes Tamanho máximo em bytes
-   */
   static async validateFileSize(
     filePath: string,
     maxSizeInBytes: number,
@@ -135,18 +85,11 @@ export class FileUtils {
     return stats.size <= maxSizeInBytes;
   }
 
-  /**
-   * Salva um arquivo enviado via upload
-   * @param file Arquivo recebido (Express.Multer.File)
-   * @param destinationDir Diretório de destino
-   * @param allowedTypes Tipos MIME permitidos
-   * @param maxSize Tamanho máximo em bytes
-   */
   static async saveUploadedFile(
     file: Express.Multer.File,
     destinationDir: string,
     allowedTypes: string[] = [],
-    maxSize: number = 5 * 1024 * 1024, // 5MB
+    maxSize: number = 10 * 1024 * 1024, // 10MB
   ): Promise<string> {
     if (file.size > maxSize) {
       throw new BadRequestException(
@@ -184,11 +127,6 @@ export class FileUtils {
     }
   }
 
-  /**
-   * Lista arquivos em um diretório
-   * @param dirPath Caminho do diretório
-   * @param extensions Extensões para filtrar (opcional)
-   */
   static async listFiles(
     dirPath: string,
     extensions?: string[],
