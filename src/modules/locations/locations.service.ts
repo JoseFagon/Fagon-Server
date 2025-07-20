@@ -57,6 +57,9 @@ export class LocationService {
         materialFinishing: true,
         photo: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
@@ -69,6 +72,9 @@ export class LocationService {
         pavement: true,
         materialFinishing: true,
         photo: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
   }

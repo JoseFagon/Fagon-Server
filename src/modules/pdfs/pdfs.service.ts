@@ -65,6 +65,13 @@ export class PdfService {
       project.location as unknown as LocationWithPhotos[],
     );
 
+    const lastLocation = locationsWithSignedUrls
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .pop();
+
+    console.log(lastLocation);
+
     const data = {
       agency: project.agency,
       engineer: project.engineer,
@@ -77,6 +84,7 @@ export class PdfService {
       fireResistance,
       maxHeight,
       pavements: project.pavements,
+      lastLocation: lastLocation,
       location: locationsWithSignedUrls.map((location) => ({
         id: location.id,
         name: location.name,

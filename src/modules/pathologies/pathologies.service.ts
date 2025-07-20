@@ -50,26 +50,42 @@ export class PathologyService {
     return pathology;
   }
 
-  async findAll(projectId?: string) {
-    const where: Prisma.PathologyWhereInput = {};
-    if (projectId) where.projectId = projectId;
+  async findAll(
+    { page, limit }: { page: number; limit: number },
+    projectId?: string,
+  ) {
+    const skip = (page - 1) * limit;
+    const [pathologies, total] =
+      await this.findAllPathologiesByProjectPaginated(
+        projectId || '',
+        skip,
+        limit,
+      );
 
-    return this.prisma.pathology.findMany({
-      where,
-      include: {
-        project: true,
-        location: true,
-        pathologyPhoto: true,
+    return {
+      pathologies,
+      meta: {
+        resource: {
+          total: total,
+          page: page,
+          limit: limit,
+          totalPages: Math.ceil(Number(total) / limit),
+        },
       },
-      orderBy: {
-        recordDate: 'desc',
-      },
-    });
+    };
   }
 
   async search(searchPathologyDto: SearchPathologyDto) {
-    const { title, description, startDate, endDate } = searchPathologyDto;
+    const {
+      title,
+      description,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 10,
+    } = searchPathologyDto;
 
+    const skip = (page - 1) * limit;
     const where: Prisma.PathologyWhereInput = {};
 
     if (title) where.title = { contains: title, mode: 'insensitive' };
@@ -82,18 +98,34 @@ export class PathologyService {
       };
     }
 
-    return this.prisma.pathology.findMany({
-      where,
-      include: {
-        project: {
-          select: {
-            id: true,
-            upeCode: true,
-          },
+    const [pathologies, total] = await Promise.all([
+      this.prisma.pathology.findMany({
+        where,
+        skip,
+        take: limit,
+        include: {
+          project: true,
+          location: true,
+          pathologyPhoto: true,
         },
-        location: true,
+        orderBy: {
+          recordDate: 'desc',
+        },
+      }),
+      this.prisma.pathology.count({ where }),
+    ]);
+
+    return {
+      pathologies: pathologies,
+      meta: {
+        resource: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
       },
-    });
+    };
   }
 
   async findOne(id: string) {
@@ -153,5 +185,31 @@ export class PathologyService {
     );
 
     return;
+  }
+
+  async findAllPathologiesByProjectPaginated(
+    projectId: string,
+    skip: number,
+    take: number,
+  ) {
+    const where: Prisma.PathologyWhereInput = {};
+    if (projectId) where.projectId = projectId;
+
+    const [pathologies, total] = await Promise.all([
+      this.prisma.pathology.findMany({
+        where,
+        skip,
+        take,
+        include: {
+          project: true,
+          location: true,
+          pathologyPhoto: true,
+        },
+        orderBy: { recordDate: 'desc' },
+      }),
+      this.prisma.pathology.count(),
+    ]);
+
+    return [pathologies, total];
   }
 }

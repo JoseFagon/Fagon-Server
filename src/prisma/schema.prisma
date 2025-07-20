@@ -76,6 +76,7 @@ model Agency {
   district     String
   street       String
   number       Int
+  createdAt      DateTime      @default(now())
   
   project      Project[]
 }
@@ -148,6 +149,7 @@ model Location {
   locationType      LocationType
   facadeObservation String?
   height            Float?
+  createdAt      DateTime      @default(now())
 
   pavement          Pavement?           @relation(fields: [pavementId], references: [id], onDelete: Restrict)
   project           Project             @relation(fields: [projectId], references: [id])

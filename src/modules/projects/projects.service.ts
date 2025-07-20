@@ -87,11 +87,19 @@ export class ProjectService {
     }
 
     const skip = (page - 1) * limit;
-    return this.prisma.project.findMany({
-      skip,
-      take: limit,
-      include: this.projectIncludes(),
-    });
+    const [projects, total] = await this.findAllProjectsPaginated(skip, limit);
+
+    return {
+      projects,
+      meta: {
+        resource: {
+          total: total,
+          page: page,
+          limit: limit,
+          totalPages: Math.ceil(Number(total) / limit),
+        },
+      },
+    };
   }
 
   async search(params: SearchProjectDto, currentUser?: { role: string }) {
@@ -162,17 +170,22 @@ export class ProjectService {
         skip,
         take: limit,
         include: this.projectIncludes(),
+        orderBy: {
+          createdAt: 'desc',
+        },
       }),
       this.prisma.project.count({ where: whereClause }),
     ]);
 
     return {
-      data: projects,
+      projects: projects,
       meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        resource: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
       },
     };
   }
@@ -287,9 +300,12 @@ export class ProjectService {
     return this.pavementService.findByProject(projectId);
   }
 
-  async getProjectPathologies(projectId: string) {
+  async getProjectPathologies(
+    { page, limit }: { page: number; limit: number },
+    projectId: string,
+  ) {
     await this.findOne(projectId);
-    return this.pathologyService.findAll(projectId);
+    return this.pathologyService.findAll({ page, limit }, projectId);
   }
 
   private projectIncludes() {
@@ -304,6 +320,20 @@ export class ProjectService {
         },
       },
     };
+  }
+
+  async findAllProjectsPaginated(skip: number, take: number) {
+    const [projects, total] = await Promise.all([
+      this.prisma.project.findMany({
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        include: this.projectIncludes(),
+      }),
+      this.prisma.project.count(),
+    ]);
+
+    return [projects, total];
   }
 
   private async validateRelationsExist(agencyId: string, engineerId: string) {

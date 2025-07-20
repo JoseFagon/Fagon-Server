@@ -29,12 +29,24 @@
         margin-bottom: 15px;
         border-bottom: 1px solid #ddd;
         padding-bottom: 5px;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      p {
+        orphans: 3;
+        widows: 3;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
 
       table {
         width: 100%;
         border-collapse: collapse;
         margin: 15px 0;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
 
       table,
@@ -65,6 +77,11 @@
         margin-bottom: 15px;
       }
 
+      .final-section {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
       .info p {
         margin: 0.1em 0;
       }
@@ -73,25 +90,22 @@
         text-align: center;
       }
 
-      .signature-section {
+      .signature {
         margin: 40px 0 40px;
         text-align: left;
       }
 
-      .signature-section p {
+      .signature p {
         margin: 0.05em 0;
       }
 
-      .signature-section .date {
+      .signature .date {
         margin-bottom: 10px;
       }
 
       @media print {
         body {
           padding: 0;
-        }
-        table {
-          page-break-inside: avoid;
         }
       }
     </style>
@@ -100,7 +114,6 @@
     <h1>ANEXO M.4<br />LAUDO TÉCNICO DE CONTROLE DE MATERIAIS DE ACABAMENTO E
       REVESTIMENTO</h1>
 
-    <!-- Seção 1: Identificação da Edificação -->
     <section class='section info'>
       <h2>1. IDENTIFICAÇÃO DA EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
       <p><strong>Razão Social:</strong>
@@ -127,19 +140,17 @@
         {{agency.district}}</p>
     </section>
 
-    <!-- Seção 2: Identificação do Proprietário -->
     <section class='section info'>
       <h2>2. IDENTIFICAÇÃO DO PROPRIETÁRIO OU RESPONSÁVEL PELO USO DA EDIFICAÇÃO</h2>
       <p><strong>Nome do Proprietário:</strong> Itaú Unibanco S/A</p>
       <p><strong>CNPJ:</strong> 60.701.190/3544-04</p>
       <p><strong>Nome do responsável pelo uso:</strong>
-        Ana Karina di Giacomo</p>
+        Ana Karina Di Giacomo</p>
       <p><strong>CPF:</strong> 216.013.208-09</p>
       <p><strong>Telefone:</strong> (11) 5019-9167</p>
       <p><strong>Email:</strong> ana.giacomo@itau-unibanco.com.br</p>
     </section>
 
-    <!-- Seção 3: Identificação do Responsável Técnico -->
     <section class='section info'>
       <h2>3. IDENTIFICAÇÃO DO RESPONSÁVEL TÉCNICO PELO LAUDO TÉCNICO</h2>
       <p><strong>Nome do profissional:</strong> {{engineer.name}}</p>
@@ -153,7 +164,6 @@
         {{engineer.registrationNumber}}</p>
     </section>
 
-    <!-- Seção 4: Objetivo -->
     <section class='section'>
       <h2>4. OBJETIVO</h2>
       <p>O presente Laudo Técnico tem o objetivo de descrever as características
@@ -169,7 +179,6 @@
         {{formatDate inspectionDate 'yyyy'}}.</p>
     </section>
 
-    <!-- Seção 5: Fundamentação Normativa -->
     <section class='section'>
       <h2>5. FUNDAMENTAÇÃO NORMATIVA</h2>
       <p>O Laudo Técnico de Controle dos Materiais de Acabamento e de
@@ -236,7 +245,6 @@
       </table>
     </section>
 
-    <!-- Seção 6: Classificação dos Materiais -->
     <section class='section'>
       <h2>6. CLASSIFICAÇÃO DOS MATERIAIS DE ACABAMENTO E REVESTIMENTO APLICADOS
         NA EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
@@ -272,7 +280,6 @@
         correlatas.</p>
     </section>
 
-    <!-- Seção 7: Conclusão -->
     <section class='section'>
       <h2>7. CONCLUSÃO</h2>
       <p>Em análise às presentes informações e aos respectivos documentos
@@ -284,31 +291,32 @@
         a eficiência prevista nas normativas elencadas.</p>
     </section>
 
-    <!-- Seção 8: Validade do Laudo -->
-    <section class='section'>
-      <h2>8. VALIDADE DO LAUDO TÉCNICO</h2>
-      <p>As informações prestadas no presente Laudo Técnico são verdadeiras e
-        seus dados não foram alterados além dos itens editáveis. Os relatórios
-        técnicos, laudos de ensaios, especificações técnicas de produto, entre
-        outros documentos comprobatórios da classificação dos materiais de
-        acabamento e de revestimento e a correta aplicação destes na edificação
-        foram entregues ao proprietário/responsável pelo uso, identificado no
-        Capítulo 2, o qual assina a plena ciência neste mesmo Laudo Técnico. O
-        presente Laudo Técnico tem validade enquanto permanecerem inalterados os
-        materiais e as condições de aplicação descritas.</p>
-    </section>
+    <section class='final-section'>
+      <section class='section'>
+        <h2>8. VALIDADE DO LAUDO TÉCNICO</h2>
+        <p>As informações prestadas no presente Laudo Técnico são verdadeiras e
+          seus dados não foram alterados além dos itens editáveis. Os relatórios
+          técnicos, laudos de ensaios, especificações técnicas de produto, entre
+          outros documentos comprobatórios da classificação dos materiais de
+          acabamento e de revestimento e a correta aplicação destes na
+          edificação foram entregues ao proprietário/responsável pelo uso,
+          identificado no Capítulo 2, o qual assina a plena ciência neste mesmo
+          Laudo Técnico. O presente Laudo Técnico tem validade enquanto
+          permanecerem inalterados os materiais e as condições de aplicação
+          descritas.</p>
+      </section>
 
-    <!-- Data e Assinatura -->
-    <section class='signature-section'>
-      <p class='date'>São Paulo,
-        {{formatDate now 'dd'}}
-        de
-        {{formatDate now 'MMMM'}}
-        de
-        {{formatDate now 'yyyy'}}.</p>
-      <p>Resp. Técnico</p>
-      <p>{{engineer.registrationEntity}}
-        {{engineer.registrationNumber}}</p>
+      <section class='section signature'>
+        <p class='date'>São Paulo,
+          {{formatDate now 'dd'}}
+          de
+          {{formatDate now 'MMMM'}}
+          de
+          {{formatDate now 'yyyy'}}.</p>
+        <p>Resp. Técnico</p>
+        <p>{{engineer.registrationEntity}}
+          {{engineer.registrationNumber}}</p>
+      </section>
     </section>
   </body>
 </html>

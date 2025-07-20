@@ -28,16 +28,36 @@ async function main() {
     skipDuplicates: true,
   });
 
-  await prisma.engineer.create({
-    data: {
-      name: 'Cinara Aprecida Batista Gonçalves',
-      email: 'cinara.goncalves@fagon.com.br',
-      phone: '11980157566',
-      cpf: '09118249876',
-      education: 'Arquiteta',
-      registrationEntity: 'CAU-SP',
-      registrationNumber: 'A49590-5',
-    },
+  await prisma.engineer.createMany({
+    data: [
+      {
+        name: 'Cinara Aparecida Batista Gonçalves',
+        email: 'cinara.goncalves@fagon.com.br',
+        phone: '11980157566',
+        cpf: '09118249876',
+        education: 'Arquiteta',
+        registrationEntity: 'CAU-SP',
+        registrationNumber: 'A49590-5',
+      },
+      {
+        name: 'Bárbara Cristina Gonçalves',
+        email: 'barbara.goncalves@fagon.com.br',
+        phone: '11980157566',
+        cpf: '09118249876',
+        education: 'Engenheira',
+        registrationEntity: 'CAU-SP',
+        registrationNumber: 'A49590-5',
+      },
+      {
+        name: 'Jennifer Aparecida Batista Gonçalves',
+        email: 'jennifer.goncalves@fagon.com.br',
+        phone: '11980157566',
+        cpf: '09118249876',
+        education: 'Engenheira',
+        registrationEntity: 'CAU-SP',
+        registrationNumber: 'A49590-5',
+      },
+    ],
   });
 }
 

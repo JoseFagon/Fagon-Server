@@ -28,10 +28,24 @@
         margin-top: 30px;
         border-bottom: 1px solid #ddd;
         padding-bottom: 5px;
+        page-break-after: avoid;
+      }
+
+      p,
+      li {
+        orphans: 3;
+        widows: 3;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
 
       .section {
         margin-bottom: 25px;
+      }
+
+      .final-section {
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
 
       .info p {
@@ -61,7 +75,6 @@
   <body>
     <h1>LAUDO DE AVALIAÇÃO DE ESTABILIDADE E SEGURANÇA DE CONSTRUÇÃO</h1>
 
-    <!-- Seção 1: Identificação -->
     <section class='section info'>
       <h2>1. IDENTIFICAÇÃO DA EDIFICAÇÃO</h2>
       <p><strong>Razão Social:</strong>
@@ -88,7 +101,6 @@
         {{agency.district}}</p>
     </section>
 
-    <!-- Seção 2: Objetivo -->
     <section class='section'>
       <h2>2. OBJETIVO</h2>
       <p>Os dados para elaboração deste laudo foram extraídos de Memorial
@@ -101,15 +113,13 @@
         atendimento das exigências do Corpo de Bombeiros do PPCI do Imóvel.</p>
     </section>
 
-    <!-- Seção 3: Descrição da Estrutura -->
     <section class='section'>
       <h2>3. DESCRIÇÃO DA ESTRUTURA</h2>
-      <p>Trata-se de uma construção em estrutura de
-        {{structureType}}, sendo
-        {{formatPavementList pavement}}. As alvenarias são de espessura total de
-        13cm ou superior.</p>
+      <p>{{structureType}}, sendo
+        {{formatPavementList pavements}}. As alvenarias são de espessura total
+        de 13cm ou superior.</p>
 
-      {{#each (sortPavements pavement)}}
+      {{#each (sortPavements pavements)}}
         <p>
           O pavimento
           {{formatPavementName this.pavement}}
@@ -134,27 +144,27 @@
       </ul>
     </section>
 
-    <!-- Seção 4: Conclusão -->
-    <section class='section'>
-      <h2>4. CONCLUSÃO</h2>
-      <p>O tempo de resistência ao fogo (TRF) do imóvel é superior a
-        {{fireResistance}}
-        minutos. Atestamos que a estrutura está em bom estado e atende
-        plenamente às solicitações a que está sujeita, atendendo às normas
-        brasileiras quanto à estabilidade e segurança.</p>
-    </section>
+    <section class='final-section'>
+      <section class='section'>
+        <h2>4. CONCLUSÃO</h2>
+        <p>O tempo de resistência ao fogo (TRF) do imóvel é superior a
+          {{fireResistance}}
+          minutos. Atestamos que a estrutura está em bom estado e atende
+          plenamente às solicitações a que está sujeita, atendendo às normas
+          brasileiras quanto à estabilidade e segurança.</p>
+      </section>
 
-    <!-- Data e Assinatura -->
-    <section class='signature-section'>
-      <p class='date'>São Paulo,
-        {{formatDate now 'dd'}}
-        de
-        {{formatDate now 'MMMM'}}
-        de
-        {{formatDate now 'yyyy'}}.</p>
-      <p>Resp. Técnico</p>
-      <p>{{engineer.registrationEntity}}
-        {{engineer.registrationNumber}}</p>
+      <section class='signature-section'>
+        <p class='date'>São Paulo,
+          {{formatDate now 'dd'}}
+          de
+          {{formatDate now 'MMMM'}}
+          de
+          {{formatDate now 'yyyy'}}.</p>
+        <p>Resp. Técnico</p>
+        <p>{{engineer.registrationEntity}}
+          {{engineer.registrationNumber}}</p>
+      </section>
     </section>
   </body>
 </html>

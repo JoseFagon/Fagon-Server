@@ -242,6 +242,15 @@ export function registerHandlebarsHelpers(): void {
   );
 
   Handlebars.registerHelper(
+    'filterValidLocations',
+    function (locations: Location[], lastName: string) {
+      return locations.filter(
+        (loc) => loc.name !== 'fachada' && loc.name !== lastName,
+      );
+    },
+  );
+
+  Handlebars.registerHelper(
     'filter',
     function (arr: unknown[], prop: string, value: unknown) {
       return Array.isArray(arr) ? arr.filter((i) => i?.[prop] === value) : [];

@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiParam,
   ApiBody,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import { AgencyService } from './agencies.service';
@@ -83,8 +84,25 @@ export class AgencyController {
   @ApiOperation({ summary: 'Search agencies with filters' })
   @ApiResponse({
     status: 200,
-    type: [AgencyResponseDto],
-    description: 'Search results',
+    description: 'Search results with pagination metadata',
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(AgencyResponseDto) },
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            total: { type: 'number' },
+            page: { type: 'number' },
+            limit: { type: 'number' },
+            totalPages: { type: 'number' },
+          },
+        },
+      },
+    },
   })
   search(
     @Query() searchParams: SearchAgencyDto,

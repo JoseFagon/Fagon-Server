@@ -27,10 +27,20 @@
         font-size: 12pt;
         margin-top: 20px;
         margin-bottom: 30px;
+        page-break-after: avoid;
       }
-
+      
       p {
         margin: 0.2em 0;
+        orphans: 3;
+        widows: 3;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .final-section {
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
 
       .text-info {
@@ -145,88 +155,87 @@
       de
       {{formatDate inspectionDate 'yyyy'}}.</p>
 
-<table>
-  <thead>
-    <tr>
-      <th>AMBIENTE</th>
-      <th>PAVIMENTO</th>
-      <th>PISO</th>
-      <th>PAREDES</th>
-      <th>FORROS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Seção de Acabamentos Externos -->
-    <tr>
-      <td colspan='5' style='background-color: #f5f5f5; font-weight: bold;'>ACABAMENTOS EXTERNOS</td>
-    </tr>
+      <table>
+        <thead>
+          <tr>
+            <th>AMBIENTE</th>
+            <th>PAVIMENTO</th>
+            <th>PISOS</th>
+            <th>PAREDES</th>
+            <th>FORROS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan='5' style='background-color: #f5f5f5; font-weight: bold;'>ACABAMENTOS EXTERNOS</td>
+          </tr>
 
-    {{#each (filterLocations location 'externo')}}
-      <tr>
-        <td>{{formatLocationName this.name}}</td>
-        <td>
-          {{#with (lookup ../pavement this.pavementId) as |pavement|}}
-            {{formatPavementName pavement.pavement}}
-          {{else}}
-            —
-          {{/with}}
-        </td>
-        <td>
-          {{joinMaterialsWithSlash this.materialFinishing 'piso'}}
-        </td>
-        <td>
-          {{joinMaterialsWithSlash this.materialFinishing 'parede'}}
-        </td>
-        <td>
-          {{#if (eq this.name 'fachada')}}
-            —
-          {{else}}
-            {{joinMaterialsWithSlash this.materialFinishing 'forro'}}
-          {{/if}}
-        </td>
-      </tr>
-    {{/each}}
+          {{#each (filterLocations location 'externo')}}
+            <tr>
+              <td>{{formatLocationName this.name}}</td>
+              <td>
+                {{#with (lookup ../pavement this.pavementId) as |pavement|}}
+                  {{formatPavementName pavement.pavement}}
+                {{else}}
+                  —
+                {{/with}}
+              </td>
+              <td>
+                {{joinMaterialsWithSlash this.materialFinishing 'piso'}}
+              </td>
+              <td>
+                {{joinMaterialsWithSlash this.materialFinishing 'parede'}}
+              </td>
+              <td>
+                {{#if (eq this.name 'fachada')}}
+                  —
+                {{else}}
+                  {{joinMaterialsWithSlash this.materialFinishing 'forro'}}
+                {{/if}}
+              </td>
+            </tr>
+          {{/each}}
 
-    <!-- Seção de Acabamentos Internos -->
-    <tr>
-      <td colspan='5' style='background-color: #f5f5f5; font-weight: bold;'>ACABAMENTOS INTERNOS</td>
-    </tr>
+          <tr>
+            <td colspan='5' style='background-color: #f5f5f5; font-weight: bold;'>ACABAMENTOS INTERNOS</td>
+          </tr>
 
-    {{#each (filterLocations location 'interno')}}
-      <tr>
-        <td>{{formatLocationName this.name}}</td>
-        <td>
-          {{#if this.pavement}}
-            {{formatPavementName this.pavement.pavement}}
-          {{else}}
-            —
-          {{/if}}
-        </td>
-        <td>{{joinMaterialsWithSlash this.materialFinishing 'piso'}}</td>
-        <td>{{joinMaterialsWithSlash this.materialFinishing 'parede'}}</td>
-        <td>{{joinMaterialsWithSlash this.materialFinishing 'forro'}}</td>
-      </tr>
-    {{/each}}
-  </tbody>
-</table>
+          {{#each (filterLocations location 'interno')}}
+            <tr>
+              <td>{{formatLocationName this.name}}</td>
+              <td>
+                {{#if this.pavement}}
+                  {{formatPavementName this.pavement.pavement}}
+                {{else}}
+                  —
+                {{/if}}
+              </td>
+              <td>{{joinMaterialsWithSlash this.materialFinishing 'piso'}}</td>
+              <td>{{joinMaterialsWithSlash this.materialFinishing 'parede'}}</td>
+              <td>{{joinMaterialsWithSlash this.materialFinishing 'forro'}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
 
-    <section class='observation'>
-      <p><strong>Obs:</strong>
-        A manutenção dos Materiais de Acabamento e Revestimento fica sob
-        responsabilidade do usuário ou responsável pelo uso da edificação.</p>
-    </section>
+    <section class="final-section">
+      <section class='observation'>
+        <p><strong>Obs:</strong>
+          A manutenção dos Materiais de Acabamento e Revestimento fica sob
+          responsabilidade do usuário ou responsável pelo uso da edificação.</p>
+      </section>
 
-    <!-- Data e Assinatura -->
-    <section class='signature-section'>
-      <p class='date'>São Paulo,
-        {{formatDate now 'dd'}}
-        de
-        {{formatDate now 'MMMM'}}
-        de
-        {{formatDate now 'yyyy'}}.</p>
-      <p>Resp. Técnico</p>
-      <p>{{engineer.registrationEntity}}
-        {{engineer.registrationNumber}}</p>
+      <section class='signature-section'>
+        <p class='date'>São Paulo,
+          {{formatDate now 'dd'}}
+          de
+          {{formatDate now 'MMMM'}}
+          de
+          {{formatDate now 'yyyy'}}.</p>
+        <p>Resp. Técnico</p>
+        <p>{{engineer.registrationEntity}}
+          {{engineer.registrationNumber}}</p>
+      </section>
     </section>
   </body>
 </html>

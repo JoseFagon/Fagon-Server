@@ -100,9 +100,9 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user) throw new UnauthorizedException('Credenciais inválidas');
+    if (!user) throw new UnauthorizedException('Usuário não encontrado');
     if (!user.password || !(await argon2.verify(user.password, password))) {
-      throw new UnauthorizedException('Credenciais inválidas');
+      throw new UnauthorizedException('Senha incorreta');
     }
 
     return this.generateToken(user);

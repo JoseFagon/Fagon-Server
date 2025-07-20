@@ -17,6 +17,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiQuery,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { PathologyResponseDto } from './dto/response-pathology.dto';
 import { CreatePathologyDto } from './dto/create-pathology.dto';
@@ -67,20 +68,51 @@ export class PathologyController {
     description: 'List of pathologies',
   })
   @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number for pagination',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+  })
+  @ApiQuery({
     name: 'projectId',
     required: false,
     description: 'Filter by project ID',
   })
-  findAll(@Query('projectId') projectId?: string) {
-    return this.pathologyService.findAll(projectId);
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('projectId') projectId?: string,
+  ) {
+    return this.pathologyService.findAll({ page, limit }, projectId);
   }
 
   @Get('search')
   @ApiOperation({ summary: 'Search pathologies with filters' })
   @ApiResponse({
     status: 200,
-    type: [PathologyResponseDto],
-    description: 'Search results',
+    description: 'Search results with pagination metadata',
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(PathologyResponseDto) },
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            total: { type: 'number' },
+            page: { type: 'number' },
+            limit: { type: 'number' },
+            totalPages: { type: 'number' },
+          },
+        },
+      },
+    },
   })
   search(@Query() searchParams: SearchPathologyDto) {
     return this.pathologyService.search(searchParams);

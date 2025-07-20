@@ -16,6 +16,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiQuery,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectResponseDto } from './dto/response-project.dto';
@@ -81,8 +82,25 @@ export class ProjectController {
   @ApiOperation({ summary: 'Search projects with filters' })
   @ApiResponse({
     status: 200,
-    type: [ProjectResponseDto],
-    description: 'Search results',
+    description: 'Search results with pagination metadata',
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(ProjectResponseDto) },
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            total: { type: 'number' },
+            page: { type: 'number' },
+            limit: { type: 'number' },
+            totalPages: { type: 'number' },
+          },
+        },
+      },
+    },
   })
   search(
     @Query() searchParams: SearchProjectDto,
@@ -138,7 +156,21 @@ export class ProjectController {
 
   @Get(':id/pathologies')
   @ApiOperation({ summary: 'Get pathologies of a project' })
-  getPathologies(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectService.getProjectPathologies(id);
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number for pagination',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+  })
+  getPathologies(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.projectService.getProjectPathologies({ page, limit }, id);
   }
 }

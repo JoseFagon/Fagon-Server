@@ -27,8 +27,13 @@ export class AgencyService {
       );
     }
 
+    const agencyData = {
+      ...createAgencyDto,
+      name: createAgencyDto.name.toUpperCase(),
+    };
+
     const agency = await this.prisma.agency.create({
-      data: createAgencyDto,
+      data: agencyData,
     });
 
     await this.logHelper.createLog(
@@ -42,7 +47,7 @@ export class AgencyService {
   }
 
   async findAll(
-    { page, limit }: { page: number; limit: number },
+    { page = 1, limit = 10 }: { page?: number; limit?: number },
     currentUser?: { role: string },
   ) {
     if (currentUser?.role === 'vistoriador') {
@@ -52,10 +57,19 @@ export class AgencyService {
     }
 
     const skip = (page - 1) * limit;
-    return this.prisma.agency.findMany({
-      skip,
-      take: limit,
-    });
+    const [agencies, total] = await this.findAllAgenciesPaginated(skip, limit);
+
+    return {
+      agencies,
+      meta: {
+        resource: {
+          total: total,
+          page: page,
+          limit: limit,
+          totalPages: Math.ceil(Number(total) / limit),
+        },
+      },
+    };
   }
 
   async search(
@@ -132,17 +146,22 @@ export class AgencyService {
         where: whereClause,
         skip,
         take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
       }),
       this.prisma.agency.count({ where: whereClause }),
     ]);
 
     return {
-      data: agencies,
+      agencies: agencies,
       meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        resource: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
       },
     };
   }
@@ -172,9 +191,14 @@ export class AgencyService {
 
     await this.findOne(id);
 
+    const updateData = {
+      ...updateAgencyDto,
+      ...(updateAgencyDto.name && { name: updateAgencyDto.name.toUpperCase() }),
+    };
+
     const updatedAgency = await this.prisma.agency.update({
       where: { id },
-      data: updateAgencyDto,
+      data: updateData,
     });
 
     await this.logHelper.createLog(currentUser.sub, 'UPDATE', 'Agency', id);
@@ -205,5 +229,18 @@ export class AgencyService {
     if (!agency) {
       throw new NotFoundException('Agency not found');
     }
+  }
+
+  async findAllAgenciesPaginated(skip: number, take: number) {
+    const [agencies, total] = await Promise.all([
+      this.prisma.agency.findMany({
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.agency.count(),
+    ]);
+
+    return [agencies, total];
   }
 }

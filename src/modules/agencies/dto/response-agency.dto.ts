@@ -30,4 +30,7 @@ export class AgencyResponseDto {
 
   @ApiProperty()
   number!: number;
+
+  @ApiProperty()
+  createdAt!: Date;
 }
