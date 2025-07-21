@@ -9,7 +9,7 @@
         "outDir": "dist/src"
       },
       {
-        "include": "modules/pdfs/assets/**/*",
+        "include": "modules/pdfs/assets/*",
         "outDir": "dist/src"
       },
       {
