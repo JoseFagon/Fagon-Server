@@ -18,6 +18,8 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
 
     let logoBase64 = '';
     const logoPath = path.join(__dirname, '../assets/logoPDF.png');
+    console.log('Logo path:', logoPath);
+    console.log('Logo exists:', fs.existsSync(logoPath));
 
     try {
       if (fs.existsSync(logoPath)) {

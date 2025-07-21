@@ -70,8 +70,6 @@ export class PdfService {
       .sort((a, b) => a.name.localeCompare(b.name))
       .pop();
 
-    console.log(lastLocation);
-
     const data = {
       agency: project.agency,
       engineer: project.engineer,
@@ -96,8 +94,8 @@ export class PdfService {
         materialFinishing: location.materialFinishing,
         photo: location.photo.map((p) => ({
           id: p.id,
-          filePath: p.signedUrl,
           selectedForPdf: p.selectedForPdf,
+          signedUrl: p.signedUrl,
         })),
       })),
     };

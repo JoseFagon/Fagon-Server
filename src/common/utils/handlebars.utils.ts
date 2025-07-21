@@ -244,9 +244,11 @@ export function registerHandlebarsHelpers(): void {
   Handlebars.registerHelper(
     'filterValidLocations',
     function (locations: Location[], lastName: string) {
-      return locations.filter(
+      const locationsFiltered = locations.filter(
         (loc) => loc.name !== 'fachada' && loc.name !== lastName,
       );
+
+      return locationsFiltered;
     },
   );
 
