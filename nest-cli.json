@@ -11,6 +11,10 @@
       {
         "include": "modules/pdfs/assets/**/*",
         "outDir": "dist/src"
+      },
+      {
+        "include": "modules/pdfs/assets/**/*",
+        "outDir": "dist/src"
       }
     ],
     "watchAssets": true
