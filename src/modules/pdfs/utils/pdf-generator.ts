@@ -14,6 +14,8 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
     if (!fs.existsSync(templatePath)) {
       throw new Error(`Template file not found: ${templatePath}`);
     }
+    console.log('Template path:', templatePath);
+    console.log('Template exists:', fs.existsSync(templatePath));
     const templateContent = fs.readFileSync(templatePath, 'utf8');
 
     let logoBase64 = '';
