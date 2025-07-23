@@ -33,12 +33,31 @@ export class ProjectService {
     createProjectDto: CreateProjectDto,
     currentUser: { sub: string; role: string },
   ) {
-    const { agencyId, engineerId, pavements, ...projectData } =
-      createProjectDto;
+    const {
+      agencyId,
+      engineerId,
+      pavements,
+      upeCode,
+      projectType,
+      ...projectData
+    } = createProjectDto;
 
     if (currentUser.role === 'vistoriador') {
       throw new ForbiddenException(
         'Vistoriadores não têm permissão para criar projeto',
+      );
+    }
+
+    const existingProject = await this.prisma.project.findFirst({
+      where: {
+        upeCode,
+        projectType,
+      },
+    });
+
+    if (existingProject) {
+      throw new ForbiddenException(
+        `Já existe um projeto do mesmo tipo com o mesmo código de UPE`,
       );
     }
 
@@ -47,6 +66,8 @@ export class ProjectService {
     const project = await this.prisma.project.create({
       data: {
         ...projectData,
+        projectType,
+        upeCode,
         status: 'aguardando_vistoria',
         agency: { connect: { id: agencyId } },
         engineer: { connect: { id: engineerId } },

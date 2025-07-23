@@ -9,8 +9,8 @@ import {
 } from 'class-validator';
 import { ProjectType } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
-import { IsUnique } from '../../../common/decorators/is-unique.decorator';
 import { PavementItemDto } from '../../../modules/pavements/dto/item-pavement.dto';
+import { IsUniqueUpeByProjectType } from '../../../common/decorators/is-unique-upe-by-project-type.decorator';
 
 export class CreateProjectDto {
   @Expose()
@@ -21,9 +21,7 @@ export class CreateProjectDto {
   @Expose()
   @ApiProperty()
   @IsNumber()
-  @IsUnique('Project', 'upeCode', {
-    message: 'A UPE tem que ser única',
-  })
+  @IsUniqueUpeByProjectType()
   upeCode!: number;
 
   @Expose()

@@ -9,8 +9,14 @@ import {
 import { Request, Response } from 'express';
 
 interface ExceptionResponse {
-  message?: string | object;
+  message?: string | string[] | ValidationError[] | object;
   error?: string;
+}
+
+interface ValidationError {
+  property?: string;
+  constraints?: Record<string, string>;
+  children?: ValidationError[];
 }
 
 @Catch()
@@ -31,7 +37,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const exceptionResponse = exception.getResponse() as ExceptionResponse;
 
       if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
-        message = exceptionResponse.message || exceptionResponse;
+        if (Array.isArray(exceptionResponse.message)) {
+          if (this.isValidationErrorArray(exceptionResponse.message)) {
+            message = this.formatValidationErrors(exceptionResponse.message);
+          } else {
+            message = exceptionResponse.message.join('; ');
+          }
+        } else {
+          message = exceptionResponse.message || exceptionResponse;
+        }
         error = exceptionResponse.error || exception.name;
       } else {
         message = exceptionResponse;
@@ -52,7 +66,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       this.logger.error('Unknown exception occurred', exception);
     }
 
-    if (typeof message === 'object') {
+    if (typeof message !== 'string') {
       message = JSON.stringify(message);
     }
 
@@ -71,5 +85,27 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message: message,
       error: error,
     });
+  }
+
+  private isValidationErrorArray(
+    messages: unknown[],
+  ): messages is ValidationError[] {
+    return messages.every(
+      (msg) =>
+        typeof msg === 'object' &&
+        msg !== null &&
+        ('property' in msg || 'constraints' in msg),
+    );
+  }
+
+  private formatValidationErrors(errors: ValidationError[]): string {
+    return errors
+      .map((error) => {
+        if (error.constraints) {
+          return Object.values(error.constraints).join(', ');
+        }
+        return error.property || 'Validation error';
+      })
+      .join('; ');
   }
 }
