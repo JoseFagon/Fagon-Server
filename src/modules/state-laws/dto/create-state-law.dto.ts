@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsString, IsNotEmpty, IsDateString, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean } from 'class-validator';
 
 export class CreateStateLawDto {
   @Expose()
@@ -19,33 +19,42 @@ export class CreateStateLawDto {
   })
   @IsString()
   @IsNotEmpty()
-  textState!: string;
+  stateName!: string;
 
   @Expose()
   @ApiProperty({
     description: 'Referência da lei 1',
-    example: 'Lei Estadual nº 12.345/2020',
+    example: 'Lei Estadual Nº 12.345/2020',
   })
   @IsString()
   @IsNotEmpty()
-  lawReference!: string;
+  primaryLawReference!: string;
 
   @Expose()
   @ApiProperty({
-    description: 'Referência da lei 2 (opcional)',
-    example: 'Decreto nº 67.890/2021',
+    description: 'Referência da lei 2',
+    example: 'Lei Estadual Nº 67.890/2021',
   })
   @IsString()
-  lawReference2!: string;
+  secondaryLawReference!: string;
 
   @Expose()
   @ApiProperty({
-    description: 'Abreviatura da polícia estadual',
-    example: 'PMESP',
+    description: 'Referência da Lei complementar',
+    example: 'Lei Estadual Nº 74.890/2020',
   })
   @IsString()
   @IsNotEmpty()
-  policeAbbreviation!: string;
+  complementaryLawReference!: string;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Abreviatura do bombeiro estadual',
+    example: 'CBMSP',
+  })
+  @IsString()
+  @IsNotEmpty()
+  stateFireAbbreviation!: string;
 
   @Expose()
   @ApiProperty({
@@ -53,7 +62,7 @@ export class CreateStateLawDto {
     required: false,
   })
   @IsString()
-  fullText?: string;
+  primaryLawFullText?: string;
 
   @Expose()
   @ApiProperty({
@@ -61,14 +70,15 @@ export class CreateStateLawDto {
     required: false,
   })
   @IsString()
-  fullText2?: string;
+  secondaryLawFullText?: string;
 
   @Expose()
   @ApiProperty({
-    example: '2020-01-15',
+    description: 'Texto completo da lei complementar',
+    required: false,
   })
-  @IsDateString()
-  publishedAt!: string;
+  @IsString()
+  complementaryLawFullText?: string;
 
   @Expose()
   @ApiProperty({

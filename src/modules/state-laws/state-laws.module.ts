@@ -6,5 +6,6 @@ import { StateLawController } from './state-laws.controller';
 @Module({
   controllers: [StateLawController],
   providers: [StateLawService, PrismaService],
+  exports: [StateLawService],
 })
 export class StateLawModule {}

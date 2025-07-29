@@ -24,7 +24,7 @@
       }
 
       h2 {
-        font-size: 10pt;
+        font-size: 11pt;
         margin-top: 30px;
         margin-bottom: 15px;
         border-bottom: 1px solid #ddd;
@@ -158,19 +158,35 @@
         contra Incêndio e pânico.</p>
     </section>
 
-    <section class='section'>
-      <h2>5. FUNDAMENTAÇÃO NORMATIVA</h2>
-      <p>O Laudo Técnico de segurança estrutural em situação de incêndio está
-        tecnicamente fundamentado na Instrução Técnica (IT)
-        {{StateLaw.lawReference2}}, do Corpo de Bombeiros da Polícia Militar
-        {{StateLaw.textState}}
-        ({{StateLaw.policeAbbreviation}}), e suas normas técnicas correlatas. Os
-        Tempos Requeridos de Resistência ao Fogo (TRRF) exigidos para os
-        subsolos e pavimentos acima do solo (altura da edificação - h) constam
-        ao Anexo A da respectiva IT. (As divisões F-11 e F-12 deverão ser
-        consideradas como pertencentes à divisão F-6, para fins de determinação
-        do tempo requerido de resistência ao fogo – TRRF).</p>
-    </section>
+<section class='section'>
+  <h2>5. FUNDAMENTAÇÃO NORMATIVA</h2>
+{{#if stateLaws.complementaryLawReference}}
+    <p>O Laudo Técnico de segurança estrutural em situação de incêndio está 
+      tecnicamente fundamentado na {{stateLaws.complementaryLawReference}}, e 
+      suas alterações, e na Instrução Técnica (IT) Nº 08/2025, do 
+      Corpo de Bombeiros da Policia Militar do Estado de São Paulo (CBMSP), e 
+      suas normas técnicas correlatas, por determinação de Resolução Técnica 
+      do Corpo de Bombeiros Militar do Estado 
+      {{stateLaws.stateName}} (RT{{stateLaws.stateFireAbbreviation}}). 
+      Os Tempos Requeridos de Resistência ao Fogo (TRRF) exigidos para os 
+      subsolos e pavimentos acima do solo (altura da edificação – h) constam 
+      na respectiva IT.
+    </p>
+  {{else}}
+    <p>O Laudo Técnico de segurança estrutural em situação de incêndio está 
+      tecnicamente fundamentado na {{stateLaws.primaryLawReference}}, do 
+      Corpo de Bombeiros da Polícia Militar do Estado 
+      {{stateLaws.stateName}} ({{stateLaws.stateFireAbbreviation}}), e suas 
+      normas técnicas correlatas. Os Tempos Requeridos de Resistência ao 
+      Fogo (TRRF) exigidos para os subsolos e pavimentos acima do 
+      solo (altura da edificação - h) constam ao Anexo A da respectiva IT.
+    </p>
+  {{/if}}
+    <p>(As divisões F-11 e F-12 deverão ser consideradas como pertencentes à 
+      divisão F-6, para fins de determinação do tempo requerido de resistência 
+      ao fogo – TRRF).
+    </p>
+</section>
 
     <p class='section'>
       <h2>6. TEMPO DE RESISTÊNCIA AO FOGO (TRF) DA EDIFICAÇÃO</h2>
@@ -179,14 +195,14 @@
         com as características da edificação analisada, são:</p>
 
       <p>a) TRRF dos pavimentos acima do solo (altura da edificação - h): (h =
-        {{formatNumber maxHeight}}m térreo)
-        {{fireResistance}} minutos;</p>
+        {{formatNumber maxHeight}}m térreo) - {{fireResistance}} minutos;
+      </p>
 
       <p>b) TRRF dos pavimentos subsolo:
         {{#with (lookup (filter pavement 'pavement' 'subsolo') 0)}}
-          (h = {{formatNumber height}}m subsolo) {{../fireResistance}} minutos
+          (h = {{formatNumber height}}m subsolo) - {{../fireResistance}} minutos;
         {{else}}
-          (não há subsolo)
+          (Não se aplica)
         {{/with}}
       </p>
 

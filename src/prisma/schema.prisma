@@ -212,16 +212,17 @@ model Pdf {
 }
 
 model StateLaw {
-  id                 String   @id @default(uuid())
-  state              String
-  textState          String
-  lawReference       String
-  lawReference2      String
-  policeAbbreviation String
-  fullText           String?
-  fullText2          String?
-  publishedAt        DateTime
-  active             Boolean
+  id                        String   @id @default(uuid())
+  state                     String
+  stateName                 String
+  primaryLawReference       String
+  secondaryLawReference     String
+  complementaryLawReference String?
+  stateFireAbbreviation     String
+  primaryLawFullText        String?
+  secondaryLawFullText      String?
+  complementaryLawFullText  String?
+  active                    Boolean
 }
 
 model Log {

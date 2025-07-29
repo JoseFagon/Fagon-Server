@@ -11,6 +11,7 @@ import { ProjectService } from '../projects/projects.service';
 import { ProjectWithIncludes } from '../../common/interfaces/project-includes.interface';
 import { LogHelperService } from '../logs/log-helper.service';
 import { getPdfFileName } from '../../common/utils/pdf-naming-helper.utils';
+import { StateLawService } from '../state-laws/state-laws.service';
 
 interface LocationWithPhotos extends Location {
   photo: Photo[];
@@ -32,6 +33,7 @@ export class PdfService {
     private prisma: PrismaService,
     private storageService: StorageService,
     private projectService: ProjectService,
+    private stateLawService: StateLawService,
     private logHelper: LogHelperService,
   ) {}
 
@@ -65,6 +67,8 @@ export class PdfService {
       project.location as unknown as LocationWithPhotos[],
     );
 
+    const laws = await this.stateLawService.findByState(project.agency.state);
+
     const lastLocation = locationsWithSignedUrls
       .slice()
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -83,6 +87,7 @@ export class PdfService {
       maxHeight,
       pavements: project.pavements,
       lastLocation: lastLocation,
+      stateLaws: laws,
       location: locationsWithSignedUrls.map((location) => ({
         id: location.id,
         name: location.name,

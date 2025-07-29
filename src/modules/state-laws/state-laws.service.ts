@@ -12,7 +12,6 @@ export class StateLawService {
     const stateLaw = await this.prisma.stateLaw.create({
       data: {
         ...createStateLawDto,
-        publishedAt: new Date(createStateLawDto.publishedAt),
       },
     });
 
@@ -44,14 +43,30 @@ export class StateLawService {
     return stateLaw;
   }
 
+  async findByState(state: string) {
+    const stateLaw = await this.prisma.stateLaw.findFirst({
+      where: {
+        state: {
+          equals: state,
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    if (!stateLaw) {
+      throw new NotFoundException(
+        `Legislação estadual para o estado ${state} não encontrada`,
+      );
+    }
+
+    return stateLaw;
+  }
+
   async update(id: string, updateStateLawDto: UpdateStateLawDto) {
     const stateLaw = await this.prisma.stateLaw.update({
       where: { id },
       data: {
         ...updateStateLawDto,
-        publishedAt: updateStateLawDto.publishedAt
-          ? new Date(updateStateLawDto.publishedAt)
-          : undefined,
       },
     });
 

@@ -24,7 +24,7 @@
       }
 
       h2 {
-        font-size: 10pt;
+        font-size: 11pt;
         margin-top: 20px;
         margin-bottom: 30px;
         page-break-after: avoid;
@@ -107,19 +107,37 @@
       class='title-section'
       style='text-align: center; margin-bottom: 20px;'
     >
-      <h1>CORPO DE BOMBEIROS DO ESTADO {{StateLaw.textState}}</h1>
+      <h1>CORPO DE BOMBEIROS DO ESTADO {{stateLaws.stateName}}</h1>
       <h2>ATESTADO DO EMPREGO DOS MATERIAIS DE ACABAMENTO E REVESTIMENTO</h2>
     </section>
 
-    <p class='text-info'>Eu,
-      {{engineer.name}}, registrado no
-      {{engineer.registrationEntity}}
-      sob o Nº
-      {{engineer.registrationNumber}}, atesto para os devidos fins, que os
-      materiais de acabamento e revestimento que foram aplicados nos pavimentos
-      da edificação descrita abaixo atendem aos parâmetros técnicos da
-      {{StateLaw.lawReference}}
-      ({{StateLaw.fullText}}).</p>
+    {{#if stateLaws.complementaryLawReference}}
+      <p class='text-info'>Eu, {{engineer.name}}, registrado no 
+        {{engineer.registrationEntity}} sob o Nº {{engineer.registrationNumber}}, 
+        atesto para os devidos fins, que os
+        materiais de acabamento e revestimento que foram aplicados nos pavimentos
+        da edificação descrita abaixo atendem aos parâmetros técnicos na 
+        {{stateLaws.complementaryLawReference}}, e suas alterações, e na 
+        Instrução Técnica (IT) Nº 10/2025, do Corpo de Bombeiros da Polícia 
+        Militar do Estado de São Paulo (CBMSP), e suas normas técnicas 
+        correlatas, por determinação da {{stateLaws.secondaryLawReference}}, do 
+        Corpo de Bombeiros Militar do Estado {{stateLaws.stateName}} 
+        ({{stateLaws.stateFireAbbreviation}}).
+      </p>
+    {{else}}
+      <p class='text-info'>Eu,
+        {{engineer.name}}, registrado no
+        {{engineer.registrationEntity}}
+        sob o Nº
+        {{engineer.registrationNumber}}, atesto para os devidos fins, que os
+        materiais de acabamento e revestimento que foram aplicados nos pavimentos
+        da edificação descrita abaixo atendem aos parâmetros técnicos da
+        {{stateLaws.secondaryLawReference}}, do Corpo de Bombeiros da Polícia
+        Militar do Estado {{stateLaws.stateName}}
+        ({{stateLaws.stateFireAbbreviation}}).
+      </p>
+    {{/if}}
+   
 
     <section class='agency-info'>
       <p><strong>Razão Social:</strong>
