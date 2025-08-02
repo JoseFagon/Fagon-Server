@@ -47,6 +47,7 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
 
     const pdfOptions: puppeteer.PDFOptions = {
       format: 'A4',
+      scale: 1,
       displayHeaderFooter: Boolean(logoBase64),
       headerTemplate: logoBase64
         ? `
@@ -64,7 +65,7 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
                 </div>
             `,
       margin: {
-        top: logoBase64 ? '2.5cm' : '1cm',
+        top: '1cm',
         bottom: '2.5cm',
         left: '2cm',
         right: '1.5cm',
