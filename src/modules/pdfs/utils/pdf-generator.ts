@@ -65,7 +65,7 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
                 </div>
             `,
       margin: {
-        top: '1cm',
+        top: logoBase64 ? '2.5cm' : '1cm',
         bottom: '2.5cm',
         left: '2cm',
         right: '1.5cm',
