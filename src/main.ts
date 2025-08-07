@@ -4,6 +4,9 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { setupSwagger } from './docs/swagger.config';
 import { PrismaService } from './prisma/prisma.service';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,8 +26,7 @@ async function bootstrap() {
       'http://localhost:8080',
       'http://localhost:3001',
       'https://fagon-server.onrender.com',
-      'https://fagon-client.vercel.app',
-      'https://fagon-server-production.up.railway.app',
+      'https://fagon.vercel.app',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
