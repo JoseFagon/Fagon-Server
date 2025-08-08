@@ -5,12 +5,14 @@ import { PhotoService } from './photos.service';
 import { AppConfigModule } from '../../config/config.module';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { LocationModule } from '../locations/locations.module';
+import { ProjectModule } from '../projects/projects.module';
 
 @Module({
   imports: [
     StorageModule,
     PrismaModule,
     AppConfigModule,
+    ProjectModule,
     forwardRef(() => LocationModule),
   ],
   controllers: [PhotoController],

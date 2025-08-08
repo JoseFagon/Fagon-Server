@@ -6,12 +6,14 @@ import { PathologyPhotoService } from './pathology-photos.service';
 import { AppConfigModule } from '../../config/config.module';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { PathologyModule } from '../pathologies/pathologies.module';
+import { ProjectModule } from '../projects/projects.module';
 
 @Module({
   imports: [
     AppConfigModule,
     StorageModule,
     PrismaModule,
+    ProjectModule,
     forwardRef(() => PathologyModule),
   ],
   controllers: [PathologyPhotoController],

@@ -12,6 +12,9 @@ import { StorageService } from '../../storage/storage.service';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { InjectSupabaseClient } from 'nestjs-supabase-js';
 import { PathologyService } from '../pathologies/pathologies.service';
+import { ProjectService } from '../projects/projects.service';
+import { PathologyResponseDto } from '../pathologies/dto/response-pathology.dto';
+import { ProjectResponseDto } from '../projects/dto/response-project.dto';
 
 @Injectable()
 export class PathologyPhotoService {
@@ -20,11 +23,12 @@ export class PathologyPhotoService {
     private storageService: StorageService,
     @Inject(forwardRef(() => PathologyService))
     private pathologyService: PathologyService,
+    private projectService: ProjectService,
     @InjectSupabaseClient() private supabase: SupabaseClient,
   ) {}
 
   async uploadPhotos(files: Express.Multer.File[], pathologyId: string) {
-    const pathology = await this.pathologyService.findOne(pathologyId);
+    const pathology: PathologyResponseDto = await this.pathologyService.findOne(pathologyId);
 
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     const invalidFiles = files.filter(
@@ -42,14 +46,15 @@ export class PathologyPhotoService {
       where: { pathologyId },
     });
 
+    const project: ProjectResponseDto = await this.projectService.findOne(pathology.project.id)
+
     try {
       const uploadedPhotos = await Promise.all(
         files.map(async (file, index) => {
           const photoNumber = existingPhotoCount + index + 1;
 
           const uploadResult = await this.storageService.uploadFile({
-            originalname:
-              file.originalname || `pathology-photo-${Date.now()}.jpg`,
+            originalname: `patologia-${project.agency.agencyNumber}-${project.projectType}-${Date.now()}-${file.originalname}`,
             buffer: file.buffer,
             mimetype: file.mimetype || 'image/jpeg',
             size: file.size,

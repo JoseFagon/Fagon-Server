@@ -12,7 +12,6 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { LogHelperService } from '../logs/log-helper.service';
 import { Prisma } from '@prisma/client';
 import { PavementService } from '../pavements/pavements.service';
-import { PhotoService } from '../photos/photos.service';
 import { MaterialFinishingService } from '../material-finishings/material-finishings.service';
 import { ProjectService } from '../projects/projects.service';
 import { StorageService } from 'src/storage/storage.service';
