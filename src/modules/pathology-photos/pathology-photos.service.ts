@@ -26,7 +26,7 @@ export class PathologyPhotoService {
   async uploadPhotos(files: Express.Multer.File[], pathologyId: string) {
     const pathology = await this.pathologyService.findOne(pathologyId);
 
-    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+    const MAX_FILE_SIZE = 1000 * 1024 * 1024; // 1000MB
     const invalidFiles = files.filter(
       (file) =>
         file.size > MAX_FILE_SIZE || !file.mimetype?.startsWith('image/'),
