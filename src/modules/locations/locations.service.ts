@@ -167,7 +167,7 @@ export class LocationService {
   
     const location = await this.findOne(id);
   
-    const photos = await this.prisma.Photo.findMany({
+    const photos = await this.prisma.photo.findMany({
         where: { locationId: id }
     });
   
