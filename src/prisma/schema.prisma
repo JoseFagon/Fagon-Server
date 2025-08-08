@@ -164,7 +164,7 @@ model MaterialFinishing {
   surface           SurfaceType
   materialFinishing String
   
-  location          Location    @relation(fields: [locationId], references: [id])
+  location          Location            @relation(fields: [locationId], references: [id], onDelete: Cascade)
 }
 
 model Photo {
@@ -174,7 +174,7 @@ model Photo {
   selectedForPdf Boolean
   name           String?
   
-  location       Location @relation(fields: [locationId], references: [id])
+  location       Location        @relation(fields: [locationId], references: [id], onDelete: Cascade)
 }
 
 model Pathology {
@@ -197,7 +197,7 @@ model PathologyPhoto {
   filePath    String
   name        String?
   
-  pathology   Pathology @relation(fields: [pathologyId], references: [id])
+  pathology   Pathology         @relation(fields: [pathologyId], references: [id], onDelete: Cascade)
 }
 
 model Pdf {

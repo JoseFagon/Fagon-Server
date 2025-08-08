@@ -15,17 +15,17 @@ import { PavementService } from '../pavements/pavements.service';
 import { PhotoService } from '../photos/photos.service';
 import { MaterialFinishingService } from '../material-finishings/material-finishings.service';
 import { ProjectService } from '../projects/projects.service';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class LocationService {
   constructor(
     private prisma: PrismaService,
+    private storageService: StorageService,
     @Inject(forwardRef(() => ProjectService))
     private projectService: ProjectService,
     @Inject(forwardRef(() => PavementService))
     private pavementService: PavementService,
-    @Inject(forwardRef(() => PhotoService))
-    private photoService: PhotoService,
     private materialFinishingService: MaterialFinishingService,
     private logHelper: LogHelperService,
   ) {}
@@ -160,12 +160,23 @@ export class LocationService {
 
   async remove(id: string, currentUser: { sub: string; role: string }) {
     if (currentUser.role === 'vistoriador') {
-      throw new ForbiddenException(
-        'Vistoriadores não têm permissão para deletar local',
-      );
+        throw new ForbiddenException(
+            'Vistoriadores não têm permissão para deletar patologia',
+        );
     }
-
+  
     const location = await this.findOne(id);
+  
+    const photos = await this.prisma.Photo.findMany({
+        where: { locationId: id }
+    });
+  
+    await Promise.all(
+        photos.map(photo => 
+            this.storageService.deleteFile(photo.filePath)
+                .catch(e => console.error(`Erro ao deletar arquivo ${photo.filePath}:`, e))
+        )
+    );
 
     if (location.pavement) {
       const locations = await this.findByPavement(location.pavement.id);

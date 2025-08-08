@@ -8,11 +8,13 @@ import { PavementModule } from '../pavements/pavements.module';
 import { MaterialFinishingModule } from '../material-finishings/material-finishings.module';
 import { PhotoModule } from '../photos/photos.module';
 import { LogModule } from '../logs/logs.module';
+import { StorageModule } from 'src/storage/storage.module';
 
 @Module({
   imports: [
     AppConfigModule,
     PrismaModule,
+    StorageModule,
     forwardRef(() => ProjectModule),
     forwardRef(() => PavementModule),
     MaterialFinishingModule,

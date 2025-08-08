@@ -12,6 +12,7 @@ import { CreatePathologyDto } from '../pathologies/dto/create-pathology.dto';
 import { SearchPathologyDto } from '../pathologies/dto/search-pathology.dto';
 import { UpdatePathologyDto } from '../pathologies/dto/update-pathology.dto';
 import { PathologyPhotoService } from '../pathology-photos/pathology-photos.service';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class PathologyService {
@@ -20,6 +21,7 @@ export class PathologyService {
     private logHelper: LogHelperService,
     @Inject(forwardRef(() => PathologyPhotoService))
     private pathologyPhotoService: PathologyPhotoService,
+    private storageService: StorageService,
   ) {}
 
   async create(
@@ -168,22 +170,33 @@ export class PathologyService {
 
   async remove(id: string, currentUser: { sub: string; role: string }) {
     if (currentUser.role === 'vistoriador') {
-      throw new ForbiddenException(
-        'Vistoriadores não têm permissão para deletar patologia',
-      );
+        throw new ForbiddenException(
+            'Vistoriadores não têm permissão para deletar patologia',
+        );
     }
-
+  
     const pathology = await this.findOne(id);
-
-    await this.prisma.pathology.delete({ where: { id } });
-
-    await this.logHelper.createLog(
-      currentUser.sub,
-      'DELETE',
-      'Pathology',
-      pathology.id,
+  
+    const photos = await this.prisma.pathologyPhoto.findMany({
+        where: { pathologyId: id }
+    });
+  
+    await Promise.all(
+        photos.map(photo => 
+            this.storageService.deleteFile(photo.filePath)
+                .catch(e => console.error(`Erro ao deletar arquivo ${photo.filePath}:`, e))
+        )
     );
-
+  
+    await this.prisma.pathology.delete({ where: { id } });
+  
+    await this.logHelper.createLog(
+        currentUser.sub,
+        'DELETE',
+        'Pathology',
+        pathology.id,
+    );
+  
     return;
   }
 
