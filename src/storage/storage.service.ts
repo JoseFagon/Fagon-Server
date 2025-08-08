@@ -13,7 +13,7 @@ import sharp from 'sharp';
 @Injectable()
 export class StorageService {
   private readonly bucketName: string;
-  private readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  private readonly MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
   constructor(
     @InjectSupabaseClient() private supabase: SupabaseClient,
