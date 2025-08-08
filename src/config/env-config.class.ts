@@ -65,6 +65,9 @@ export class EnvConfig {
   REDIS_DEFAULT_TTL = 60 * 60 * 24; // 24h
 
   @IsString()
+  API_URL!: string;
+ 
+  @IsString()
   MAIL_HOST!: string;
 
   @IsNumber()

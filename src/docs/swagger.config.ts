@@ -12,7 +12,7 @@ export const setupSwagger = (app: INestApplication) => {
       scheme: 'bearer',
       bearerFormat: 'JWT',
     })
-    .addServer('Base Path')
+    .addServer(process.env.API_URL || 'http://localhost:3000')
     .setContact('Suporte', '', 'suporte@empresa.com')
     .setLicense('MIT', '')
     .build();
@@ -27,6 +27,8 @@ export const setupSwagger = (app: INestApplication) => {
       docExpansion: 'none',
       filter: true,
       showRequestDuration: true,
+      persistAuthorization: false,
+      url: '/api-docs-json'
     },
   });
 };

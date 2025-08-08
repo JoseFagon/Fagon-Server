@@ -24,8 +24,8 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:8080',
-      'http://localhost:3001',
-      'https://fagon-server.onrender.com',
+      'http://localhost:3000',
+      'https://fagon-server-c822.onrender.com',
       'https://fagon.vercel.app',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

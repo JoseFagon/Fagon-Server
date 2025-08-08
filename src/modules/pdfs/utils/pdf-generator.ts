@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as puppeteer from 'puppeteer';
 import Handlebars from '../../../config/handlebars.config';
+import chromium from '@sparticuz/chromium';
 
 export async function generatePdfFromTemplate(templateName: string, data: any) {
   try {
@@ -37,17 +38,17 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
       logoBase64,
     });
 
-    const browser = await puppeteer.launch({  
-      headless: true,
+    const browser = await puppeteer.launch({
       args: [
+        ...chromium.args,
         '--no-sandbox',
         '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--single-process',
+        '--disable-dev-shm-usage'
       ],
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-    })
-
+      executablePath: await chromium.executablePath(),
+      headless: true,
+      ignoreHTTPSErrors: true
+    } as puppeteer.LaunchOptions);
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
