@@ -113,7 +113,6 @@ export class PdfService {
       originalname: getPdfFileName(
         pdfType as PdfType,
         project.agency.agencyNumber,
-        project.projectType,
       ),
       mimetype: 'application/pdf',
       size: pdfBuffer.length,

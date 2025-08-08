@@ -12,9 +12,6 @@ import { StorageService } from '../../storage/storage.service';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { InjectSupabaseClient } from 'nestjs-supabase-js';
 import { LocationService } from '../locations/locations.service';
-import { ProjectService } from '../projects/projects.service';
-import { ProjectResponseDto } from '../projects/dto/response-project.dto';
-import { LocationResponseDto } from '../locations/dto/response-location.dto';
 
 @Injectable()
 export class PhotoService {
@@ -23,12 +20,11 @@ export class PhotoService {
     private storageService: StorageService,
     @Inject(forwardRef(() => LocationService))
     private locationService: LocationService,
-    private projectService: ProjectService,
     @InjectSupabaseClient() private supabase: SupabaseClient,
   ) {}
 
   async uploadPhotos(files: Express.Multer.File[], locationId: string) {
-    const location: LocationResponseDto =
+    const location =
       await this.locationService.validateLocationExists(locationId);
 
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -47,15 +43,13 @@ export class PhotoService {
       where: { locationId },
     });
 
-    const project: ProjectResponseDto = await this.projectService.findOne(location.projectId)
-
     try {
       const uploadedPhotos = await Promise.all(
         files.map(async (file, index) => {
           const photoNumber = existingPhotoCount + index + 1;
 
           const uploadResult = await this.storageService.uploadFile({
-            originalname: `${project.agency.agencyNumber}-${project.projectType}-${Date.now()}-${file.originalname}`,
+            originalname: file.originalname || `photo-${Date.now()}.jpg`,
             buffer: file.buffer,
             mimetype: file.mimetype || 'image/jpeg',
             size: file.size,
