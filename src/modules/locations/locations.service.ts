@@ -159,22 +159,25 @@ export class LocationService {
 
   async remove(id: string, currentUser: { sub: string; role: string }) {
     if (currentUser.role === 'vistoriador') {
-        throw new ForbiddenException(
-            'Vistoriadores não têm permissão para deletar patologia',
-        );
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para deletar patologia',
+      );
     }
-  
+
     const location = await this.findOne(id);
-  
+
     const photos = await this.prisma.photo.findMany({
-        where: { locationId: id }
+      where: { locationId: id },
     });
-  
+
     await Promise.all(
-        photos.map(photo => 
-            this.storageService.deleteFile(photo.filePath)
-                .catch(e => console.error(`Erro ao deletar arquivo ${photo.filePath}:`, e))
-        )
+      photos.map((photo) =>
+        this.storageService
+          .deleteFile(photo.filePath)
+          .catch((e) =>
+            console.error(`Erro ao deletar arquivo ${photo.filePath}:`, e),
+          ),
+      ),
     );
 
     if (location.pavement) {

@@ -66,7 +66,7 @@ export class EnvConfig {
 
   @IsString()
   API_URL!: string;
- 
+
   @IsString()
   MAIL_HOST!: string;
 

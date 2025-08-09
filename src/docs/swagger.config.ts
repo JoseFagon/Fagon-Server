@@ -28,7 +28,7 @@ export const setupSwagger = (app: INestApplication) => {
       filter: true,
       showRequestDuration: true,
       persistAuthorization: false,
-      url: '/api-docs-json'
+      url: '/api-docs-json',
     },
   });
 };

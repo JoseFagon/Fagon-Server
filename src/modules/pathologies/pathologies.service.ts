@@ -170,33 +170,36 @@ export class PathologyService {
 
   async remove(id: string, currentUser: { sub: string; role: string }) {
     if (currentUser.role === 'vistoriador') {
-        throw new ForbiddenException(
-            'Vistoriadores não têm permissão para deletar patologia',
-        );
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para deletar patologia',
+      );
     }
-  
+
     const pathology = await this.findOne(id);
-  
+
     const photos = await this.prisma.pathologyPhoto.findMany({
-        where: { pathologyId: id }
+      where: { pathologyId: id },
     });
-  
+
     await Promise.all(
-        photos.map(photo => 
-            this.storageService.deleteFile(photo.filePath)
-                .catch(e => console.error(`Erro ao deletar arquivo ${photo.filePath}:`, e))
-        )
+      photos.map((photo) =>
+        this.storageService
+          .deleteFile(photo.filePath)
+          .catch((e) =>
+            console.error(`Erro ao deletar arquivo ${photo.filePath}:`, e),
+          ),
+      ),
     );
-  
+
     await this.prisma.pathology.delete({ where: { id } });
-  
+
     await this.logHelper.createLog(
-        currentUser.sub,
-        'DELETE',
-        'Pathology',
-        pathology.id,
+      currentUser.sub,
+      'DELETE',
+      'Pathology',
+      pathology.id,
     );
-  
+
     return;
   }
 
