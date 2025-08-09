@@ -90,16 +90,18 @@
         margin: 0.1em 0;
       }
 
-      .signature {
+      .signature-section {
         margin: 40px 0 40px;
         text-align: left;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
 
-      .signature p {
+      .signature-section p {
         margin: 0.05em 0;
       }
 
-      .signature .date {
+      .signature-section .date {
         margin-bottom: 10px;
       }
 
@@ -169,8 +171,8 @@
       <p>O presente Laudo Técnico tem o objetivo de descrever as características
         de reação ao fogo dos materiais de acabamento e de revestimento
         aplicados na edificação identificada no Capítulo 1, atestando sua
-        conformidade com as Resoluções e Normas Técnicas vigentes de
-        segurança contra incêndio e pânico.</p>
+        conformidade com as Resoluções e Normas Técnicas vigentes de segurança
+        contra incêndio e pânico.</p>
 
       <p>Os dados para elaboração deste laudo foram extraídos de Memorial
         Descritivo conforme levantamento realizado pelo escritório Fagon em
@@ -324,7 +326,7 @@
           descritas.</p>
       </section>
 
-      <section class='section signature'>
+      <section class='signature-section'>
         <p class='date'>São Paulo,
           {{formatDate now 'dd'}}
           de

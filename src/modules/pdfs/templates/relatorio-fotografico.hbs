@@ -64,6 +64,8 @@
       .signature-section {
         margin: 40px 0 40px;
         text-align: left;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
 
       .signature-section p {
@@ -154,8 +156,8 @@
       {{/each}}
     </section>
 
+    <h3>{{formatLocationName lastLocation.name}}</h3>
     <div class="final-section">
-      <h3>{{formatLocationName lastLocation.name}}</h3>
       {{#each lastLocation.photo}}
         <div class='photo-container'>
           <img class='photo' src='{{this.signedUrl}}' alt='Foto do/a {{formatLocationName ../lastLocation.name}}' />

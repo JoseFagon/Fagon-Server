@@ -43,11 +43,11 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
         ...chromium.args,
         '--no-sandbox',
         '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage'
+        '--disable-dev-shm-usage',
       ],
       executablePath: await chromium.executablePath(),
       headless: true,
-      ignoreHTTPSErrors: true
+      ignoreHTTPSErrors: true,
     } as puppeteer.LaunchOptions);
 
     const page = await browser.newPage();
@@ -78,6 +78,9 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
         left: '2cm',
         right: '1.5cm',
       },
+      printBackground: false,
+      preferCSSPageSize: true,
+      omitBackground: true,
     };
 
     const pdfBuffer = await page.pdf(pdfOptions);

@@ -12,6 +12,7 @@ import { ProjectWithIncludes } from '../../common/interfaces/project-includes.in
 import { LogHelperService } from '../logs/log-helper.service';
 import { getPdfFileName } from '../../common/utils/pdf-naming-helper.utils';
 import { StateLawService } from '../state-laws/state-laws.service';
+import { optimizeImageForPdf } from './utils/image-optimizer';
 
 interface LocationWithPhotos extends Location {
   photo: Photo[];
@@ -267,7 +268,7 @@ export class PdfService {
               );
               return {
                 ...p,
-                signedUrl,
+                signedUrl: await optimizeImageForPdf(signedUrl),
               };
             }),
         );
