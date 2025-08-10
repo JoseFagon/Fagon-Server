@@ -12,7 +12,7 @@ import { ProjectModule } from '../projects/projects.module';
     StorageModule,
     PrismaModule,
     AppConfigModule,
-    ProjectModule,
+    forwardRef(() => ProjectModule),
     forwardRef(() => LocationModule),
   ],
   controllers: [PhotoController],

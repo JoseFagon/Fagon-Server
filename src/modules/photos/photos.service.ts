@@ -21,6 +21,7 @@ export class PhotoService {
     private storageService: StorageService,
     @Inject(forwardRef(() => LocationService))
     private locationService: LocationService,
+    @Inject(forwardRef(() => ProjectService))
     private projectService: ProjectService,
     @InjectSupabaseClient() private supabase: SupabaseClient,
   ) {}

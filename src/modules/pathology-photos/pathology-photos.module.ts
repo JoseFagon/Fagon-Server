@@ -13,7 +13,7 @@ import { ProjectModule } from '../projects/projects.module';
     AppConfigModule,
     StorageModule,
     PrismaModule,
-    ProjectModule,
+    forwardRef(() => ProjectModule),
     forwardRef(() => PathologyModule),
   ],
   controllers: [PathologyPhotoController],

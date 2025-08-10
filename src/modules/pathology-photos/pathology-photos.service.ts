@@ -21,6 +21,7 @@ export class PathologyPhotoService {
     private storageService: StorageService,
     @Inject(forwardRef(() => PathologyService))
     private pathologyService: PathologyService,
+    @Inject(forwardRef(() => ProjectService))
     private projectService: ProjectService,
     @InjectSupabaseClient() private supabase: SupabaseClient,
   ) {}
