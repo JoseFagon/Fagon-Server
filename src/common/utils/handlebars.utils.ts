@@ -108,7 +108,14 @@ export function registerHandlebarsHelpers(): void {
   };
 
   Handlebars.registerHelper('formatLocationName', function (value: string) {
-    return locationLabelMap[value] || value;
+    if (locationLabelMap[value]) {
+      return locationLabelMap[value];
+    }
+
+    return value
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   });
 
   Handlebars.registerHelper(

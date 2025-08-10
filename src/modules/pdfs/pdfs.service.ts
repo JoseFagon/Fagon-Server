@@ -12,6 +12,7 @@ import { ProjectWithIncludes } from '../../common/interfaces/project-includes.in
 import { LogHelperService } from '../logs/log-helper.service';
 import { getPdfFileName } from '../../common/utils/pdf-naming-helper.utils';
 import { StateLawService } from '../state-laws/state-laws.service';
+import { optimizeImageForPdf } from './utils/image-optimizer';
 
 interface LocationWithPhotos extends Location {
   photo: Photo[];
@@ -112,6 +113,7 @@ export class PdfService {
       buffer: Buffer.from(pdfBuffer),
       originalname: getPdfFileName(
         pdfType as PdfType,
+        project.projectType,
         project.agency.agencyNumber,
       ),
       mimetype: 'application/pdf',
@@ -157,7 +159,12 @@ export class PdfService {
 
     const uploadResult = await this.storageService.uploadFile({
       buffer: signedFile.buffer,
-      originalname: getPdfFileName(pdf.pdfType, project.agency.agencyNumber),
+      originalname: getPdfFileName(
+        pdf.pdfType,
+        project.projectType,
+        project.agency.agencyNumber,
+        true,
+      ),
       mimetype: 'application/pdf',
       size: signedFile.size,
     });
@@ -207,7 +214,11 @@ export class PdfService {
 
       return {
         fileStream,
-        filename: getPdfFileName(pdf.pdfType, project.agency.agencyNumber),
+        filename: getPdfFileName(
+          pdf.pdfType,
+          project.projectType,
+          project.agency.agencyNumber,
+        ),
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -267,7 +278,7 @@ export class PdfService {
               );
               return {
                 ...p,
-                signedUrl,
+                signedUrl: await optimizeImageForPdf(signedUrl),
               };
             }),
         );
