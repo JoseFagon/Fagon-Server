@@ -12,6 +12,7 @@ import { StorageService } from '../../storage/storage.service';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { InjectSupabaseClient } from 'nestjs-supabase-js';
 import { LocationService } from '../locations/locations.service';
+import { ProjectService } from '../projects/projects.service';
 
 @Injectable()
 export class PhotoService {
@@ -20,6 +21,8 @@ export class PhotoService {
     private storageService: StorageService,
     @Inject(forwardRef(() => LocationService))
     private locationService: LocationService,
+    @Inject(forwardRef(() => ProjectService))
+    private projectService: ProjectService,
     @InjectSupabaseClient() private supabase: SupabaseClient,
   ) {}
 
@@ -43,13 +46,15 @@ export class PhotoService {
       where: { locationId },
     });
 
+    const project = await this.projectService.findOne(location.projectId);
+
     try {
       const uploadedPhotos = await Promise.all(
         files.map(async (file, index) => {
           const photoNumber = existingPhotoCount + index + 1;
 
           const uploadResult = await this.storageService.uploadFile({
-            originalname: file.originalname || `photo-${Date.now()}.jpg`,
+            originalname: `${project.projectType}-${project.agency.agencyNumber}-${Date.now()}-${file.originalname}`,
             buffer: file.buffer,
             mimetype: file.mimetype || 'image/jpeg',
             size: file.size,

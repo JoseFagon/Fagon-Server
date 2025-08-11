@@ -113,6 +113,7 @@ export class PdfService {
       buffer: Buffer.from(pdfBuffer),
       originalname: getPdfFileName(
         pdfType as PdfType,
+        project.projectType,
         project.agency.agencyNumber,
       ),
       mimetype: 'application/pdf',
@@ -158,7 +159,12 @@ export class PdfService {
 
     const uploadResult = await this.storageService.uploadFile({
       buffer: signedFile.buffer,
-      originalname: getPdfFileName(pdf.pdfType, project.agency.agencyNumber),
+      originalname: getPdfFileName(
+        pdf.pdfType,
+        project.projectType,
+        project.agency.agencyNumber,
+        true,
+      ),
       mimetype: 'application/pdf',
       size: signedFile.size,
     });
@@ -208,7 +214,11 @@ export class PdfService {
 
       return {
         fileStream,
-        filename: getPdfFileName(pdf.pdfType, project.agency.agencyNumber),
+        filename: getPdfFileName(
+          pdf.pdfType,
+          project.projectType,
+          project.agency.agencyNumber,
+        ),
       };
     } catch (error) {
       if (error instanceof Error) {

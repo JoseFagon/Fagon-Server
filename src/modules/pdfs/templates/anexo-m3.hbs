@@ -201,7 +201,7 @@
       </p>
 
       <p>b) TRRF dos pavimentos subsolo:
-        {{#with (lookup (filter pavement 'pavement' 'subsolo') 0)}}
+        {{#with (lookup (filter pavements 'pavement' 'subsolo') 0)}}
           (h = {{formatNumber height}}m subsolo) - {{../fireResistance}} minutos;
         {{else}}
           (Não se aplica)
