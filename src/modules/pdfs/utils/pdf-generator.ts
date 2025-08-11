@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as fs from 'fs';
 import * as path from 'path';
 import * as puppeteer from 'puppeteer';
 import Handlebars from '../../../config/handlebars.config';
+import chromium from '@sparticuz/chromium';
 
 export async function generatePdfFromTemplate(templateName: string, data: any) {
   try {
@@ -39,18 +41,18 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
 
     const browser = await puppeteer.launch({
       args: [
+        ...chromium.args,
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
-        '--single-process',
       ],
+      executablePath: await chromium.executablePath(),
       headless: true,
-      executablePath:
-        process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
-    });
+      ignoreHTTPSErrors: true,
+    } as puppeteer.LaunchOptions);
 
     const page = await browser.newPage();
-    await page.setContent(html);
+    await page.setContent(html, { waitUntil: 'networkidle0' });
 
     const pdfOptions: puppeteer.PDFOptions = {
       format: 'A4',
@@ -77,8 +79,6 @@ export async function generatePdfFromTemplate(templateName: string, data: any) {
         left: '2cm',
         right: '1.5cm',
       },
-      printBackground: false,
-      preferCSSPageSize: true,
     };
 
     const pdfBuffer = await page.pdf(pdfOptions);
