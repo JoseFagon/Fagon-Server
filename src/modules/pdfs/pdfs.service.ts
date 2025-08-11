@@ -106,8 +106,6 @@ export class PdfService {
       })),
     };
 
-    console.log(data.pavements);
-
     const formatPdfType = pdfType.replace(/_/g, '-');
     const pdfBuffer = await generatePdfFromTemplate(formatPdfType, data);
 
