@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { Module } from '@nestjs/common';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -10,7 +10,6 @@ import { JwtAuthGuard } from './auth/guards/auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 import { AppConfigModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
-import { ValidationPipe } from './common/pipes/validation.pipe';
 import { MetricsModule } from './core/monitoring/metrics/metrics.module';
 import { FlagsModule } from './feature-flags/flags.module';
 import { GatewaysModule } from './gateways/gateways.module';
@@ -35,6 +34,8 @@ import { PathologyPhotoModule } from './modules/pathology-photos/pathology-photo
 import { StateLawModule } from './modules/state-laws/state-laws.module';
 import { LogModule } from './modules/logs/logs.module';
 import { AuthExceptionFilter } from './common/filters/auth-exception.filter';
+import { InspectorModule } from './modules/inspectors/inspectors.module';
+import { DistanceModule } from './modules/distances/distance.module';
 
 @Module({
   imports: [
@@ -61,9 +62,11 @@ import { AuthExceptionFilter } from './common/filters/auth-exception.filter';
     AuthModule,
     StorageModule,
     LogModule,
+    DistanceModule,
     UserModule,
     AgencyModule,
     EngineerModule,
+    InspectorModule,
     ProjectModule,
     LocationModule,
     MaterialFinishingModule,
@@ -75,10 +78,6 @@ import { AuthExceptionFilter } from './common/filters/auth-exception.filter';
     StateLawModule,
   ],
   providers: [
-    {
-      provide: APP_PIPE,
-      useClass: ValidationPipe,
-    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

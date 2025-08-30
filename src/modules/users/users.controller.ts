@@ -22,16 +22,12 @@ import { CacheKey, CacheTTL } from '@nestjs/cache-manager';
 import { UserResponseDto } from './dto/response-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './users.service';
-import {
-  CurrentUser,
-  RequireAuth,
-} from '../../common/decorators/current-user.decorator';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
 import { SearchUserDto } from './dto/search-user.dto';
 
 @ApiTags('Users Management')
 @ApiBearerAuth()
-@RequireAuth()
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -61,16 +57,16 @@ export class UserController {
     return this.userService.search(searchParams);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get user profile' })
-  @ApiParam({ name: 'id', description: 'User UUID' })
+  @Get('email/:email')
+  @ApiOperation({ summary: 'Get user by email' })
+  @ApiParam({ name: 'email', description: 'User email' })
   @ApiResponse({
     status: 200,
     type: UserResponseDto,
-    description: 'User profile',
+    description: 'User profile by email',
   })
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.findOne(id);
+  findOneByEmail(@Param('email') email: string) {
+    return this.userService.findOneByEmail(email);
   }
 
   @Patch(':id')

@@ -6,36 +6,29 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon2 from 'argon2';
 import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
 import { AccessKeyDto } from './dto/access-key.dto';
 import * as crypto from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../common/interfaces/jwt.payload.interface';
-import { RegisterResponse } from '../common/interfaces/response.register.interface';
 import { LoginResponse } from '../common/interfaces/response.login.interface';
-import { ADMIN_EMAILS } from '../common/constants/admin-emails.constant';
 import { User } from '@prisma/client';
 import { UserResponseDto } from '../modules/users/dto/response-user.dto';
 import { ROLES } from '../common/constants/roles.constant';
-// import { EmailJobType } from '../queue/jobs/email.job';
-// import { InjectQueue } from '@nestjs/bull';
-// import { Queue } from 'bull';
+import { UserService } from 'src/modules/users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
+    private userService: UserService,
     private jwtService: JwtService,
-    // @InjectQueue('email') private emailQueue: Queue,
   ) {}
 
   async validateEmployee(
     email: string,
     password: string,
   ): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
+    const user = await this.userService.findOneByEmail(email);
 
     if (!user?.password || !(await argon2.verify(user.password, password))) {
       throw new UnauthorizedException('Credenciais inválidas');
@@ -64,17 +57,7 @@ export class AuthService {
 
   async getMe(userId: string): Promise<UserResponseDto> {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          cameraType: true,
-          status: true,
-        },
-      });
+      const user = await this.userService.findOne(userId);
 
       if (!user) {
         throw new UnauthorizedException('Usuário não encontrado');
@@ -96,11 +79,12 @@ export class AuthService {
       throw new UnauthorizedException('Email e senha são obrigatórios');
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
+    const user = await this.userService.findOneByEmail(email);
 
     if (!user) throw new UnauthorizedException('Usuário não encontrado');
+    if (!user.status) {
+      throw new UnauthorizedException('Usuário desativado');
+    }
     if (!user.password || !(await argon2.verify(user.password, password))) {
       throw new UnauthorizedException('Senha incorreta');
     }
@@ -160,49 +144,8 @@ export class AuthService {
     };
   }
 
-  async register(registerDto: RegisterDto): Promise<RegisterResponse> {
-    const { name, email, password } = registerDto;
-
-    if (!name || !email || !password) {
-      throw new BadRequestException('Todos os campos são obrigatórios');
-    }
-
-    const isAdmin = ADMIN_EMAILS.includes(email);
-    const role = isAdmin ? ROLES.ADMIN : ROLES.FUNCIONARIO;
-
-    const user = await this.prisma.user.create({
-      data: {
-        ...registerDto,
-        role,
-        password: await argon2.hash(password),
-        status: true,
-      },
-    });
-
-    const payload: JwtPayload = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-      cameraType: user.cameraType || null,
-      isActive: user.status,
-    };
-
-    return {
-      token: this.jwtService.sign(payload),
-      user: {
-        sub: user.id,
-        email: user.email,
-        role: user.role,
-        cameraType: user.cameraType || null,
-        isActive: user.status,
-      },
-    };
-  }
-
   async generateAccessKey(accessKeyDto: AccessKeyDto, userId: string) {
-    const requestingUser = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
+    const requestingUser = await this.userService.findOne(userId);
 
     if (!requestingUser || requestingUser.role === ROLES.VISTORIADOR) {
       throw new BadRequestException(
@@ -269,67 +212,4 @@ export class AuthService {
       },
     };
   }
-
-  // async requestPasswordReset(email: string): Promise<{ message: string }> {
-  //   const user = await this.prisma.user.findUnique({
-  //     where: { email },
-  //   });
-
-  //   if (!user) {
-  //     return {
-  //       message: 'Se o email existir, um link de redefinição será enviado',
-  //     };
-  //   }
-
-  //   const resetToken = crypto.randomBytes(32).toString('hex');
-  //   const resetTokenExpiry = new Date(Date.now() + 1000 * 60 * 60); // 1 hora
-
-  //   await this.prisma.user.update({
-  //     where: { email },
-  //     data: {
-  //       resetToken,
-  //       resetTokenExpiry,
-  //     },
-  //   });
-
-  //   await this.emailQueue.add(EmailJobType.RECOVERY_PASSWORD, {
-  //     email: user.email,
-  //     name: user.name,
-  //     token: resetToken,
-  //     expiresIn: 60, // 60 minutos
-  //   });
-
-  //   return {
-  //     message: 'Se o email existir, um link de redefinição será enviado',
-  //   };
-  // }
-
-  // async resetPassword(
-  //   token: string,
-  //   newPassword: string,
-  // ): Promise<{ message: string }> {
-  //   const user = await this.prisma.user.findFirst({
-  //     where: {
-  //       resetToken: token,
-  //       resetTokenExpiry: {
-  //         gt: new Date(),
-  //       },
-  //     },
-  //   });
-
-  //   if (!user) {
-  //     throw new BadRequestException('Token inválido ou expirado');
-  //   }
-
-  //   await this.prisma.user.update({
-  //     where: { id: user.id },
-  //     data: {
-  //       password: await argon2.hash(newPassword),
-  //       resetToken: null,
-  //       resetTokenExpiry: null,
-  //     },
-  //   });
-
-  //   return { message: 'Senha redefinida com sucesso' };
-  // }
 }

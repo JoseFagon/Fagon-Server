@@ -1,4 +1,3 @@
-// src/modules/pdf/utils/image-optimizer.ts
 import sharp from 'sharp';
 import axios, { AxiosResponse } from 'axios';
 

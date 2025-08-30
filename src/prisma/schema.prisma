@@ -76,7 +76,7 @@ model Agency {
   district     String
   street       String
   number       Int
-  createdAt      DateTime      @default(now())
+  createdAt    DateTime      @default(now())
   
   project      Project[]
 }
@@ -90,8 +90,23 @@ model Engineer {
   education          String
   registrationNumber String
   registrationEntity String
+  createdAt          DateTime  @default(now())
 
   project            Project[]
+}
+
+model Inspector {
+  id             String        @id @default(uuid())
+  name           String
+  phone          String 
+  cep            String?
+  state          String
+  city           String
+  district       String?
+  street         String?
+  selectedCities String[] 
+  rating         Decimal?
+  createdAt      DateTime      @default(now())
 }
 
 model Project {
