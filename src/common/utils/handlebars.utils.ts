@@ -267,6 +267,20 @@ export function registerHandlebarsHelpers(): void {
   );
 
   Handlebars.registerHelper(
+    'extractStateFromRegistry',
+    function (registry: string): string {
+      if (!registry || typeof registry !== 'string') return '';
+
+      const parts = registry.split('-');
+      if (parts.length > 1) {
+        return parts[parts.length - 1].trim();
+      }
+
+      return registry;
+    },
+  );
+
+  Handlebars.registerHelper(
     'formatNumber',
     function (number: number | undefined | null): string {
       if (number === undefined || number === null) return '—';

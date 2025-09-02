@@ -126,13 +126,7 @@ export class EngineerService {
     searchEngineerDto: SearchEngineerDto,
     currentUser?: { role: string },
   ) {
-    const {
-      name,
-      education,
-      registrationNumber,
-      page = 1,
-      limit = 10,
-    } = searchEngineerDto;
+    const { name, education, phone, page = 1, limit = 10 } = searchEngineerDto;
 
     if (currentUser?.role === 'vistoriador') {
       throw new ForbiddenException(
@@ -140,24 +134,46 @@ export class EngineerService {
       );
     }
 
-    const where: Prisma.EngineerWhereInput = {};
+    const orFilters: Prisma.EngineerWhereInput[] = [];
 
-    if (name) where.name = { contains: name, mode: 'insensitive' };
+    if (name) {
+      orFilters.push({
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      });
+    }
 
-    if (education)
-      where.education = { contains: education, mode: 'insensitive' };
+    if (education) {
+      orFilters.push({
+        education: {
+          contains: education,
+          mode: 'insensitive',
+        },
+      });
+    }
 
-    if (registrationNumber)
-      where.registrationNumber = { equals: registrationNumber };
+    if (phone) {
+      orFilters.push({
+        phone: {
+          contains: phone,
+          mode: 'insensitive',
+        },
+      });
+    }
+
+    const whereClause = orFilters.length > 0 ? { OR: orFilters } : {};
 
     const skip = (page - 1) * limit;
     const [engineers, total] = await Promise.all([
       this.prisma.engineer.findMany({
+        where: whereClause,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.engineer.count(),
+      this.prisma.engineer.count({ where: whereClause }),
     ]);
 
     return {
@@ -214,7 +230,13 @@ export class EngineerService {
     });
   }
 
-  async remove(id: string) {
+  async remove(id: string, currentUser?: { role: string }) {
+    if (currentUser?.role !== 'admin') {
+      throw new ForbiddenException(
+        'Apenas admins têm permissão para deletar engenheiros',
+      );
+    }
+
     const engineer = await this.prisma.engineer.findUnique({
       where: { id },
     });

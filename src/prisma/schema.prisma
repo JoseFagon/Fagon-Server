@@ -76,6 +76,7 @@ model Agency {
   district     String
   street       String
   number       Int
+  complement   String?
   createdAt    DateTime      @default(now())
   
   project      Project[]
@@ -110,25 +111,26 @@ model Inspector {
 }
 
 model Project {
-  id             String        @id @default(uuid())
-  projectType    ProjectType
-  upeCode        Int
-  agencyId       String
-  engineerId     String
-  status         ProjectStatus
-  structureType  String?
-  floorHeight    String?
-  inspectorName  String?
-  inspectionDate DateTime?
-  createdAt      DateTime      @default(now())
-
-  accessKey      AccessKey[]
-  location       Location[]
-  pathology      Pathology[]
-  pavements       Pavement[]
-  pdf            Pdf[]
-  agency         Agency        @relation(fields: [agencyId], references: [id])
-  engineer       Engineer      @relation(fields: [engineerId], references: [id])
+  id                            String        @id @default(uuid())
+  projectType                   ProjectType
+  upeCode                       Int
+  agencyId                      String
+  engineerId                    String
+  status                        ProjectStatus
+  structureType                 String?
+  floorHeight                   String?
+  inspectorName                 String?
+  inspectionDate                DateTime?
+  technicalResponsibilityNumber String?
+  createdAt                     DateTime      @default(now())
+                 
+  accessKey                     AccessKey[]
+  location                      Location[]
+  pathology                     Pathology[]
+  pavements                     Pavement[]
+  pdf                           Pdf[]
+  agency                        Agency        @relation(fields: [agencyId], references: [id])
+  engineer                      Engineer      @relation(fields: [engineerId], references: [id])
 }
 
 model AccessKey {

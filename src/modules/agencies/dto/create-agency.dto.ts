@@ -67,4 +67,10 @@ export class CreateAgencyDto {
   @IsInt({ message: 'O número deve ser um inteiro.' })
   @Min(1, { message: 'O número deve ser maior que zero.' })
   number!: number;
+
+  @Expose()
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  complement?: string;
 }

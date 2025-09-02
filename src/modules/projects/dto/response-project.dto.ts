@@ -26,6 +26,9 @@ export class ProjectResponseDto {
   @ApiProperty({ required: false })
   inspectionDate?: Date;
 
+  @ApiProperty({ required: false })
+  technicalResponsibilityNumber?: string;
+
   @ApiProperty()
   createdAt!: Date;
 

@@ -13,13 +13,13 @@ export class SearchEngineerDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  education?: string;
+  phone?: string;
 
   @Expose()
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  registrationNumber?: string;
+  education?: string;
 
   @Expose()
   @ApiProperty({ required: false, default: 1 })

@@ -81,25 +81,46 @@ export class InspectorService {
       );
     }
 
-    const skip = (page - 1) * limit;
-    const whereClause: Prisma.InspectorWhereInput = {};
+    const orFilters: Prisma.InspectorWhereInput[] = [];
 
     if (name) {
-      whereClause.name = { contains: name, mode: 'insensitive' };
+      orFilters.push({
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      });
     }
 
     if (city) {
-      whereClause.city = { contains: city, mode: 'insensitive' };
+      orFilters.push({
+        city: {
+          contains: city,
+          mode: 'insensitive',
+        },
+      });
     }
 
     if (state) {
-      whereClause.state = { contains: state, mode: 'insensitive' };
+      orFilters.push({
+        state: {
+          contains: state,
+          mode: 'insensitive',
+        },
+      });
+    }
+
+    const whereClause: Prisma.InspectorWhereInput = {};
+
+    if (orFilters.length > 0) {
+      whereClause.OR = orFilters;
     }
 
     if (selectedCities && selectedCities.length > 0) {
       whereClause.selectedCities = { hasSome: selectedCities };
     }
 
+    const skip = (page - 1) * limit;
     const [inspectors, total] = await Promise.all([
       this.prisma.inspector.findMany({
         where: whereClause,

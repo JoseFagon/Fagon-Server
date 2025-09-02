@@ -44,6 +44,10 @@ export class AgencyResponseDto {
   number!: number;
 
   @ApiProperty()
+  @IsString()
+  complement!: string;
+
+  @ApiProperty()
   @IsDate()
   createdAt!: Date;
 }
