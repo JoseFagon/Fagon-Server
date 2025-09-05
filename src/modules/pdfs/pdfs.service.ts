@@ -80,6 +80,7 @@ export class PdfService {
       engineer: project.engineer,
       inspectorName: project.inspectorName,
       inspectionDate: project.inspectionDate,
+      technicalResponsibilityNumber: project.technicalResponsibilityNumber,
       structureType: project.structureType,
       floorHeight: project.floorHeight,
       createdAt: project.createdAt,

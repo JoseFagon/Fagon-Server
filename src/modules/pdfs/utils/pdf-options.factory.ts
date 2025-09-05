@@ -30,8 +30,8 @@ export const getPdfOptions = (
       left: '2cm',
       right: '1.5cm',
     },
-    printBackground: false,
     preferCSSPageSize: true,
     omitBackground: true,
+    printBackground: true,
   };
 };

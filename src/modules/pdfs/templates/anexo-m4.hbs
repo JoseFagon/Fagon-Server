@@ -3,12 +3,16 @@
     <meta charset='UTF-8' />
     <title>Anexo M.4</title>
     <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+
       body {
         font-family: Arial, sans-serif;
         line-height: 1.6;
         margin: 0;
-        padding: 20px;
-        color: #333;
       }
 
       h1,
@@ -18,91 +22,176 @@
 
       h1 {
         text-align: center;
-        font-size: 12pt;
-        margin-bottom: 20px;
+        font-size: 11pt;
+        margin: 0;
+        padding: 10px 5px;
         text-transform: uppercase;
+        border: 1px solid black;
+        background-color: #d3d3d3;
       }
 
       h2 {
-        font-size: 11pt;
-        margin-top: 30px;
-        margin-bottom: 10px;
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 5px;
+        font-size: 10pt;
+        padding: 5px;
         page-break-after: avoid;
-        page-break-inside: avoid;
-        break-inside: avoid;
+        border: 1px solid black;
+        background-color: #d3d3d3;
       }
 
       p {
+        font-size: 9pt;
         orphans: 3;
         widows: 3;
         page-break-inside: avoid;
         break-inside: avoid;
       }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 15px 0;
-        page-break-inside: avoid;
-        break-inside: avoid;
-      }
-
-      table,
-      th,
-      td {
-        font-size: 9pt;
-        border: 1px solid #ddd;
-        page-break-inside: avoid;
-      }
-
-      th,
-      td {
-        padding: 10px;
-        text-align: left;
-      }
-
-      th {
-        background-color: #f5f5f5;
-        text-align: center;
-      }
-
-      .table-title {
-        text-align: center;
-      }
-
-      .col-title,
-      .rows-title {
-        font-size: 9pt;
-      }
-
-      .section {
-        margin-bottom: 15px;
-      }
-
+      .section,
+      .checkbox-section,
       .final-section {
         page-break-inside: avoid;
         break-inside: avoid;
       }
 
-      .info p {
-        margin: 0.1em 0;
+      .section-border {
+        border: 1px solid black;
+        border-top: 0px;
+        border-bottom: 0px;
+      }
+
+      .section-text {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 5px;
+      }
+
+      table.grid-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table.grid-table td {
+        font-size: 9pt;
+        border: 1px solid black;
+        padding: 3px 5px 15px;
+        vertical-align: top;
+      }
+
+      .separate-text {
+        border-bottom: 1px solid black;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .border-top {
+        border-top: 1px solid black;
+      }
+
+      .title-page {
+        text-align: center;
+        font-size: 9pt;
+        width: 80%;
+        margin: auto;
+      }
+
+      .table-one,
+      .table-two {
+        width: 85%;
+        border-collapse: collapse;
+        margin: 5px auto;
+        text-align: center;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .table-one,
+      .table-one td,
+      .table-two,
+      .table-two td {
+        font-size: 8pt;
+        border: 1px solid black;
+        page-break-inside: avoid;
+      }
+
+      .table-one td,
+      .table-two td {
+        padding: 5px;
+      }
+
+      .table-title,
+      .col-title {
+        background-color: #afa888;
+      }
+
+      .background-table-one {
+        background-color: #d4ccb9;
+      }
+
+      .section-caption {
+        width: 85%;
+        margin: auto;
+      }
+
+      .section-caption div {
+        padding-left: 5px;
+      }
+
+      .section-caption p {
+        font-size: 7pt;
+      }
+
+      .caption {
+        text-align: center;
+        font-size: 8pt;
+        width: 80%;
+        margin: auto;
+      }
+
+      .table-two {
+        text-align: left;
+      }
+
+      .table-two th {
+        padding: 5px;
+        border: 1px solid black;
+        page-break-inside: avoid;
+      }
+
+      .background-color-two {
+        background-color: #d3d3d3;
+      }
+
+      .row-ladder {
+        display: flex;
+        justify-content: space-between;
+        border: 0px;
+      }
+
+      .bold {
+        font-weight: bold;
+      }
+
+      .final-border {
+        display: flex;
+        flex-direction: column;
+        gap: 100px;
+        align-items: end;
       }
 
       .signature-section {
-        margin: 40px 0 40px;
-        text-align: left;
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        padding: 0px 25px 0px;
         page-break-inside: avoid;
         break-inside: avoid;
       }
 
       .signature-section p {
-        margin: 0.05em 0;
-      }
-
-      .signature-section .date {
-        margin-bottom: 10px;
+        font-size: 7pt;
+        padding-inline: 20px;
       }
 
       @media print {
@@ -113,229 +202,401 @@
     </style>
   </head>
   <body>
-    <h1>ANEXO M.4<br />LAUDO TÉCNICO DE CONTROLE DE MATERIAIS DE ACABAMENTO E
-      REVESTIMENTO</h1>
+    <h1>LAUDO TÉCNICO DE CONTROLE DE MATERIAIS DE ACABAMENTO E REVESTIMENTO
+      <br />
+      PPCI N.º</h1>
 
     <section class='section info'>
       <h2>1. IDENTIFICAÇÃO DA EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
-      <p><strong>Razão Social:</strong>
-        Itaú Unibanco S/A — AG.
-        {{formatNumberAgency agency.agencyNumber}}
-        /
-        {{agency.city}}
-        -
-        {{agency.district}}</p>
-      <p><strong>Nome Fantasia:</strong>
-        Itaú Unibanco S/A — AG.
-        {{formatNumberAgency agency.agencyNumber}}
-        /
-        {{agency.city}}
-        -
-        {{agency.district}}</p>
-      <p><strong>CNPJ:</strong> {{formatCNPJ agency.cnpj}}</p>
-      <p><strong>CEP:</strong> {{formatCEP agency.cep}}</p>
-      <p><strong>Município:</strong> {{agency.city}} - {{agency.state}}</p>
-      <p><strong>Logradouro:</strong>
-        {{agency.street}},
-        {{agency.number}}
-        -
-        {{agency.district}}</p>
+      <table class='grid-table'>
+        <tr>
+          <td colspan='3'>Razão Social:
+            <strong>Itaú Unibanco S/A</strong></td>
+        </tr>
+        <tr>
+          <td colspan='3'>Nome Fantasia:
+            <strong>Itaú Unibanco S/A</strong></td>
+        </tr>
+        <tr>
+          <td colspan='3'>CNPJ:
+            <strong>{{formatCNPJ agency.cnpj}}</strong></td>
+        </tr>
+        <tr>
+          <td colspan='3'>Logradouro: <strong>{{agency.street}}</strong></td>
+        </tr>
+        <tr>
+          <td>N.º: <strong>{{agency.number}}</strong></td>
+          <td>Complemento: <strong>{{agency.complement}}</strong></td>
+          <td>Bairro: <strong>{{agency.district}}</strong></td>
+        </tr>
+        <tr>
+          <td colspan='2'>Município:
+            <strong>{{agency.city}} - {{agency.state}}</strong></td>
+          <td>CEP: <strong>{{formatCEP agency.cep}}</strong></td>
+        </tr>
+      </table>
     </section>
 
     <section class='section info'>
-      <h2>2. IDENTIFICAÇÃO DO PROPRIETÁRIO OU RESPONSÁVEL PELO USO DA EDIFICAÇÃO</h2>
-      <p><strong>Nome do Proprietário:</strong> Itaú Unibanco S.A.</p>
-      <p><strong>CNPJ:</strong> 60.701.190/0798-78</p>
-      <p><strong>Nome do responsável pelo uso:</strong>
-        Juliane dos Santos Costa</p>
-      <p><strong>CPF:</strong> 098.053.057-16</p>
-      <p><strong>Telefone:</strong> (21) 99433-6923</p>
-      <p><strong>Email:</strong> juliane.costa@itau-unibanco.com.br</p>
+      <h2>2. IDENTIFICAÇÃO DO PROPRIETÁRIO OU RESPONSÁVEL PELO USO DA EDIFICAÇÃO
+        OU ÁREA DE RISCO DE INCÊNDIO</h2>
+      <table class='grid-table'>
+        <tr>
+          <td colspan='3'>Nome do Proprietário:
+            <strong>Itaú-Unibanco S.A.</strong></td>
+        </tr>
+        <tr>
+          <td>CNPJ: <strong>60.701.190/0798-78</strong></td>
+          <td>Telefone: <strong>(21) 99433-6923</strong></td>
+          <td>Email: <strong>juliane.costa@itau-unibanco.com.br</strong></td>
+        </tr>
+        <tr>
+          <td colspan='3'>Nome do responsável pelo uso:
+            <strong>Juliane dos Santos Costa</strong></td>
+        </tr>
+        <tr>
+          <td>CPF: <strong>098.053.057-16</strong></td>
+          <td>Telefone: <strong>(21) 99433-6923</strong></td>
+          <td>Email: <strong>juliane.costa@itau-unibanco.com.br</strong></td>
+        </tr>
+      </table>
     </section>
 
     <section class='section info'>
       <h2>3. IDENTIFICAÇÃO DO RESPONSÁVEL TÉCNICO PELO LAUDO TÉCNICO</h2>
-      <p><strong>Nome do profissional:</strong> {{engineer.name}}</p>
-      <p><strong>CPF:</strong> {{formatCPF engineer.cpf}}</p>
-      <p><strong>Telefone:</strong> {{formatPhone engineer.phone}}</p>
-      <p><strong>Email:</strong> {{engineer.email}}</p>
-      <p><strong>Formação Profissional:</strong>
-        {{engineer.education}}
-        -
-        {{engineer.registrationEntity}}
-        {{engineer.registrationNumber}}</p>
+      <table class='grid-table'>
+        <tr>
+          <td colspan='2'>Nome: <strong>{{engineer.name}}</strong></td>
+          <td>Nº ART/RRT:
+            <strong>{{technicalResponsibilityNumber}}</strong></td>
+        </tr>
+        <tr>
+          <td>CPF: <strong>{{formatCPF engineer.cpf}}</strong></td>
+          <td>Telefone: <strong>{{formatPhone engineer.phone}}</strong></td>
+          <td>Email: <strong>{{engineer.email}}</strong></td>
+        </tr>
+        <tr>
+          <td colspan='2'>Formação Profissional:
+            <strong>{{engineer.education}}</strong></td>
+          <td>Nº CREA/CAU:
+            <strong>{{extractStateFromRegistry engineer.registrationEntity}}
+              {{engineer.registrationNumber}}</strong></td>
+        </tr>
+      </table>
     </section>
 
     <section class='section'>
       <h2>4. OBJETIVO</h2>
-      <p>O presente Laudo Técnico tem o objetivo de descrever as características
-        de reação ao fogo dos materiais de acabamento e de revestimento
-        aplicados na edificação identificada no Capítulo 1, atestando sua
-        conformidade com as Resoluções e Normas Técnicas vigentes de segurança
-        contra incêndio e pânico.</p>
-
-      <p>Os dados para elaboração deste laudo foram extraídos de Memorial
-        Descritivo conforme levantamento realizado pelo escritório Fagon em
-        {{formatDate inspectionDate 'MMMM'}}
-        de
-        {{formatDate inspectionDate 'yyyy'}}.</p>
+      <div class='section-border section-text'>
+        <p>O presente Laudo Técnico tem o objetivo de descrever as condições de
+          reação ao fogo dos materiais de acabamento e de revestimento aplicados
+          na edificação identificada no Capítulo 1 deste Laudo Técnico,
+          atestando sua conformidade com as Resoluções Técnicas e Normas
+          Técnicas vigentes de segurança contra incêndio e pânico.
+        </p>
+      </div>
     </section>
 
     <section class='section'>
       <h2>5. FUNDAMENTAÇÃO NORMATIVA</h2>
-      {{#if stateLaws.complementaryLawReference}}
+      <div class='section-border section-text separate-text'>
         <p>O Laudo Técnico de Controle dos Materiais de Acabamento e de
           Revestimento está tecnicamente fundamentado na
           {{stateLaws.complementaryLawReference}}, e suas alterações, e na
-          Instrução Técnica (IT) Nº 10/2025, do Corpo de Bombeiros da Polícia
-          Militar do Estado de São Paulo (CBMSP), e suas normas técnicas
-          correlatas, por determinação da
-          {{stateLaws.secondaryLawReference}}, do Corpo de Bombeiros Militar do
-          Estado
+          {{stateLaws.secondaryLawFullText}}, do Corpo de Bombeiros da Polícia
+          Militar
           {{stateLaws.stateName}}
-          ({{stateLaws.stateFireAbbreviation}}).
+          ({{stateLaws.stateFireAbbreviation}}), e suas normas técnicas
+          correlatas, por determinação da Resolução Técnica de Transição do
+          Corpo de Bombeiros Militar do Estado do Rio Grande do Sul (CBMRS).
         </p>
-      {{else}}
-        <p>O Laudo Técnico de Controle dos Materiais de Acabamento e de
-          Revestimento está tecnicamente fundamentado na
-          {{stateLaws.secondaryLawReference}}, do Corpo de Bombeiros da Polícia
-          Militar do Estado
-          {{stateLaws.stateName}}
-          ({{stateLaws.stateFireAbbreviation}}) e suas normas técnicas
-          correlatas.
+        <p>As classificações e as condições exigidas para aplicação dos
+          materiais de acabamento e de revestimento e os respectivos locais
+          constam na Tabela B.1, do Anexo “B”, da
+          {{stateLaws.secondaryLawReference}}, do ({{stateLaws.stateFireAbbreviation}}),
+          replicada abaixo na Tabela 1:
         </p>
-      {{/if}}
-
-      <p>As classificações e as condições exigidas para aplicação dos materiais
-        de acabamento e de revestimento e os respectivos locais constam na
-        respectiva IT, replicada abaixo na tabela abaixo: (Agência Bancária –
-        Classificação D-2)</p>
-
-      <table>
-        <thead>
-          <tr>
-            <td rowspan='2' colspan='2'></td>
-            <td class='table-title' colspan='4'><strong>FINALIDADE DO MATERIAL</strong></td>
-          </tr>
-          <tr>
-            <td class='col-title'><strong>Piso (Acabamento<sup>1</sup>
-                / Revestimento)</strong></td>
-            <td class='col-title'><strong>Paredes e Divisórias (Acabamento<sup
-                >2</sup>
-                / Revestimento)</strong></td>
-            <td class='col-title'><strong>Teto e Forro (Acabamento /
-                Revestimento)</strong></td>
-            <td class='col-title'><strong>Fachada (Acabamento / Revestimento)</strong></td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class='rows-title' rowspan='3'><strong>GRUPO / DIVISÃO</strong></td>
-            <td class='row-title'>A-3<sup>5</sup>
-              e Condomínios Residenciais<sup>5</sup></td>
-            <td>Classe I, II-A, III-A, IV-A ou V-A<sup>7</sup></td>
-            <td>Classe I, II-A, III-A ou IV-A<sup>8</sup></td>
-            <td>Classe I, II-A ou III-A<sup>6</sup></td>
-            <td rowspan='3'>Classe I a II-B</td>
-          </tr>
-          <tr>
-            <td class='row-title'>B, D, E, G, H, I-1, J-1<sup>4</sup>, J-2, C-1,
-              F-1, F-2, F-3, F-4, F-6, F-8, F-9, F-10</td>
-            <td>Classe I, II-A, III-A ou IV-A</td>
-            <td>Classe I, II-A ou III-A<sup>9</sup></td>
-            <td>Classe I ou II-A</td>
-          </tr>
-          <tr>
-            <td class='row-title'>C-2, C-3 F-5, F-7, F-11, I-2, I-3, J-3, J-4,
-              L-1, M-2<sup>3</sup>
-              e M-3</td>
-            <td>Classe I, II-A, III-A ou IV-A</td>
-            <td>Classe I, II-A</td>
-            <td>Classe I, II-A</td>
-          </tr>
-        </tbody>
-      </table>
+      </div>
     </section>
 
     <section class='section'>
-      <h2>6. CLASSIFICAÇÃO DOS MATERIAIS DE ACABAMENTO E REVESTIMENTO APLICADOS
-        NA EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
+      <div class='section-border section-text separate-text border-top'>
+        <p class='title-page'>Tabela 1 - Classe dos materiais a serem utilizados
+          considerando a ocupação em função da finalidade de aplicação do
+          material
+        </p>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Local de aplicação dos materiais de acabamento e de revestimento</th>
-            <th>Classes de reação ao fogo dos materiais de acabamento e de
-              revestimento aplicados</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>PISOS</td>
-            <td>CLASSE I ou CLASSE II-A</td>
-          </tr>
-          <tr>
-            <td>DIVISÓRIAS</td>
-            <td>CLASSE II-A</td>
-          </tr>
-          <tr>
-            <td>PAREDES E TETO OU FORROS</td>
-            <td>CLASSE II-A</td>
-          </tr>
-          <tr>
-            <td>ACESSOS (CORREDORES) ÀS SAÍDAS ENCLAUSURADAS</td>
-            <td>CLASSE II-A</td>
-          </tr>
-          <tr>
-            <td>ESCADAS E RAMPAS DE EMERGÊNCIA</td>
-            <td>CLASSE I ou CLASSE II-A</td>
-          </tr>
-        </tbody>
-      </table>
+        <table class='table-one'>
+          <thead>
+            <tr>
+              <td rowspan='2' colspan='2'></td>
+              <td class='table-title' colspan='3'><strong>FINALIDADE DO MATERIAL</strong></td>
+            </tr>
+            <tr>
+              <td class='col-title'><strong>Piso (Acabamento<sup>1</sup>
+                  / Revestimento)</strong></td>
+              <td class='col-title'><strong>Paredes e divisórias (Acabamento<sup
+                  >2</sup>
+                  / Revestimento)</strong></td>
+              <td class='col-title'><strong>Teto e forro (Acabamento /
+                  Revestimento)</strong></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class='rows-title' rowspan='3'><strong>GRUPO / DIVISÃO</strong></td>
+              <td class='row-title background-table-one'>A-3<sup>5</sup>
+                e Condomínios Residenciais<sup>5</sup></td>
+              <td class='background-table-one'>Classe I, II-A, III-A, IV-A ou
+                V-A<sup>8</sup></td>
+              <td class='background-table-one'>Classe I, II-A, III-A ou IV-A<sup
+                >9</sup></td>
+              <td class='background-table-one'>Classe I, II-A ou III-A<sup
+                >7</sup></td>
+            </tr>
+            <tr>
+              <td class='row-title'>B, D, E, G, H, I-1, J-1<sup>4</sup>
+                e J-2</td>
+              <td>Classe I, II-A, III-A ou IV-A</td>
+              <td>Classe I, II-A ou III-A<sup>10</sup></td>
+              <td>Classe I ou II-A</td>
+            </tr>
+            <tr>
+              <td class='row-title background-table-one'>C, F<sup>5</sup>, I-2,
+                I-3, J-3, J-4, L-1, M-2<sup>3</sup>
+                e M-3</td>
+              <td class='background-table-one'>Classe I, II-A, III-A ou IV-A</td>
+              <td class='background-table-one'>Classe I, II-A</td>
+              <td class='background-table-one'>Classe I, II-A</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class='section-caption'>
+          <p class='bold'>Notas específicas:</p>
+          <div>
+            <p>1 - Incluem-se aqui cordões, rodapés e arremates;</p>
+            <p>2 - Excluem-se aqui portas, janelas, cordões e outros acabamentos
+              decorativos com área inferior a 20% da parede onde estão
+              aplicados;</p>
+            <p>3 - Somente ára líquidos e gases combustíveis e inflamáveis
+              acondicionados;</p>
+            <p>4 - Exceto edificação térrea;</p>
+            <p>5 - Obrigatório para todo o grupo F, sendo que a divisão F-7, no
+              que se refere a edificações com altura superior a 6 metros, será
+              submetida à Comissão Técnica para definição das medidas de
+              segurança contra incêndio;</p>
+            <p>6 - Somente para edificações com altura superior a 12 metros;</p>
+            <p>7 - Exceto para cozinhas que serão Classe I ou II-A;</p>
+            <p>8 - Exceto para revestimentos que serão Classe I, II-A, III-A ou
+              IV-A;</p>
+            <p>9 - Exceto para revestimentos que serão Classe I, II-A ou III-A;</p>
+            <p>10 - Exceto para revestimentos que serão Classe I ou II-A.</p>
+          </div>
+        </div>
+        <div class='section-caption'>
+          <p class='bold'>Notas genéricas:</p>
+          <div>
+            <p>
+              a - Os materiais de acabamento e de revestimento das fachadas das
+              edificações deve enquadrar-se entre as Classes I a II-B;</p>
+            <p>
+              b - Os materiais de acabamento e de revestimento das coberturas de
+              edificações devem enquadrar-se entre as Classes I a III-B, exceto
+              para os grupos/divisões C,F5, I-2, J-3, J-4, L-1, M-3 que devem
+              enquadrar-se entre as Classes I a II-B;</p>
+            <p>
+              c - Os materiais isolantes termo-acústicos aparentes, que podem
+              contribuir para o desenvolvimento do incêndio, como por exemplo:
+              espumas plásticas protegidas por materiais incombustíveis, lajes
+              mistas com enchimento de espumas plásticas protegidas por forro ou
+              revestimentos aplicados diretamente, forros em grelha com
+              isolamento termo-acústico envoltos em filmes plásticos e
+              assemelhados; devem enquadrar-se entre as Classes I a II-A quando
+              aplicados junto ao teto/forro ou paredes, exceto para os
+              grupos/divisões A2, A3 e Condomínios residenciais que será Classe
+              I, II-A ou III-A quando aplicados nas paredes;</p>
+            <p>
+              d - Os materiais isolantes termo-acústicos aplicados nas
+              instalações de serviço, em redes de dutos de ventilação e
+              ar-condicionado, e em cabines ou salas de equipamentos, aparentes
+              ou não, devem enquadrar-se entre as Classes I a II-A;</p>
+            <p>
+              e - Componentes construtivos onde não são aplicados revestimentos
+              e/ou acabamentos em razão de já se constituírem em produtos
+              acabados, incluindo-se divisórias, telhas, forros, painéis em
+              geral; face inferior de coberturas, entre outros, também estão
+              submetidos aos critérios da Tabela “B”;</p>
+            <p>
+              f - Determinados componentes construtivos que podem expor-se ao
+              incêndio em faces não voltadas para o ambiente ocupado, como é o
+              caso de pisos elevados, forros, revestimentos destacados do
+              substrato devem atender aos critérios da Tabela “B” para ambas as
+              faces;</p>
+            <p>
+              g - Materiais de proteção de elementos estruturais, juntamente com
+              seus revestimentos e acabamentos devem atender aos critérios dos
+              elementos construtivos onde estão inseridos, ou seja, de tetos
+              para as vigas e de paredes para pilares;</p>
+            <p>
+              h - Materiais empregados em subcoberturas com finalidades de
+              estanqueidade e de conforto termo-acústico devem atender os
+              critérios da Tabela “B” aplicados a tetos e a superfície inferior
+              da cobertura, mesmo que escondidas por forro;</p>
+            <p>
+              i - Coberturas de passarelas e toldos, instalados no pavimento
+              térreo, estarão dispensados do CMAR, desde que não apresentem área
+              superficial superior a 50,00 m2 e que a área de cobertura não
+              possua materiais incombustíveis;</p>
+            <p>
+              j - As circulações (corredores) que dão acesso às saídas de
+              emergência enclausuradas devem possuir CMAR Classe I ou Classe
+              II-A (Tabela “A”) e as Saídas de emergência (escadas, rampas,
+              etc), Classe I ou Classe II-A, com Dm ≤ 100 (Tabela “A”);</p>
+            <p>
+              k - Os materiais utilizados como revestimento, acabamento e
+              isolamento térmico-acústico no interior dos poços de elevadores,
+              monta-cargas e shafts, devem ser enquadrados na Classe I ou Classe
+              II-A, com Dm ≤ 100 (Tabela “A”);</p>
+            <p>
+              l - Materiais enquadrados na categoria II, por meio da NBR 9442,
+              ou que não sofrem a ignição no ensaio executado de acordo com a
+              UBC 26-3, podem ser incluídos na Classe II-A, dispensando a
+              avaliação por meio da ASTM E662, desde que sejam submetidos
+              especificamente ao ensaio de acordo com a UBC 26-3 e, nos
+              primeiros 5 minutos deste ensaio, ocorra o desprendimento de todo
+              o material do substrato ou se solte da estrutura que o sustenta e
+              que, mesmo nesta condição, o material não sofra a ignição.</p>
+          </div>
+        </div>
+        <p class='caption'>(As divisões F-11 e F-12 deverão ser consideradas
+          como pertencentes à divisão F-6, para fins de determinação das classes
+          de reação ao fogo dos materiais de acabamento e revestimento)
+        </p>
+      </div>
+    </section>
 
-      <p>Os materiais de acabamento e de revestimento aplicados nos demais
-        locais da edificação não descritos na Tabela do presente Laudo Técnico
-        cumprem rigorosamente as exigências constantes na respectiva IT,
-        incluindo suas notas específicas e genéricas, e normas técnicas
-        correlatas.</p>
+    <section class='section'>
+      <h2>
+        6. CLASSIFICAÇÃO DOS MATERIAIS DE ACABAMENTO E REVESTIMENTO APLICADOS NA
+        EDIFICAÇÃO OU ÁREA DE RISCO DE INCÊNDIO</h2>
+      <div class='section-border section-text'>
+        <p class='title-page'>Tabela 2 - Classe dos materiais de acabamento e de
+          revestimento aplicados considerando a ocupação e em função do elemento
+          a ser revestido, de acordo com a
+          {{stateLaws.secondaryLawReference}}
+          do ({{stateLaws.stateFireAbbreviation}})
+        </p>
+
+        <table class='table-two'>
+          <thead>
+            <tr>
+              <th class='background-color-two'>Local de aplicação dos materiais
+                de acabamento e de revestimento</th>
+              <th class='background-color-two'>Classes de reação ao fogo dos
+                materiais de acabamento e de revestimento aplicados</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PISOS</td>
+              <td>CLASSE I ou CLASSE III e IV-A e B</td>
+            </tr>
+            <tr>
+              <td>PAREDES E DIVISÓRIAS</td>
+              <td>CLASSE I e CLASSE II-A</td>
+            </tr>
+            <tr>
+              <td>TETO OU FORROS</td>
+              <td>CLASSE II-A</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th class='background-color-two' colspan='2'>Materiais aplicados
+                na saída de emergência (letra “j” das notas genéricas da Tabela
+                B.1 do Anexo “B” da
+                {{stateLaws.secondaryLawReference}}
+                do ({{stateLaws.stateFireAbbreviation}}))</th>
+            </tr>
+            <tr>
+              <th class='background-color-two'>Local de aplicação dos materiais
+                de acabamento e de revestimento</th>
+              <th class='background-color-two'>Classes de reação ao fogo dos
+                materiais de acabamento e de revestimento aplicados</th>
+            </tr>
+            <tr>
+              <td>ACESSOS (CORREDORES) ÀS SAÍDAS DE EMERGÊNCIA ENCLAUSURADAS</td>
+              <td>CLASSE I</td>
+            </tr>
+            <tr>
+              <td>ESCADAS E RAMPAS DE EMERGÊNCIA</td>
+              <td class='row-ladder'><p>CLASSE I</p><p>| [X] Dm ≥ 100</p></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>Os materiais de acabamento e de revestimento aplicados nos demais
+          locais da edificação não descritos na Tabela 2 do presente Laudo
+          Técnico cumprem rigorosamente as exigências constantes na Tabela B.1,
+          do Anexo “B”, da
+          {{stateLaws.secondaryLawReference}}, do ({{stateLaws.stateFireAbbreviation}}),
+          incluindo suas notas específicas e genéricas, e Normas Técnicas
+          correlatas.
+        </p>
+      </div>
     </section>
 
     <section class='section'>
       <h2>7. CONCLUSÃO</h2>
-      <p>Em análise às presentes informações e aos respectivos documentos
-        técnicos comprobatórios, conclui-se que os materiais de acabamento e de
-        revestimento aplicados na edificação identificada no Capítulo 1 do
-        presente Laudo Técnico cumprem rigorosamente a legislação, Resoluções
-        Técnicas do Corpo de Bombeiros da Polícia Militar Estadual e Normas
-        Técnicas vigentes, oferecendo segurança aos usuários desta de acordo com
-        a eficiência prevista nas normativas elencadas.</p>
+      <div class='section-border section-text'>
+        <p>Em análise às presentes informações e aos respectivos documentos
+          técnicos comprobatórios, conclui-se que os materiais de acabamento e
+          de revestimento aplicados na edificação identificada no Capítulo 1 do
+          presente Laudo Técnico cumprem rigorosamente a legislação, RTCBMRS e
+          Normas Técnicas vigentes, oferecendo segurança aos usuários desta de
+          acordo com a eficiência prevista nas normativas elencadas.
+        </p>
+      </div>
     </section>
 
     <section class='final-section'>
       <section class='section'>
         <h2>8. VALIDADE DO LAUDO TÉCNICO</h2>
-        <p>As informações prestadas no presente Laudo Técnico são verdadeiras e
-          seus dados não foram alterados além dos itens editáveis. Os relatórios
-          técnicos, laudos de ensaios, especificações técnicas de produto, entre
-          outros documentos comprobatórios da classificação dos materiais de
-          acabamento e de revestimento e a correta aplicação destes na
-          edificação foram entregues ao proprietário/responsável pelo uso,
-          identificado no Capítulo 2, o qual assina a plena ciência neste mesmo
-          Laudo Técnico. O presente Laudo Técnico tem validade enquanto
-          permanecerem inalterados os materiais e as condições de aplicação
-          descritas.</p>
-      </section>
+        <div class='section-border section-text final-border'>
+          <p>As informações prestadas no presente Laudo Técnico são verdadeiras
+            e seus dados não foram alterados além dos itens editáveis. Os
+            relatórios técnicos, laudos de ensaios, especificações técnicas de
+            produto, entre outros documentos comprobatórios da segurança
+            estrutural em situação de incêndio da edificação foram entregues ao
+            proprietário/responsável pelo uso, identificado no Capítulo 2, o
+            qual assina a plena ciência neste mesmo Laudo Técnico. O presente
+            Laudo Técnico tem validade enquanto permanecerem inalterados os
+            materiais analisados e forem adequados às condições de uso e
+            manutenção das estruturas.
+          </p>
 
-      <section class='signature-section'>
-        <p class='date'>São Paulo,
-          {{formatDate now 'dd'}}
-          de
-          {{formatDate now 'MMMM'}}
-          de
-          {{formatDate now 'yyyy'}}.</p>
-        <p>Resp. Técnico</p>
-        <p>{{engineer.registrationEntity}}
-          {{engineer.registrationNumber}}</p>
+          <p class='date'>São Paulo,
+            {{formatDate now 'dd'}}
+            de
+            {{formatDate now 'MMMM'}}
+            de
+            {{formatDate now 'yyyy'}}
+          </p>
+
+          <div class='signature-section'>
+            <div>
+              <hr />
+              <p>Proprietário e/ou responsável pelo uso da edificação ou área de
+                risco de incêndio</p>
+            </div>
+            <div>
+              <hr />
+              <p>Responsável técnico pelo Laudo</p>
+            </div>
+          </div>
+        </div>
       </section>
     </section>
   </body>
