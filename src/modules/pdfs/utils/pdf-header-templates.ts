@@ -35,9 +35,10 @@ export const getHeaderTemplate = (
       return `
         <div style="display: flex; align-items: center; width: 100%; padding: 10px 2cm;">
           ${baseLogo}
-          <div style=" flex: 1; margin: 0 auto; position: absolute; left: 0; right: 0;">
+          <div style="text-align: center; flex: 1; margin-left: 0px;">
             <h2 style="margin: 0; font-size: 12pt; font-weight: bold;">ANEXO M.4</h2>
           </div>
+          <div style="width: 50px;"></div>
         </div>
       `;
 
