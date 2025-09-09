@@ -16,6 +16,7 @@ export interface ProjectWithIncludes {
   status: ProjectStatus;
   structureType: string;
   floorHeight: string;
+  technicalResponsibilityNumber?: string;
   inspectorName?: string;
   inspectionDate?: Date;
   createdAt: Date;

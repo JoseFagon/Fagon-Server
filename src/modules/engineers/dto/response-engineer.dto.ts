@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class EngineerResponseDto {
+  @ApiProperty({ format: 'uuid' })
+  id!: string;
+
   @ApiProperty()
   name!: string;
 
@@ -21,4 +24,7 @@ export class EngineerResponseDto {
 
   @ApiProperty()
   registrationEntity!: string;
+
+  @ApiProperty()
+  createdAt!: Date;
 }

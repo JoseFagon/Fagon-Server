@@ -86,6 +86,32 @@ export class UserService {
     return user;
   }
 
+  async findOneByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: {
+        ...this.userSafeFields(),
+        password: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    return user;
+  }
+
+  async findByEmail(
+    email: string,
+    transactionPrisma?: Prisma.TransactionClient,
+  ) {
+    const client = transactionPrisma || this.prisma;
+    return client.user.findUnique({
+      where: { email },
+    });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     await this.validateUserExists(id);
 
@@ -113,6 +139,39 @@ export class UserService {
     return this.prisma.user.update({
       where: { id },
       data: { status: true },
+      select: this.userSafeFields(),
+    });
+  }
+
+  async disableByEmail(
+    email: string,
+    transactionPrisma?: Prisma.TransactionClient,
+  ) {
+    const prismaClient = transactionPrisma || this.prisma;
+
+    return prismaClient.user.updateMany({
+      where: { email, status: true },
+      data: { status: false },
+    });
+  }
+
+  async updateByEmail(
+    email: string,
+    updateUserDto: UpdateUserDto,
+    transactionPrisma?: Prisma.TransactionClient,
+  ) {
+    const client = transactionPrisma || this.prisma;
+    const user = await client.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    return client.user.update({
+      where: { email },
+      data: updateUserDto,
       select: this.userSafeFields(),
     });
   }

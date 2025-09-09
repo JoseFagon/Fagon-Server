@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsOptional, IsString, IsArray, IsNumber, Min } from 'class-validator';
 
-export class SearchEngineerDto {
+export class SearchInspectorDto {
   @Expose()
   @ApiProperty({ required: false })
   @IsOptional()
@@ -13,13 +13,20 @@ export class SearchEngineerDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  phone?: string;
+  city?: string;
 
   @Expose()
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  education?: string;
+  state?: string;
+
+  @Expose()
+  @ApiProperty({ required: false, type: [String] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  selectedCities?: string[];
 
   @Expose()
   @ApiProperty({ required: false, default: 1 })

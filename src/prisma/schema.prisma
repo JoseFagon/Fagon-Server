@@ -76,7 +76,8 @@ model Agency {
   district     String
   street       String
   number       Int
-  createdAt      DateTime      @default(now())
+  complement   String?
+  createdAt    DateTime      @default(now())
   
   project      Project[]
 }
@@ -90,30 +91,46 @@ model Engineer {
   education          String
   registrationNumber String
   registrationEntity String
+  createdAt          DateTime  @default(now())
 
   project            Project[]
 }
 
-model Project {
+model Inspector {
   id             String        @id @default(uuid())
-  projectType    ProjectType
-  upeCode        Int
-  agencyId       String
-  engineerId     String
-  status         ProjectStatus
-  structureType  String?
-  floorHeight    String?
-  inspectorName  String?
-  inspectionDate DateTime?
+  name           String
+  phone          String 
+  cep            String?
+  state          String
+  city           String
+  district       String?
+  street         String?
+  selectedCities String[] 
+  rating         Decimal?
   createdAt      DateTime      @default(now())
+}
 
-  accessKey      AccessKey[]
-  location       Location[]
-  pathology      Pathology[]
-  pavements       Pavement[]
-  pdf            Pdf[]
-  agency         Agency        @relation(fields: [agencyId], references: [id])
-  engineer       Engineer      @relation(fields: [engineerId], references: [id])
+model Project {
+  id                            String        @id @default(uuid())
+  projectType                   ProjectType
+  upeCode                       Int
+  agencyId                      String
+  engineerId                    String
+  status                        ProjectStatus
+  structureType                 String?
+  floorHeight                   String?
+  inspectorName                 String?
+  inspectionDate                DateTime?
+  technicalResponsibilityNumber String?
+  createdAt                     DateTime      @default(now())
+                 
+  accessKey                     AccessKey[]
+  location                      Location[]
+  pathology                     Pathology[]
+  pavements                     Pavement[]
+  pdf                           Pdf[]
+  agency                        Agency        @relation(fields: [agencyId], references: [id])
+  engineer                      Engineer      @relation(fields: [engineerId], references: [id])
 }
 
 model AccessKey {

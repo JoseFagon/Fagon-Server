@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsString,
   IsBoolean,
+  IsArray,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
@@ -16,6 +17,15 @@ export enum Environment {
 export class EnvConfig {
   @IsEnum(Environment)
   NODE_ENV: Environment = Environment.Development;
+
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  @IsOptional()
+  RENDER = false;
+
+  @IsString()
+  @IsOptional()
+  PUPPETEER_EXECUTABLE_PATH?: string;
 
   @IsNumber()
   @Transform(({ value }: { value: string }) => parseInt(value, 10))
@@ -30,6 +40,16 @@ export class EnvConfig {
   @IsString()
   @IsOptional()
   JWT_EXPIRES_IN = '1d';
+
+  @IsArray()
+  @Transform(({ value }: { value: string }) =>
+    value ? value.split(',').map((email) => email.trim()) : [],
+  )
+  @IsOptional()
+  ADMIN_EMAILS: string[] = [];
+
+  @IsString()
+  EMPLOYEES_PASSWORD!: string;
 
   @IsString()
   REDIS_HOST!: string;
@@ -66,6 +86,9 @@ export class EnvConfig {
 
   @IsString()
   API_URL!: string;
+
+  @IsString()
+  APP_URL!: string;
 
   @IsString()
   MAIL_HOST!: string;
@@ -122,9 +145,6 @@ export class EnvConfig {
   @IsString()
   @IsOptional()
   FEATURE_FLAGS?: string;
-
-  @IsString()
-  APP_URL!: string;
 
   @IsNumber()
   @Transform(({ value }: { value: string }) => parseInt(value, 10))

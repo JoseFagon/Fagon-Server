@@ -80,6 +80,7 @@ export class PdfService {
       engineer: project.engineer,
       inspectorName: project.inspectorName,
       inspectionDate: project.inspectionDate,
+      technicalResponsibilityNumber: project.technicalResponsibilityNumber,
       structureType: project.structureType,
       floorHeight: project.floorHeight,
       createdAt: project.createdAt,
@@ -107,7 +108,15 @@ export class PdfService {
     };
 
     const formatPdfType = pdfType.replace(/_/g, '-');
-    const pdfBuffer = await generatePdfFromTemplate(formatPdfType, data);
+    const pdfBuffer = await generatePdfFromTemplate(formatPdfType, data, {
+      headerType:
+        pdfType === 'anexo_m3'
+          ? 'anexo_m3'
+          : pdfType === 'anexo_m4'
+            ? 'anexo_m4'
+            : 'default',
+      includeFooter: !['anexo_m3', 'anexo_m4'].includes(pdfType),
+    });
 
     const file = {
       buffer: Buffer.from(pdfBuffer),

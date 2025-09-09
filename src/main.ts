@@ -43,11 +43,13 @@ async function bootstrap() {
     new ValidationPipe({
       disableErrorMessages: false,
       transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
+      whitelist: false,
+      forbidNonWhitelisted: false,
       transformOptions: {
         enableImplicitConversion: true,
       },
+      skipMissingProperties: false,
+      forbidUnknownValues: false,
     }),
   );
   await app.listen(port);

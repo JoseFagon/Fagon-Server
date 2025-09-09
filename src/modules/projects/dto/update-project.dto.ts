@@ -50,4 +50,10 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @IsOptional()
   @IsDateString()
   inspectionDate?: string;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  technicalResponsibilityNumber?: string;
 }

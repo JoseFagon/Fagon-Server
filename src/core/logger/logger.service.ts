@@ -1,5 +1,7 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { Injectable, Scope, Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
+import { EnvConfig, Environment } from 'src/config/env-config.class';
 import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
@@ -8,7 +10,10 @@ export class LoggerService {
   private logger!: winston.Logger;
   private context?: string;
 
-  constructor() {
+  constructor(
+    @Inject(ConfigService)
+    private configService: ConfigService<EnvConfig, true>,
+  ) {
     this.initializeLogger();
   }
 
@@ -20,6 +25,9 @@ export class LoggerService {
   }
 
   private initializeLogger() {
+    const logLevel = this.configService.get('LOG_LEVEL', { infer: true });
+    const nodeEnv = this.configService.get('NODE_ENV', { infer: true });
+
     const transports: winston.transport[] = [
       new winston.transports.Console({
         format: winston.format.combine(
@@ -30,7 +38,7 @@ export class LoggerService {
       }) as winston.transport,
     ];
 
-    if (process.env.NODE_ENV !== 'development') {
+    if (nodeEnv !== Environment.Development) {
       transports.push(
         new DailyRotateFile({
           filename: 'logs/application-%DATE%.log',
@@ -47,7 +55,7 @@ export class LoggerService {
     }
 
     this.logger = winston.createLogger({
-      level: process.env.LOG_LEVEL || 'info',
+      level: logLevel,
       transports,
     });
   }
