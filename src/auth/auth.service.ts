@@ -173,7 +173,7 @@ export class AuthService {
         userId: surveyor.id,
         generatedBy: userId,
         cameraType: accessKeyDto.cameraType,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h
+        expiresAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days
       },
     });
 
