@@ -186,6 +186,34 @@ export class AuthService {
     };
   }
 
+  async revokeAccessKey(
+    accessKeyToken: string,
+    userId: string,
+  ): Promise<{ message: string }> {
+    const requestingUser = await this.userService.findOne(userId);
+
+    if (!requestingUser || requestingUser.role === ROLES.VISTORIADOR) {
+      throw new BadRequestException(
+        'Apenas funcionários ou administradores podem expirar chaves de acesso',
+      );
+    }
+
+    const accessKey = await this.prisma.accessKey.findFirst({
+      where: { token: accessKeyToken },
+    });
+
+    if (!accessKey) {
+      throw new BadRequestException('Chave de acesso não encontrada');
+    }
+
+    await this.prisma.accessKey.update({
+      where: { id: accessKey.id },
+      data: { expiresAt: new Date() },
+    });
+
+    return { message: 'Chave de acesso expirada com sucesso' };
+  }
+
   private generateToken(user: User) {
     const payload: JwtPayload = {
       sub: user.id,

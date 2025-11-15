@@ -23,6 +23,14 @@ export class AuthController {
     return this.authService.generateAccessKey(accessKeyDto, currentUser.sub);
   }
 
+  @Post('access-keys/revoke')
+  async revokeAccessKey(
+    @Body() { accessKeyToken }: { accessKeyToken: string },
+    @CurrentUser() currentUser: JwtPayload,
+  ): Promise<{ message: string }> {
+    return this.authService.revokeAccessKey(accessKeyToken, currentUser.sub);
+  }
+
   @Get('me')
   async getMe(@CurrentUser() currentUser: JwtPayload) {
     return this.authService.getMe(currentUser.sub);
