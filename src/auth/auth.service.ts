@@ -15,6 +15,9 @@ import { User } from '@prisma/client';
 import { UserResponseDto } from '../modules/users/dto/response-user.dto';
 import { ROLES } from '../common/constants/roles.constant';
 import { UserService } from 'src/modules/users/users.service';
+import { RegisterDto } from './dto/register.dto';
+import { RegisterResponse } from 'src/common/interfaces/response.register.interface';
+import { ADMIN_EMAILS } from 'src/common/constants/admin-emails.constant';
 
 @Injectable()
 export class AuthService {
@@ -140,6 +143,45 @@ export class AuthService {
       user: {
         ...tokenResponse.user,
         cameraType: accessKey.user.cameraType,
+      },
+    };
+  }
+
+  async register(registerDto: RegisterDto): Promise<RegisterResponse> {
+    const { name, email, password } = registerDto;
+
+    if (!name || !email || !password) {
+      throw new BadRequestException('Todos os campos são obrigatórios');
+    }
+
+    const isAdmin = ADMIN_EMAILS.includes(email);
+    const role = isAdmin ? ROLES.ADMIN : ROLES.FUNCIONARIO;
+
+    const user = await this.prisma.user.create({
+      data: {
+        ...registerDto,
+        role,
+        password: await argon2.hash(password),
+        status: true,
+      },
+    });
+
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      cameraType: user.cameraType || null,
+      isActive: user.status,
+    };
+
+    return {
+      token: this.jwtService.sign(payload),
+      user: {
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+        cameraType: user.cameraType || null,
+        isActive: user.status,
       },
     };
   }

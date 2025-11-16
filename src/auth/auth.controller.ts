@@ -8,6 +8,7 @@ import { Public } from '../common/decorators/public.decorator';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { RegisterDto } from './dto/register.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
@@ -43,5 +44,11 @@ export class AuthController {
       return this.authService.loginWithAccessKey(loginDto);
     }
     return this.authService.loginEmployee(loginDto);
+  }
+
+  @Post('register')
+  @Public()
+  async register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(registerDto);
   }
 }
