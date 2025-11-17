@@ -133,7 +133,11 @@ export class StorageService {
       format?: keyof sharp.FormatEnum;
     },
   ): Promise<Buffer> {
-    return sharp(buffer)
+    let image = sharp(buffer);
+
+    image = image.rotate();
+
+    return image
       .resize(options.width, options.height, {
         fit: 'inside',
         withoutEnlargement: true,
