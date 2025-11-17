@@ -161,7 +161,7 @@ export class ProjectService {
 
     if (engineerName) {
       orFilters.push({
-        engineer: { name: { startsWith: engineerName, mode: 'insensitive' } },
+        engineer: { name: { contains: engineerName, mode: 'insensitive' } },
       });
     }
 
@@ -173,39 +173,32 @@ export class ProjectService {
 
     if (state) {
       orFilters.push({
-        agency: { state: { startsWith: state, mode: 'insensitive' } },
+        agency: { state: { contains: state, mode: 'insensitive' } },
       });
     }
 
     if (city) {
       orFilters.push({
-        agency: { city: { startsWith: city, mode: 'insensitive' } },
+        agency: { city: { contains: city, mode: 'insensitive' } },
       });
     }
 
     const whereClause = orFilters.length > 0 ? { OR: orFilters } : {};
 
-    const [projects, total] = await Promise.all([
-      this.prisma.project.findMany({
-        where: whereClause,
-        skip,
-        take: limit,
-        include: this.projectIncludes(),
-        orderBy: {
-          createdAt: 'desc',
-        },
-      }),
-      this.prisma.project.count({ where: whereClause }),
-    ]);
+    const [projects, total] = await this.findAllProjectsPaginated(
+      skip,
+      limit,
+      whereClause,
+    );
 
     return {
-      projects: projects,
+      projects,
       meta: {
         resource: {
           total,
           page,
           limit,
-          totalPages: Math.ceil(total / limit),
+          totalPages: Math.ceil(Number(total) / limit),
         },
       },
     };
@@ -343,15 +336,21 @@ export class ProjectService {
     };
   }
 
-  async findAllProjectsPaginated(skip: number, take: number) {
+  async findAllProjectsPaginated(
+    skip: number,
+    take: number,
+    whereClause?: Prisma.ProjectWhereInput,
+  ) {
     const [projects, total] = await Promise.all([
       this.prisma.project.findMany({
+        where: whereClause,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
         include: this.projectIncludes(),
+        distinct: ['id'],
       }),
-      this.prisma.project.count(),
+      this.prisma.project.count({ where: whereClause }),
     ]);
 
     return [projects, total];

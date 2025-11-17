@@ -141,26 +141,20 @@ export class AgencyService {
 
     const whereClause = orFilters.length > 0 ? { OR: orFilters } : {};
 
-    const [agencies, total] = await Promise.all([
-      this.prisma.agency.findMany({
-        where: whereClause,
-        skip,
-        take: limit,
-        orderBy: {
-          createdAt: 'desc',
-        },
-      }),
-      this.prisma.agency.count({ where: whereClause }),
-    ]);
+    const [agencies, total] = await this.findAllAgenciesPaginated(
+      skip,
+      limit,
+      whereClause,
+    );
 
     return {
       agencies: agencies,
       meta: {
         resource: {
-          total,
+          total: total,
           page,
           limit,
-          totalPages: Math.ceil(total / limit),
+          totalPages: Math.ceil(Number(total) / limit),
         },
       },
     };
@@ -231,14 +225,20 @@ export class AgencyService {
     }
   }
 
-  async findAllAgenciesPaginated(skip: number, take: number) {
+  async findAllAgenciesPaginated(
+    skip: number,
+    take: number,
+    whereClause?: Prisma.AgencyWhereInput,
+  ) {
     const [agencies, total] = await Promise.all([
       this.prisma.agency.findMany({
+        where: whereClause,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
+        distinct: ['id'],
       }),
-      this.prisma.agency.count(),
+      this.prisma.agency.count({ where: whereClause }),
     ]);
 
     return [agencies, total];
