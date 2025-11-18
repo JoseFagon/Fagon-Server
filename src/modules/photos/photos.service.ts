@@ -31,7 +31,7 @@ export class PhotoService {
     const location =
       await this.locationService.validateLocationExists(locationId);
 
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
     const invalidFiles = files.filter(
       (file) =>
         file.size > MAX_FILE_SIZE || !file.mimetype?.startsWith('image/'),
@@ -43,19 +43,31 @@ export class PhotoService {
       );
     }
 
-    const existingPhotoCount = await this.prisma.photo.count({
+    const lastPhoto = await this.prisma.photo.findFirst({
       where: { locationId },
+      orderBy: { name: 'desc' },
     });
+
+    let lastPhotoNumber = 0;
+    if (lastPhoto?.name) {
+      const match = lastPhoto.name.match(/Foto(\d+)/);
+      if (match) {
+        lastPhotoNumber = parseInt(match[1]);
+      }
+    }
 
     const project = await this.projectService.findOne(location.projectId);
 
     try {
       const uploadedPhotos = await Promise.all(
         files.map(async (file, index) => {
-          const photoNumber = existingPhotoCount + index + 1;
+          const photoNumber = lastPhotoNumber + index + 1;
+          const timestamp = Date.now();
+
+          const uniqueFileName = `${project.projectType}-${project.agency.agencyNumber}-${timestamp}-${index}-${file.originalname}`;
 
           const uploadResult = await this.storageService.uploadFile({
-            originalname: `${project.projectType}-${project.agency.agencyNumber}-${Date.now()}-${file.originalname}`,
+            originalname: uniqueFileName,
             buffer: file.buffer,
             mimetype: file.mimetype || 'image/jpeg',
             size: file.size,
@@ -73,7 +85,8 @@ export class PhotoService {
       );
 
       return uploadedPhotos;
-    } catch {
+    } catch (error) {
+      console.error('Upload error:', error);
       throw new InternalServerErrorException('Falha ao fazer upload das fotos');
     }
   }
@@ -211,7 +224,7 @@ export class PhotoService {
         url: await this.storageService.getSignedUrl(updatedPhoto.filePath),
       };
     } catch (error) {
-      console.error('💥 Erro detalhado ao rotacionar foto:', error);
+      console.error('Erro detalhado ao rotacionar foto:', error);
     }
   }
 
