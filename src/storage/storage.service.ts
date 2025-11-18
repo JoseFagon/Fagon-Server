@@ -163,19 +163,11 @@ export class StorageService {
     const targetBucket = bucket || this.bucketName;
 
     try {
-      const { data: fileInfo } = this.supabase.storage
-        .from(targetBucket)
-        .getPublicUrl(filePath);
-
-      if (!fileInfo) {
-        throw new NotFoundException(`Arquivo não encontrado: ${filePath}`);
-      }
-
       const { data: downloadData, error: downloadError } =
         await this.supabase.storage.from(targetBucket).download(filePath);
 
       if (downloadError || !downloadData) {
-        throw new Error(downloadError?.message || 'Falha ao baixar o arquivo');
+        throw new NotFoundException(`Arquivo não encontrado: ${filePath}`);
       }
 
       const stream = new Readable();
@@ -185,9 +177,9 @@ export class StorageService {
       return {
         stream,
         metadata: {
-          contentType: 'application/pdf',
+          contentType: 'application/octet-stream',
           contentLength: downloadData.size,
-          originalName: filePath.split('/').pop() || 'document.pdf',
+          originalName: filePath.split('/').pop() || 'file',
         },
       };
     } catch (error) {
@@ -207,42 +199,34 @@ export class StorageService {
     const targetBucket = bucket || this.bucketName;
 
     try {
-      const { data: downloadData, error: downloadError } =
-        await this.supabase.storage.from(targetBucket).download(filePath);
-
-      if (downloadError || !downloadData) {
-        throw new Error(downloadError?.message || 'Falha ao baixar o arquivo');
-      }
-
-      const buffer = Buffer.from(await downloadData.arrayBuffer());
-
-      const { data: fileList, error: listError } = await this.supabase.storage
+      const { data, error } = await this.supabase.storage
         .from(targetBucket)
-        .list('', { search: filePath.split('/').pop() });
+        .download(filePath);
 
-      if (listError || !fileList || fileList.length === 0) {
-        throw new Error(listError?.message || 'Falha ao obter metadados');
+      if (error) {
+        console.error('❌ Erro do Supabase:', error);
+        throw new Error(`Falha ao baixar arquivo: ${error.message}`);
       }
 
-      const fileMeta = fileList.find(
-        (file) => file.name === filePath.split('/').pop(),
-      );
+      if (!data) {
+        throw new Error('Nenhum dado retornado do Supabase');
+      }
+
+      const buffer = Buffer.from(await data.arrayBuffer());
+
+      const fileName = filePath.split('/').pop() || 'file.jpg';
 
       return {
         buffer,
         metadata: {
-          contentType:
-            (fileMeta?.metadata as { mimetype?: string })?.mimetype ||
-            'application/octet-stream',
-          contentLength:
-            (fileMeta?.metadata as { size?: number })?.size ||
-            downloadData.size,
-          originalName: filePath.split('/').pop() || 'file',
+          contentType: 'image/jpeg',
+          contentLength: buffer.length,
+          originalName: fileName,
         },
       };
     } catch (error) {
-      const typedError = error as Error;
-      throw new Error(`Erro ao obter o arquivo: ${typedError.message}`);
+      console.error('💥 Erro crítico no getFileBuffer:', error);
+      throw error;
     }
   }
 

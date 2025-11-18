@@ -13,6 +13,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { InjectSupabaseClient } from 'nestjs-supabase-js';
 import { LocationService } from '../locations/locations.service';
 import { ProjectService } from '../projects/projects.service';
+import sharp from 'sharp';
 
 @Injectable()
 export class PhotoService {
@@ -142,6 +143,76 @@ export class PhotoService {
       ...photo,
       url: await this.storageService.getSignedUrl(photo.filePath),
     };
+  }
+
+  async rotatePhoto(
+    id: string,
+    rotation: number,
+    currentUser?: { role: string },
+  ) {
+    if (currentUser?.role === 'vistoriador') {
+      throw new ForbiddenException(
+        'Vistoriadores não têm permissão para rotacionar fotos',
+      );
+    }
+
+    const existingPhoto = await this.getPhotoById(id);
+
+    if (!existingPhoto.filePath) {
+      throw new BadRequestException(
+        'Caminho do arquivo não encontrado no banco de dados',
+      );
+    }
+
+    try {
+      const fileBuffer = await this.storageService.getFileBuffer(
+        existingPhoto.filePath,
+      );
+
+      let rotatedImage = sharp(fileBuffer.buffer);
+
+      if (rotation !== 0) {
+        rotatedImage = rotatedImage.rotate(rotation);
+      }
+
+      const rotatedBuffer = await rotatedImage.jpeg({ quality: 90 }).toBuffer();
+
+      await this.storageService.deleteFile(existingPhoto.filePath);
+
+      const location = await this.locationService.validateLocationExists(
+        existingPhoto.locationId,
+      );
+      const project = await this.projectService.findOne(location.projectId);
+
+      const uploadResult = await this.storageService.uploadFile({
+        originalname: `${project.projectType}-${project.agency.agencyNumber}-rotated-${Date.now()}.jpg`,
+        buffer: rotatedBuffer,
+        mimetype: 'image/jpeg',
+        size: rotatedBuffer.length,
+      });
+
+      const updatedPhoto = await this.prisma.photo.update({
+        where: { id },
+        data: {
+          filePath: uploadResult.key,
+        },
+        include: {
+          location: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      return {
+        ...updatedPhoto,
+        url: await this.storageService.getSignedUrl(updatedPhoto.filePath),
+      };
+    } catch (error) {
+      console.error('💥 Erro detalhado ao rotacionar foto:', error);
+    }
   }
 
   async deletePhoto(id: string, currentUser?: { role: string }) {

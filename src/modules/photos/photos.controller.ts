@@ -11,6 +11,7 @@ import {
   UploadedFiles,
   BadRequestException,
   Query,
+  Put,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
@@ -30,6 +31,7 @@ import { PhotoResponseDto } from './dto/response-photo.dto';
 import { UpdatePhotoDto } from './dto/update-photo.dto';
 import { StorageService } from '../../storage/storage.service';
 import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
+import { RotatePhotoDto } from './dto/rotate-photo.dto';
 
 @ApiTags('Photos')
 @ApiBearerAuth()
@@ -44,6 +46,12 @@ export class PhotoController {
 
   @Post('upload/:locationId')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 10 }]))
+  @ApiOperation({ summary: 'Faz upload de fotos para uma localização' })
+  @ApiResponse({
+    status: 201,
+    type: [PhotoResponseDto],
+    description: 'Fotos enviadas com sucesso',
+  })
   async uploadPhotos(
     @UploadedFiles() files: { files?: Express.Multer.File[] },
     @Param('locationId') locationId: string,
@@ -105,6 +113,26 @@ export class PhotoController {
     const photo = await this.photoService.getPhotoById(id);
     const signedUrl = await this.storageService.getSignedUrl(photo.filePath);
     return { url: signedUrl };
+  }
+
+  @Put(':id/rotate')
+  @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
+  @ApiOperation({ summary: 'Rotaciona uma foto' })
+  @ApiResponse({
+    status: 200,
+    type: PhotoResponseDto,
+    description: 'Foto rotacionada com sucesso',
+  })
+  async rotatePhoto(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() rotatePhotoDto: RotatePhotoDto,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.photoService.rotatePhoto(
+      id,
+      rotatePhotoDto.rotation,
+      currentUser,
+    );
   }
 
   @Delete(':id')
