@@ -15,7 +15,7 @@
     "prisma:seed": "ts-node src/prisma/seed.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "postinstall": "npm rebuild --platform=linux --libc=glibc sharp",
+    "postinstall": "npm rebuild --platform=linux --libc=glibc sharp && npm rebuild --platform=linux --libc=glibc @css-inline/css-inline",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -23,6 +23,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@css-inline/css-inline": "^0.18.0",
     "@nestjs-modules/ioredis": "^2.0.2",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/axios": "github:nestjs/axios",
