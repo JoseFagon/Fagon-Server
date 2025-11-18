@@ -11,8 +11,9 @@ import {
   UploadedFiles,
   BadRequestException,
   Query,
+  Put,
 } from '@nestjs/common';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
@@ -30,6 +31,7 @@ import { PhotoResponseDto } from './dto/response-photo.dto';
 import { UpdatePhotoDto } from './dto/update-photo.dto';
 import { StorageService } from '../../storage/storage.service';
 import { JwtPayload } from '../../common/interfaces/jwt.payload.interface';
+import { RotatePhotoDto } from './dto/rotate-photo.dto';
 
 @ApiTags('Photos')
 @ApiBearerAuth()
@@ -43,16 +45,22 @@ export class PhotoController {
   ) {}
 
   @Post('upload/:locationId')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 10 }]))
+  @UseInterceptors(FilesInterceptor('files', 10))
+  @ApiOperation({ summary: 'Faz upload de fotos para uma localização' })
+  @ApiResponse({
+    status: 201,
+    type: [PhotoResponseDto],
+    description: 'Fotos enviadas com sucesso',
+  })
   async uploadPhotos(
-    @UploadedFiles() files: { files?: Express.Multer.File[] },
+    @UploadedFiles() files: Express.Multer.File[],
     @Param('locationId') locationId: string,
   ) {
-    if (!files?.files || files.files.length === 0) {
+    if (!files || files.length === 0) {
       throw new BadRequestException('Nenhum arquivo enviado');
     }
 
-    return this.photoService.uploadPhotos(files.files, locationId);
+    return this.photoService.uploadPhotos(files, locationId);
   }
 
   @Get('location/:locationId')
@@ -105,6 +113,26 @@ export class PhotoController {
     const photo = await this.photoService.getPhotoById(id);
     const signedUrl = await this.storageService.getSignedUrl(photo.filePath);
     return { url: signedUrl };
+  }
+
+  @Put(':id/rotate')
+  @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO)
+  @ApiOperation({ summary: 'Rotaciona uma foto' })
+  @ApiResponse({
+    status: 200,
+    type: PhotoResponseDto,
+    description: 'Foto rotacionada com sucesso',
+  })
+  async rotatePhoto(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() rotatePhotoDto: RotatePhotoDto,
+    @CurrentUser() currentUser: JwtPayload,
+  ) {
+    return this.photoService.rotatePhoto(
+      id,
+      rotatePhotoDto.rotation,
+      currentUser,
+    );
   }
 
   @Delete(':id')
