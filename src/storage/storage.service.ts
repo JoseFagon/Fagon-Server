@@ -29,12 +29,17 @@ export class StorageService {
       await this.validateUpload(file, targetBucket);
 
       let uploadBuffer = file.buffer;
-      if (file.mimetype.startsWith('image/')) {
+      if (
+        file.mimetype.startsWith('image/') &&
+        file.buffer.length < 5 * 1024 * 1024
+      ) {
         uploadBuffer = await this.optimizeImage(file.buffer, {
           quality: 80,
           width: 1200,
           format: 'webp',
         });
+      } else {
+        uploadBuffer = file.buffer;
       }
 
       const filePath = this.generateFilePath(file);

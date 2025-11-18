@@ -59,19 +59,29 @@ export class PhotoService {
     const project = await this.projectService.findOne(location.projectId);
 
     try {
+      console.log('📸 Iniciando upload de', files.length, 'fotos');
+
       const uploadedPhotos = await Promise.all(
         files.map(async (file, index) => {
+          console.log(`🔄 Processando arquivo ${index + 1}:`, {
+            name: file.originalname,
+            size: file.size,
+            mimetype: file.mimetype,
+          });
+
           const photoNumber = lastPhotoNumber + index + 1;
           const timestamp = Date.now();
 
           const uniqueFileName = `${project.projectType}-${project.agency.agencyNumber}-${timestamp}-${index}-${file.originalname}`;
 
+          console.log('📤 Chamando storageService.uploadFile...');
           const uploadResult = await this.storageService.uploadFile({
             originalname: uniqueFileName,
             buffer: file.buffer,
             mimetype: file.mimetype || 'image/jpeg',
             size: file.size,
           });
+          console.log('✅ StorageService concluído');
 
           return this.prisma.photo.create({
             data: {

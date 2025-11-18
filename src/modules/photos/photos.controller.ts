@@ -13,7 +13,7 @@ import {
   Query,
   Put,
 } from '@nestjs/common';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
@@ -45,7 +45,7 @@ export class PhotoController {
   ) {}
 
   @Post('upload/:locationId')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 10 }]))
+  @UseInterceptors(FilesInterceptor('files', 10))
   @ApiOperation({ summary: 'Faz upload de fotos para uma localização' })
   @ApiResponse({
     status: 201,
@@ -53,14 +53,14 @@ export class PhotoController {
     description: 'Fotos enviadas com sucesso',
   })
   async uploadPhotos(
-    @UploadedFiles() files: { files?: Express.Multer.File[] },
+    @UploadedFiles() files: Express.Multer.File[],
     @Param('locationId') locationId: string,
   ) {
-    if (!files?.files || files.files.length === 0) {
+    if (!files || files.length === 0) {
       throw new BadRequestException('Nenhum arquivo enviado');
     }
 
-    return this.photoService.uploadPhotos(files.files, locationId);
+    return this.photoService.uploadPhotos(files, locationId);
   }
 
   @Get('location/:locationId')
