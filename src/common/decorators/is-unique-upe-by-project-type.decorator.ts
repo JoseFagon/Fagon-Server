@@ -5,17 +5,18 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
-import { PrismaClient, ProjectType } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { ProjectType } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @ValidatorConstraint({ async: true })
 export class IsUniqueUpeByProjectTypeConstraint
   implements ValidatorConstraintInterface
 {
+  constructor(private prisma: PrismaService) {}
+
   async validate(upeCode: number, args: ValidationArguments) {
     const { projectType } = args.object as { projectType: ProjectType };
-    const existingProject = await prisma.project.findFirst({
+    const existingProject = await this.prisma.project.findFirst({
       where: {
         upeCode,
         projectType,

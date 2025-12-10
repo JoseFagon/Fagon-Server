@@ -22,7 +22,7 @@ export class UpdateLocationDto extends PartialType(CreateLocationDto) {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
-  height?: number;
+  height?: number | null;
 
   @Expose()
   @ApiProperty({ required: false })

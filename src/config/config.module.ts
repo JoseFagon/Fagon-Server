@@ -43,11 +43,11 @@ import { loggerConfig } from './logger.config';
   providers: [],
   exports: [
     ConfigModule,
+    LoggerModule,
     BullModule,
     CacheModule,
     SupabaseModule,
     TerminusModule,
-    LoggerModule,
   ],
 })
 export class AppConfigModule {}

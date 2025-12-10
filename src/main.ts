@@ -5,6 +5,7 @@ import { setupSwagger } from './docs/swagger.config';
 import { PrismaService } from './prisma/prisma.service';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+import { HeightTransformPipe } from './common/pipes/height-transform.pipe';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
   app.setGlobalPrefix('api/v1');
+  app.useGlobalPipes(new HeightTransformPipe());
 
   setupSwagger(app);
   app.useGlobalInterceptors(new TransformInterceptor());

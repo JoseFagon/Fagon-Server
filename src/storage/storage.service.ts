@@ -270,7 +270,7 @@ export class StorageService {
   async getSignedUrl(
     filePath: string,
     bucket?: string,
-    expiresIn = 60 * 60 * 24 * 7, // 7 dias
+    expiresIn = 60 * 60 * 24 * 7, // 7d
   ): Promise<string> {
     const targetBucket = bucket || this.bucketName;
 
