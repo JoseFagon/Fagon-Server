@@ -30,6 +30,7 @@ export class AgencyService {
     const agencyData = {
       ...createAgencyDto,
       name: createAgencyDto.name.toUpperCase(),
+      number: createAgencyDto.number.toUpperCase().trim(),
     };
 
     const agency = await this.prisma.agency.create({
@@ -193,8 +194,15 @@ export class AgencyService {
 
     const updateData = {
       ...updateAgencyDto,
-      ...(updateAgencyDto.name && { name: updateAgencyDto.name.toUpperCase() }),
     };
+
+    if (updateAgencyDto.name) {
+      updateData.name = updateAgencyDto.name.toUpperCase();
+    }
+
+    if (updateAgencyDto.number) {
+      updateData.number = updateAgencyDto.number.toUpperCase().trim();
+    }
 
     const updatedAgency = await this.prisma.agency.update({
       where: { id },

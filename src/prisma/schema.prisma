@@ -75,7 +75,7 @@ model Agency {
   city         String
   district     String
   street       String
-  number       Int
+  number       String
   complement   String?
   createdAt    DateTime      @default(now())
   
