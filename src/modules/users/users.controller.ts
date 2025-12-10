@@ -34,7 +34,7 @@ export class UserController {
 
   @Get()
   @CacheKey('users_list')
-  @CacheTTL(30) // 30 seconds
+  @CacheTTL(30) // 30s
   @ApiOperation({ summary: 'List all users (Admin)' })
   @ApiResponse({
     status: 200,

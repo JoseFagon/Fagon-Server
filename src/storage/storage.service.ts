@@ -29,15 +29,21 @@ export class StorageService {
       await this.validateUpload(file, targetBucket);
 
       let uploadBuffer = file.buffer;
+
       if (
         file.mimetype.startsWith('image/') &&
         file.buffer.length < 5 * 1024 * 1024
       ) {
-        uploadBuffer = await this.optimizeImage(file.buffer, {
-          quality: 80,
-          width: 1200,
-          format: 'webp',
-        });
+        try {
+          uploadBuffer = await this.optimizeImage(file.buffer, {
+            quality: 80,
+            width: 1200,
+            format: this.getOriginalFormat(file.mimetype),
+          });
+        } catch {
+          console.warn('❌ Erro na otimização, usando original:');
+          uploadBuffer = file.buffer;
+        }
       } else {
         uploadBuffer = file.buffer;
       }
@@ -129,6 +135,18 @@ export class StorageService {
     return `${folder}/${Date.now()}-${sanitizedName}.${fileExt}`;
   }
 
+  private getOriginalFormat(mimetype: string): keyof sharp.FormatEnum {
+    const formatMap: Record<string, keyof sharp.FormatEnum> = {
+      'image/jpeg': 'jpeg',
+      'image/jpg': 'jpeg',
+      'image/png': 'png',
+      'image/gif': 'gif',
+      'image/webp': 'webp',
+    };
+
+    return formatMap[mimetype] || 'jpeg';
+  }
+
   private async optimizeImage(
     buffer: Buffer,
     options: {
@@ -138,19 +156,33 @@ export class StorageService {
       format?: keyof sharp.FormatEnum;
     },
   ): Promise<Buffer> {
-    let image = sharp(buffer);
+    try {
+      const image = sharp(buffer);
 
-    image = image.rotate();
+      try {
+        const metadata = await image.metadata();
+        if (!metadata.width || !metadata.height) {
+          throw new Error('Imagem com dimensões inválidas');
+        }
+      } catch {
+        console.warn('⚠️ Imagem com metadata inválida, usando original');
+        return buffer;
+      }
 
-    return image
-      .resize(options.width, options.height, {
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-      .toFormat(options.format || 'webp', {
-        quality: options.quality,
-      })
-      .toBuffer();
+      return await image
+        .rotate()
+        .resize(options.width, options.height, {
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .toFormat(options.format || 'jpeg', {
+          quality: options.quality,
+        })
+        .toBuffer();
+    } catch {
+      console.warn('❌ Erro na otimização, usando original');
+      return buffer;
+    }
   }
 
   private handleUploadError(error: unknown): never {
@@ -238,7 +270,7 @@ export class StorageService {
   async getSignedUrl(
     filePath: string,
     bucket?: string,
-    expiresIn = 60 * 60 * 24 * 7, // 7 dias
+    expiresIn = 60 * 60 * 24 * 7, // 7d
   ): Promise<string> {
     const targetBucket = bucket || this.bucketName;
 

@@ -130,9 +130,9 @@ export class LocationService {
         },
       });
 
-      if (pavementId && height !== undefined) {
+      if (pavementId && height !== undefined && height !== null) {
         await this.pavementService.updatePavementHeight(pavementId, height);
-      } else if (height !== undefined && location.pavement) {
+      } else if (height !== undefined && height !== null && location.pavement) {
         await this.pavementService.updatePavementHeight(
           location.pavement.id,
           height,

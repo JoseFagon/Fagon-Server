@@ -8,6 +8,8 @@ import {
   IsNotEmpty,
   IsInt,
   Min,
+  Matches,
+  MaxLength,
 } from 'class-validator';
 
 export class CreateAgencyDto {
@@ -63,10 +65,14 @@ export class CreateAgencyDto {
 
   @Expose()
   @ApiProperty()
-  @IsNumber()
-  @IsInt({ message: 'O número deve ser um inteiro.' })
-  @Min(1, { message: 'O número deve ser maior que zero.' })
-  number!: number;
+  @IsString()
+  @IsNotEmpty({ message: 'O número é obrigatório.' })
+  @MaxLength(20, { message: 'O número não pode exceder 20 caracteres.' })
+  @Matches(/^[A-Za-z0-9/\-\s]+$/, {
+    message:
+      'O número deve conter apenas letras, números, barras, hífens ou espaços.',
+  })
+  number!: string;
 
   @Expose()
   @ApiProperty()
