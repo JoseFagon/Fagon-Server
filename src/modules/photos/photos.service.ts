@@ -6,6 +6,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { StorageService } from '../../storage/storage.service';
@@ -17,6 +18,7 @@ import sharp from 'sharp';
 
 @Injectable()
 export class PhotoService {
+  private readonly logger = new Logger(PhotoService.name);
   constructor(
     private prisma: PrismaService,
     private storageService: StorageService,
@@ -28,21 +30,55 @@ export class PhotoService {
   ) {}
 
   async uploadPhotos(files: Express.Multer.File[], locationId: string) {
-    const location =
-      await this.locationService.validateLocationExists(locationId);
+    this.logger.log(
+      `🚀 Iniciando processamento de ${files.length} fotos para location: ${locationId}`,
+    );
 
-    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    try {
+      this.logger.debug(`🔍 Validando locationId: ${locationId}`);
+      const location =
+        await this.locationService.validateLocationExists(locationId);
+      this.logger.debug(
+        `✅ Location válido: ${location.name} (ID: ${location.id})`,
+      );
+    } catch (error) {
+      this.logger.error(`❌ Location não encontrado: ${locationId}`, error);
+      throw error;
+    }
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    this.logger.debug(
+      `📏 Validando tamanho dos arquivos (limite: ${MAX_FILE_SIZE} bytes)`,
+    );
+
     const invalidFiles = files.filter(
       (file) =>
         file.size > MAX_FILE_SIZE || !file.mimetype?.startsWith('image/'),
     );
 
     if (invalidFiles.length > 0) {
+      this.logger.error(
+        `❌ Arquivos inválidos encontrados: ${invalidFiles.length}`,
+      );
+      invalidFiles.forEach((file, index) => {
+        this.logger.error(`Arquivo inválido ${index + 1}:`, {
+          name: file.originalname,
+          size: file.size,
+          maxSize: MAX_FILE_SIZE,
+          mimetype: file.mimetype,
+          isImage: file.mimetype?.startsWith('image/'),
+        });
+      });
       throw new BadRequestException(
         `Arquivos inválidos: tamanho máximo 10MB e apenas imagens são permitidas`,
       );
     }
 
+    this.logger.debug(
+      `✅ Todos os ${files.length} arquivos passaram na validação inicial`,
+    );
+
+    this.logger.debug('🔢 Buscando última foto para numeração sequencial');
     const lastPhoto = await this.prisma.photo.findFirst({
       where: { locationId },
       orderBy: { name: 'desc' },
@@ -55,49 +91,110 @@ export class PhotoService {
         lastPhotoNumber = parseInt(match[1]);
       }
     }
-
-    const project = await this.projectService.findOne(location.projectId);
+    this.logger.debug(`📊 Último número de foto: ${lastPhotoNumber}`);
 
     try {
-      console.log('📸 Iniciando upload de', files.length, 'fotos');
+      this.logger.debug('🏗️ Buscando projeto para nomeação dos arquivos');
+      const location = await this.prisma.location.findUnique({
+        where: { id: locationId },
+        include: { project: { include: { agency: true } } },
+      });
 
-      const uploadedPhotos = await Promise.all(
-        files.map(async (file, index) => {
-          console.log(`🔄 Processando arquivo ${index + 1}:`, {
-            name: file.originalname,
-            size: file.size,
-            mimetype: file.mimetype,
-          });
+      if (!location?.project) {
+        throw new NotFoundException(
+          'Projeto não encontrado para esta localização',
+        );
+      }
 
-          const photoNumber = lastPhotoNumber + index + 1;
-          const timestamp = Date.now();
+      const project = location.project;
+      this.logger.debug(`📋 Informações do projeto:`, {
+        projectType: project.projectType,
+        agencyNumber: project.agency.agencyNumber,
+      });
 
-          const uniqueFileName = `${project.projectType}-${project.agency.agencyNumber}-${timestamp}-${index}-${file.originalname}`;
+      try {
+        this.logger.log(`📸 Iniciando upload de ${files.length} fotos`);
 
-          console.log('📤 Chamando storageService.uploadFile...');
-          const uploadResult = await this.storageService.uploadFile({
-            originalname: uniqueFileName,
-            buffer: file.buffer,
-            mimetype: file.mimetype || 'image/jpeg',
-            size: file.size,
-          });
-          console.log('✅ StorageService concluído');
+        const uploadedPhotos = await Promise.all(
+          files.map(async (file, index) => {
+            this.logger.debug(
+              `🔄 Processando arquivo ${index + 1}/${files.length}:`,
+              {
+                originalname: file.originalname,
+                size: `${(file.size / 1024 / 1024).toFixed(2)}MB`,
+                mimetype: file.mimetype,
+                bufferLength: file.buffer?.length || 0,
+              },
+            );
 
-          return this.prisma.photo.create({
-            data: {
-              name: `Foto${photoNumber}-${location.name}`,
-              locationId,
-              filePath: uploadResult.key,
-              selectedForPdf: false,
-            },
-          });
-        }),
-      );
+            const photoNumber = lastPhotoNumber + index + 1;
+            const timestamp = Date.now();
 
-      return uploadedPhotos;
+            const uniqueFileName = `${project.projectType}-${project.agency.agencyNumber}-${timestamp}-${index}-${file.originalname}`;
+            this.logger.debug(`📝 Nome gerado: ${uniqueFileName}`);
+
+            try {
+              this.logger.debug(
+                `📤 Enviando para storageService.uploadFile...`,
+              );
+              const uploadResult = await this.storageService.uploadFile({
+                originalname: uniqueFileName,
+                buffer: file.buffer,
+                mimetype: file.mimetype || 'image/jpeg',
+                size: file.size,
+              });
+
+              this.logger.debug(
+                `✅ StorageService concluído para arquivo ${index + 1}:`,
+                {
+                  key: uploadResult.key,
+                  url: uploadResult.url,
+                  metadata: uploadResult.metadata,
+                },
+              );
+
+              const photoName = `Foto${photoNumber}-${location.name}`;
+              this.logger.debug(`💾 Salvando no banco: ${photoName}`);
+
+              const savedPhoto = await this.prisma.photo.create({
+                data: {
+                  name: photoName,
+                  locationId,
+                  filePath: uploadResult.key,
+                  selectedForPdf: false,
+                },
+              });
+
+              this.logger.debug(
+                `✅ Foto ${index + 1} salva com ID: ${savedPhoto.id}`,
+              );
+              return savedPhoto;
+            } catch (uploadError) {
+              this.logger.error(
+                `❌ Erro no upload do arquivo ${index + 1}:`,
+                uploadError,
+              );
+              throw uploadError;
+            }
+          }),
+        );
+
+        this.logger.log(
+          `🎉 Upload concluído com sucesso! ${uploadedPhotos.length} fotos salvas`,
+        );
+        return uploadedPhotos;
+      } catch (error) {
+        this.logger.error(
+          '💥 Erro durante o processamento dos uploads:',
+          error,
+        );
+        throw new InternalServerErrorException(
+          'Falha ao fazer upload das fotos',
+        );
+      }
     } catch (error) {
-      console.error('Upload error:', error);
-      throw new InternalServerErrorException('Falha ao fazer upload das fotos');
+      this.logger.error('❌ Erro ao buscar projeto:', error);
+      throw error;
     }
   }
 

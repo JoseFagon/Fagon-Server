@@ -12,6 +12,7 @@ import {
   BadRequestException,
   Query,
   Put,
+  Logger,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import {
@@ -39,6 +40,8 @@ import { RotatePhotoDto } from './dto/rotate-photo.dto';
 @Roles(ROLES.ADMIN, ROLES.FUNCIONARIO, ROLES.VISTORIADOR)
 @Controller('photos')
 export class PhotoController {
+  private readonly logger = new Logger(PhotoController.name);
+
   constructor(
     private readonly photoService: PhotoService,
     private readonly storageService: StorageService,
@@ -56,11 +59,39 @@ export class PhotoController {
     @UploadedFiles() files: Express.Multer.File[],
     @Param('locationId') locationId: string,
   ) {
+    this.logger.log(
+      `📤 Iniciando upload de fotos para location: ${locationId}`,
+    );
+    this.logger.debug(`Número de arquivos recebidos: ${files?.length || 0}`);
+
+    if (files && files.length > 0) {
+      this.logger.debug('Detalhes dos arquivos recebidos:');
+      files.forEach((file, index) => {
+        this.logger.debug(`Arquivo ${index + 1}:`, {
+          fieldname: file.fieldname,
+          originalname: file.originalname,
+          mimetype: file.mimetype,
+          size: file.size,
+          bufferLength: file.buffer?.length || 0,
+        });
+      });
+    }
+
     if (!files || files.length === 0) {
+      this.logger.warn('❌ Nenhum arquivo recebido no upload');
       throw new BadRequestException('Nenhum arquivo enviado');
     }
 
-    return this.photoService.uploadPhotos(files, locationId);
+    try {
+      const result = await this.photoService.uploadPhotos(files, locationId);
+      this.logger.log(
+        `✅ Upload concluído com sucesso. ${files.length} fotos processadas`,
+      );
+      return result;
+    } catch (error) {
+      this.logger.error('❌ Erro no upload de fotos:', error);
+      throw error;
+    }
   }
 
   @Get('location/:locationId')
