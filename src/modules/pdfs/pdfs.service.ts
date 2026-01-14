@@ -263,7 +263,13 @@ export class PdfService {
       return 90;
     }
 
-    const hasOver6m = pavements.some((p) => (p.height ?? 0) > 6);
+    const hasPavementOver6m = pavements.some((p) => (p.height ?? 0) > 6);
+
+    const projectFloorHeight = Number(project.floorHeight);
+    const hasProjectOver6m =
+      !isNaN(projectFloorHeight) && projectFloorHeight > 6;
+
+    const hasOver6m = hasPavementOver6m || hasProjectOver6m;
 
     if (subsolos.length > 0 || hasOver6m) {
       return 60;
