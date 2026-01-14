@@ -244,7 +244,9 @@ export class PdfService {
   }
 
   private calculateFireResistance(project: ProjectWithIncludes): number {
-    if (!project.pavements || project.pavements.length === 0) return 30;
+    if (!project.pavements || project.pavements.length === 0) {
+      return 30;
+    }
 
     const pavements = project.pavements;
 
@@ -265,7 +267,9 @@ export class PdfService {
 
     const hasPavementOver6m = pavements.some((p) => (p.height ?? 0) > 6);
 
-    const projectFloorHeight = Number(project.floorHeight);
+    const projectFloorHeight = project.floorHeight
+      ? Number(project.floorHeight.replace(',', '.'))
+      : NaN;
     const hasProjectOver6m =
       !isNaN(projectFloorHeight) && projectFloorHeight > 6;
 
