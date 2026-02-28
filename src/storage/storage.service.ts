@@ -148,6 +148,10 @@ export class StorageService {
       'image/gif',
       'image/webp',
       'application/pdf',
+      'image/heic',
+      'image/heif',
+      'image/heic-sequence',
+      'image/heif-sequence',
     ];
 
     if (!allowedMimeTypes.includes(file.mimetype)) {
@@ -157,7 +161,7 @@ export class StorageService {
         fileName: file.originalname,
       });
       throw new Error(
-        'Tipo de arquivo não suportado. São permitidos: JPEG, PNG, GIF, WEBP, PDF',
+        'Tipo de arquivo não suportado. São permitidos: JPEG, PNG, GIF, WEBP, PDF, HEIC/HEIF',
       );
     }
 
@@ -171,6 +175,8 @@ export class StorageService {
         'image/png': 'png',
         'image/gif': 'gif',
         'image/webp': 'webp',
+        'image/heic': 'heic',
+        'image/heif': 'heif',
         'application/pdf': 'pdf',
       };
       return typeMap[file.mimetype] ?? 'bin';
@@ -198,6 +204,7 @@ export class StorageService {
       'image/png': 'png',
       'image/gif': 'gif',
       'image/webp': 'webp',
+      'image/heif': 'heif',
     };
 
     return formatMap[mimetype] || 'jpeg';
